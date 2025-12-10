@@ -1,0 +1,221 @@
+.level-up-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 1rem;
+}
+
+.level-up-modal {
+  background: var(--surface-color, #1e1e2e);
+  border-radius: 12px;
+  max-width: 600px;
+  width: 100%;
+  max-height: 80vh;
+  overflow-y: auto;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+}
+
+.level-up-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem;
+  border-bottom: 1px solid var(--border-color, #3a3a4a);
+  position: sticky;
+  top: 0;
+  background: var(--surface-color, #1e1e2e);
+}
+
+.level-up-header h2 {
+  margin: 0;
+  color: var(--accent-gold, #f0c674);
+  font-size: 1.5rem;
+}
+
+.close-modal {
+  background: none;
+  border: none;
+  color: var(--text-secondary, #a0a0a0);
+  font-size: 1.5rem;
+  cursor: pointer;
+  padding: 0.25rem;
+  line-height: 1;
+}
+
+.close-modal:hover {
+  color: var(--text-primary, #ffffff);
+}
+
+.level-up-content {
+  padding: 1.5rem;
+}
+
+.level-up-content h3 {
+  margin: 0 0 1.5rem 0;
+  color: var(--text-primary, #ffffff);
+  font-size: 1.125rem;
+}
+
+.feature-section {
+  margin-bottom: 1.5rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid var(--border-color, #3a3a4a);
+}
+
+.feature-section:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+
+.feature-section h4 {
+  margin: 0 0 0.5rem 0;
+  color: var(--accent-blue, #61afef);
+  font-size: 1rem;
+}
+
+.feature-description {
+  margin: 0 0 1rem 0;
+  color: var(--text-secondary, #a0a0a0);
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+
+.feature-choices {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.choice-option {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 0.75rem;
+  background: var(--surface-dark, #141420);
+  border: 2px solid var(--border-color, #3a3a4a);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.choice-option:hover {
+  border-color: var(--accent-blue, #61afef);
+}
+
+.choice-option.selected {
+  border-color: var(--accent-gold, #f0c674);
+  background: rgba(240, 198, 116, 0.1);
+}
+
+.choice-option input[type="radio"] {
+  margin-top: 0.25rem;
+  accent-color: var(--accent-gold, #f0c674);
+}
+
+.choice-content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.choice-content strong {
+  color: var(--text-primary, #ffffff);
+  font-size: 0.875rem;
+}
+
+.choice-content span {
+  color: var(--text-secondary, #a0a0a0);
+  font-size: 0.8rem;
+  line-height: 1.4;
+}
+
+.stat-changes-section {
+  background: var(--surface-dark, #141420);
+  border-radius: 8px;
+  padding: 1rem;
+  margin-top: 1rem;
+}
+
+.stat-changes-section h4 {
+  margin: 0 0 0.75rem 0;
+  color: var(--success-color, #4caf50);
+  font-size: 0.875rem;
+}
+
+.stat-changes-section ul {
+  margin: 0;
+  padding-left: 1.25rem;
+  color: var(--text-secondary, #a0a0a0);
+  font-size: 0.875rem;
+}
+
+.stat-changes-section li {
+  margin-bottom: 0.25rem;
+}
+
+.level-up-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  padding: 1.5rem;
+  border-top: 1px solid var(--border-color, #3a3a4a);
+  position: sticky;
+  bottom: 0;
+  background: var(--surface-color, #1e1e2e);
+}
+
+.cancel-btn {
+  padding: 0.75rem 1.5rem;
+  border: 1px solid var(--border-color, #3a3a4a);
+  border-radius: 6px;
+  background: transparent;
+  color: var(--text-secondary, #a0a0a0);
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.cancel-btn:hover {
+  background: var(--surface-dark, #141420);
+  color: var(--text-primary, #ffffff);
+}
+
+.confirm-btn {
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 6px;
+  background: var(--accent-gold, #f0c674);
+  color: #000;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.confirm-btn:hover:not(:disabled) {
+  background: #e0b654;
+}
+
+.confirm-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.close-btn {
+  padding: 0.75rem 2rem;
+  border: 1px solid var(--border-color, #3a3a4a);
+  border-radius: 6px;
+  background: transparent;
+  color: var(--text-primary, #ffffff);
+  font-size: 0.875rem;
+  cursor: pointer;
+  margin-top: 1rem;
+}

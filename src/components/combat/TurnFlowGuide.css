@@ -1,0 +1,149 @@
+.turn-flow-guide {
+  background: #2a2a2a;
+  border: 2px solid #3a3a3a;
+  border-radius: 12px;
+  padding: 1.5rem;
+}
+
+.turn-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 2px solid #3a3a3a;
+}
+
+.turn-header h3 {
+  margin: 0;
+  color: #4fc3f7;
+  font-size: 1.8rem;
+}
+
+.new-turn-btn {
+  padding: 0.75rem 1.5rem;
+  background: #4fc3f7;
+  color: #1a1a1a;
+  border: none;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.new-turn-btn:hover {
+  background: #29b6f6;
+  transform: scale(1.02);
+}
+
+.phases-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.phase-item {
+  display: flex;
+  align-items: start;
+  gap: 1rem;
+  padding: 1rem;
+  background: #1a1a1a;
+  border: 2px solid #3a3a3a;
+  border-radius: 8px;
+  transition: all 0.3s;
+}
+
+.phase-item.completed {
+  border-color: #4caf50;
+  background: rgba(76, 175, 80, 0.1);
+}
+
+.phase-item.completed .phase-indicator {
+  background: #4caf50;
+  color: white;
+}
+
+.phase-item.current {
+  border-color: #4fc3f7;
+  background: rgba(79, 195, 247, 0.1);
+  box-shadow: 0 0 20px rgba(79, 195, 247, 0.2);
+}
+
+.phase-item.current .phase-indicator {
+  background: #4fc3f7;
+  color: #1a1a1a;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+}
+
+.phase-item.pending {
+  opacity: 0.6;
+}
+
+.phase-indicator {
+  min-width: 2.5rem;
+  height: 2.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #3a3a3a;
+  color: #888;
+  border-radius: 50%;
+  font-weight: bold;
+  font-size: 1.1rem;
+}
+
+.phase-content {
+  flex: 1;
+}
+
+.phase-content h4 {
+  margin: 0 0 0.25rem 0;
+  color: #e0e0e0;
+  font-size: 1.1rem;
+}
+
+.phase-content p {
+  margin: 0;
+  color: #b0b0b0;
+  font-size: 0.9rem;
+}
+
+.advance-phase-btn {
+  width: 100%;
+  padding: 1rem;
+  background: #4fc3f7;
+  color: #1a1a1a;
+  border: none;
+  border-radius: 8px;
+  font-size: 1.1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.advance-phase-btn:hover {
+  background: #29b6f6;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(79, 195, 247, 0.4);
+}
+
+@media (max-width: 768px) {
+  .turn-header {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .new-turn-btn {
+    width: 100%;
+  }
+}

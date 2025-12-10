@@ -1,0 +1,370 @@
+.portfolio-manager {
+  width: 100%;
+}
+
+.portfolio-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #2a2a2a;
+}
+
+.portfolio-header h2 {
+  margin: 0;
+  color: #e8e8e8;
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.essence-display {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: #1a1a1a;
+  padding: 0.75rem 1.5rem;
+  border-radius: 6px;
+  border: 1px solid #2a2a2a;
+}
+
+.essence-label {
+  color: #b0b0b0;
+  font-size: 1rem;
+}
+
+.essence-value {
+  color: #4fc3f7;
+  font-size: 1.8rem;
+  font-weight: bold;
+}
+
+.portfolio-filters {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+}
+
+.portfolio-filters button {
+  padding: 0.5rem 1rem;
+  background: #1a1a1a;
+  border: 1px solid #2a2a2a;
+  color: #888;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-weight: 500;
+}
+
+.portfolio-filters button:hover {
+  border-color: #4fc3f7;
+  color: #b0b0b0;
+  background: rgba(79, 195, 247, 0.05);
+}
+
+.portfolio-filters button.active {
+  background: rgba(79, 195, 247, 0.1);
+  border-color: #4fc3f7;
+  color: #4fc3f7;
+}
+
+.signature-section,
+.unlocked-section {
+  margin-bottom: 3rem;
+}
+
+.signature-section h3,
+.unlocked-section h3 {
+  color: #e8e8e8;
+  margin-bottom: 1rem;
+  font-size: 1.3rem;
+  font-weight: 600;
+}
+
+.minions-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 1rem;
+}
+
+/* Minion Card */
+.minion-card {
+  background: #1a1a1a;
+  border: 1px solid #2a2a2a;
+  border-left: 3px solid transparent;
+  border-radius: 6px;
+  padding: 1rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.minion-card:hover {
+  border-left-color: #4fc3f7;
+  background: #1f1f1f;
+  box-shadow: 0 2px 8px rgba(79, 195, 247, 0.1);
+}
+
+.minion-card.selected {
+  border-left-color: #4fc3f7;
+  background: rgba(79, 195, 247, 0.05);
+  box-shadow: 0 0 16px rgba(79, 195, 247, 0.15);
+}
+
+.minion-card.unaffordable {
+  opacity: 0.5;
+}
+
+.minion-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: start;
+  margin-bottom: 0.5rem;
+}
+
+.minion-header h4 {
+  margin: 0;
+  color: #e0e0e0;
+  font-size: 1.2rem;
+}
+
+.essence-cost {
+  background: #4fc3f7;
+  color: #1a1a1a;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-weight: bold;
+  font-size: 0.9rem;
+}
+
+.minion-role {
+  color: #ffa726;
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  margin-bottom: 0.5rem;
+}
+
+.minion-quick-stats {
+  display: flex;
+  justify-content: space-between;
+  margin: 0.5rem 0;
+  padding: 0.5rem;
+  background: #1a1a1a;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  color: #b0b0b0;
+}
+
+.minion-summon-info {
+  color: #b0b0b0;
+  font-size: 0.85rem;
+  margin: 0.5rem 0;
+}
+
+.minion-trait-preview {
+  color: #888;
+  font-size: 0.8rem;
+  font-style: italic;
+  margin: 0.5rem 0;
+  height: 2.4em;
+  overflow: hidden;
+}
+
+.summon-button {
+  width: 100%;
+  padding: 0.75rem;
+  background: #4fc3f7;
+  color: #1a1a1a;
+  border: none;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-top: 0.5rem;
+}
+
+.summon-button:hover:not(:disabled) {
+  background: #29b6f6;
+  transform: scale(1.02);
+}
+
+.summon-button:disabled {
+  background: #3a3a3a;
+  color: #666;
+  cursor: not-allowed;
+}
+
+/* Minion Detail Panel */
+.minion-detail-panel {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 400px;
+  height: 100vh;
+  background: #2a2a2a;
+  border-left: 2px solid #4fc3f7;
+  box-shadow: -4px 0 20px rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+  overflow-y: auto;
+  animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+.detail-content {
+  padding: 2rem;
+}
+
+.close-detail {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: none;
+  border: none;
+  color: #b0b0b0;
+  font-size: 2rem;
+  cursor: pointer;
+  line-height: 1;
+  padding: 0;
+  width: 2rem;
+  height: 2rem;
+}
+
+.close-detail:hover {
+  color: #4fc3f7;
+}
+
+.detail-content h3 {
+  color: #4fc3f7;
+  font-size: 1.8rem;
+  margin: 0 0 1rem 0;
+}
+
+.detail-stats {
+  background: #1a1a1a;
+  padding: 1rem;
+  border-radius: 8px;
+  margin-bottom: 1.5rem;
+}
+
+.detail-stats .stat {
+  margin: 0.5rem 0;
+  color: #e0e0e0;
+}
+
+.detail-characteristics {
+  margin-bottom: 1.5rem;
+}
+
+.detail-characteristics h4 {
+  color: #4fc3f7;
+  margin-bottom: 0.5rem;
+}
+
+.characteristics-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.5rem;
+  background: #1a1a1a;
+  padding: 1rem;
+  border-radius: 8px;
+}
+
+.characteristics-grid div {
+  color: #e0e0e0;
+  font-size: 0.9rem;
+}
+
+.detail-traits {
+  margin-bottom: 1.5rem;
+}
+
+.detail-traits h4 {
+  color: #4fc3f7;
+  margin-bottom: 0.5rem;
+}
+
+.trait {
+  background: #1a1a1a;
+  padding: 0.75rem;
+  border-radius: 6px;
+  margin-bottom: 0.5rem;
+  color: #e0e0e0;
+  font-size: 0.9rem;
+}
+
+.trait strong {
+  color: #4fc3f7;
+}
+
+.detail-ability {
+  background: #1a1a1a;
+  padding: 1rem;
+  border-radius: 8px;
+}
+
+.detail-ability h4 {
+  color: #4fc3f7;
+  margin-top: 0;
+}
+
+.ability-name {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #e0e0e0;
+  margin-bottom: 0.5rem;
+}
+
+.ability-keywords {
+  color: #ffa726;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  margin-bottom: 0.5rem;
+}
+
+.ability-target {
+  color: #b0b0b0;
+  font-size: 0.9rem;
+  margin-bottom: 0.75rem;
+}
+
+.ability-target strong {
+  color: #e0e0e0;
+}
+
+.power-roll {
+  background: #2a2a2a;
+  padding: 0.75rem;
+  border-radius: 6px;
+  margin-bottom: 0.75rem;
+}
+
+.power-roll div {
+  margin: 0.25rem 0;
+  color: #e0e0e0;
+  font-size: 0.9rem;
+}
+
+.ability-effect {
+  color: #b0b0b0;
+  font-size: 0.9rem;
+  line-height: 1.4;
+}
+
+@media (max-width: 768px) {
+  .minion-detail-panel {
+    width: 100%;
+  }
+
+  .minions-grid {
+    grid-template-columns: 1fr;
+  }
+}

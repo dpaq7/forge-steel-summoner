@@ -1,0 +1,73 @@
+.victory-tracker {
+  background: var(--surface-color, #1e1e2e);
+  border-radius: 8px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+}
+
+.victory-tracker h3 {
+  margin: 0 0 0.75rem 0;
+  font-size: 0.875rem;
+  color: var(--text-secondary, #a0a0a0);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  text-align: center;
+}
+
+.victory-display {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.victory-count {
+  font-size: 2.5rem;
+  font-weight: bold;
+  color: var(--accent-gold, #f0c674);
+  min-width: 3rem;
+  text-align: center;
+}
+
+.victory-btn {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+  border: 2px solid var(--border-color, #3a3a4a);
+  background: var(--surface-dark, #141420);
+  color: var(--text-primary, #ffffff);
+  font-size: 1.5rem;
+  font-weight: bold;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.victory-btn:hover:not(:disabled) {
+  background: var(--surface-light, #2a2a3a);
+  border-color: var(--accent-gold, #f0c674);
+}
+
+.victory-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.victory-btn.plus:hover:not(:disabled) {
+  border-color: var(--success-color, #4caf50);
+  color: var(--success-color, #4caf50);
+}
+
+.victory-btn.minus:hover:not(:disabled) {
+  border-color: var(--error-color, #f44336);
+  color: var(--error-color, #f44336);
+}
+
+.victory-hint {
+  margin: 0.75rem 0 0 0;
+  font-size: 0.75rem;
+  color: var(--text-tertiary, #666);
+  text-align: center;
+}

@@ -1,0 +1,281 @@
+.character-details-view {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.5rem;
+}
+
+.details-section {
+  background: #1a1a1a;
+  border: 1px solid #2a2a2a;
+  border-radius: 8px;
+  padding: 1.5rem;
+}
+
+.details-section h2 {
+  margin: 0 0 0.75rem 0;
+  font-size: 1.3rem;
+  color: #4fc3f7;
+  border-bottom: 1px solid #2a2a2a;
+  padding-bottom: 0.5rem;
+}
+
+.details-section h4 {
+  margin: 0 0 0.5rem 0;
+  font-size: 1rem;
+  color: #81c784;
+}
+
+.description {
+  color: #aaa;
+  font-style: italic;
+  margin-bottom: 1rem;
+  line-height: 1.5;
+}
+
+/* Ancestry Section */
+.ancestry-stats {
+  display: flex;
+  gap: 1.5rem;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+}
+
+.ancestry-stats .stat {
+  background: rgba(79, 195, 247, 0.1);
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  color: #4fc3f7;
+  font-weight: 500;
+}
+
+.feature-block {
+  margin-top: 1rem;
+  padding: 1rem;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 6px;
+}
+
+.feature-block.signature {
+  border-left: 3px solid #f0c674;
+}
+
+.feature-block.purchased {
+  border-left: 3px solid #81c784;
+}
+
+.feature {
+  margin-bottom: 0.5rem;
+}
+
+.feature strong {
+  color: #f0c674;
+}
+
+.feature p {
+  margin: 0.25rem 0 0 0;
+  color: #ccc;
+}
+
+.traits-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.trait strong {
+  color: #81c784;
+}
+
+.trait .cost {
+  color: #f0c674;
+  margin-left: 0.5rem;
+  font-size: 0.9rem;
+}
+
+.trait p {
+  margin: 0.25rem 0 0 0;
+  color: #aaa;
+  font-size: 0.9rem;
+}
+
+/* Culture Section */
+.culture-details {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.culture-aspect {
+  padding: 0.75rem;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 4px;
+}
+
+.culture-aspect h4 {
+  margin: 0 0 0.25rem 0;
+  color: #ba68c8;
+}
+
+.culture-aspect p {
+  margin: 0;
+  color: #aaa;
+  font-size: 0.9rem;
+}
+
+/* Career Section */
+.career-details {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.career-stat {
+  background: rgba(0, 0, 0, 0.3);
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+}
+
+.career-stat strong {
+  color: #ffb74d;
+}
+
+.inciting-incident {
+  padding: 1rem;
+  background: rgba(255, 183, 77, 0.1);
+  border-radius: 6px;
+  border-left: 3px solid #ffb74d;
+}
+
+.inciting-incident h4 {
+  color: #ffb74d;
+}
+
+.inciting-incident p {
+  margin: 0;
+  color: #ccc;
+}
+
+/* Skills & Languages Section */
+.skills-languages-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+}
+
+.skills-block, .languages-block {
+  background: rgba(0, 0, 0, 0.3);
+  padding: 1rem;
+  border-radius: 6px;
+}
+
+.skills-list, .languages-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.skills-list li, .languages-list li {
+  background: rgba(79, 195, 247, 0.15);
+  padding: 0.4rem 0.8rem;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  color: #4fc3f7;
+}
+
+.languages-list li {
+  background: rgba(186, 104, 200, 0.15);
+  color: #ba68c8;
+}
+
+/* Kit Section */
+.kit-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.kit-stat {
+  background: rgba(0, 0, 0, 0.3);
+  padding: 0.75rem;
+  border-radius: 4px;
+  text-align: center;
+}
+
+.kit-stat strong {
+  display: block;
+  color: #81c784;
+  margin-bottom: 0.25rem;
+  font-size: 0.85rem;
+}
+
+.kit-equipment {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.equipment-block {
+  padding: 0.75rem;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 4px;
+}
+
+.equipment-block h4 {
+  margin: 0 0 0.25rem 0;
+  color: #90caf9;
+  font-size: 0.9rem;
+}
+
+.equipment-block p {
+  margin: 0;
+  color: #ccc;
+}
+
+/* Circle Section */
+.circle-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.circle-stat strong {
+  color: #ce93d8;
+}
+
+.formation-info {
+  padding: 1rem;
+  background: rgba(156, 39, 176, 0.1);
+  border-radius: 6px;
+  border-left: 3px solid #9c27b0;
+}
+
+.formation-info h4 {
+  margin: 0 0 0.5rem 0;
+  color: #ce93d8;
+}
+
+.quick-command-detail strong {
+  color: #f0c674;
+}
+
+.quick-command-detail p {
+  margin: 0.25rem 0 0 0;
+  color: #aaa;
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .character-details-view {
+    grid-template-columns: 1fr;
+  }
+
+  .skills-languages-grid {
+    grid-template-columns: 1fr;
+  }
+}

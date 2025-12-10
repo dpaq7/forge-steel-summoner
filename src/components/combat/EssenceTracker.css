@@ -1,0 +1,124 @@
+.essence-tracker {
+  background: #2a2a2a;
+  border: 2px solid #3a3a3a;
+  border-radius: 12px;
+  padding: 1.5rem;
+  text-align: center;
+}
+
+.essence-tracker h3 {
+  margin: 0 0 1rem 0;
+  color: #4fc3f7;
+  font-size: 1.5rem;
+}
+
+.essence-dots-container {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.essence-dot {
+  font-size: 2rem;
+  transition: all 0.3s;
+}
+
+.essence-dot.filled {
+  color: #4fc3f7;
+  text-shadow: 0 0 10px rgba(79, 195, 247, 0.8);
+}
+
+.essence-dot.empty {
+  color: #3a3a3a;
+}
+
+.essence-info {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.essence-count {
+  color: #e0e0e0;
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+.essence-gained {
+  color: #4caf50;
+  font-size: 1rem;
+}
+
+.essence-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.gain-essence-btn {
+  padding: 0.75rem;
+  background: #4fc3f7;
+  color: #1a1a1a;
+  border: none;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.gain-essence-btn:hover {
+  background: #29b6f6;
+  transform: scale(1.02);
+}
+
+.essence-details {
+  display: flex;
+  justify-content: center;
+  gap: 1.5rem;
+  margin-bottom: 1rem;
+  font-size: 0.875rem;
+}
+
+.essence-detail {
+  color: #888;
+}
+
+.essence-controls {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.minion-death-btn {
+  padding: 0.75rem;
+  background: #ff9800;
+  color: #1a1a1a;
+  border: none;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.minion-death-btn:hover:not(:disabled) {
+  background: #f57c00;
+  transform: scale(1.02);
+}
+
+.minion-death-btn.disabled,
+.minion-death-btn:disabled {
+  background: #555;
+  color: #888;
+  cursor: not-allowed;
+}
+
+.essence-note {
+  margin-top: 0.5rem;
+  font-size: 0.75rem;
+  color: #888;
+  font-style: italic;
+}
