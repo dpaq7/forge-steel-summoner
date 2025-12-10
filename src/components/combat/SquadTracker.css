@@ -1,311 +1,414 @@
+/* ============================================
+   SQUAD TRACKER - Draw Steel Summoner Style
+   ============================================ */
+
 .squad-tracker {
-  background: #2a2a2a;
-  border: 2px solid #3a3a3a;
-  border-radius: 12px;
-  padding: 1.5rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border-dark);
+  border-radius: var(--radius-lg);
+  padding: var(--space-lg);
 }
 
 .squad-tracker.empty {
   text-align: center;
-  padding: 3rem;
-  color: #888;
+  padding: var(--space-xl);
+  color: var(--text-muted);
 }
 
 .squad-tracker.empty h3 {
-  color: #4fc3f7;
-  margin-bottom: 0.5rem;
+  color: var(--accent-primary);
+  margin-bottom: var(--space-sm);
+  font-size: var(--font-size-md);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
 }
 
 .squad-header {
-  margin-bottom: 1.5rem;
-  padding-bottom: 1rem;
-  border-bottom: 2px solid #3a3a3a;
+  margin-bottom: var(--space-lg);
+  padding-bottom: var(--space-md);
+  border-bottom: 1px solid var(--border-dark);
 }
 
 .squad-header h3 {
   margin: 0;
-  color: #4fc3f7;
-  font-size: 1.5rem;
+  color: var(--accent-primary);
+  font-size: var(--font-size-lg);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
 }
 
 .squads-list {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: var(--space-md);
 }
 
+/* ============================================
+   SQUAD CARD
+   ============================================ */
 .squad-card {
-  background: #1a1a1a;
-  border: 2px solid #3a3a3a;
-  border-radius: 8px;
-  padding: 1rem;
+  background: var(--bg-dark);
+  border: 1px solid var(--border-dark);
+  border-radius: var(--radius-lg);
+  padding: var(--space-md);
+  transition: border-color var(--transition-fast);
+}
+
+.squad-card:hover {
+  border-color: var(--border-light);
 }
 
 .squad-card-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 1rem;
+  margin-bottom: var(--space-md);
 }
 
 .squad-name {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: var(--space-sm);
+  cursor: pointer;
 }
 
 .squad-name h4 {
   margin: 0;
-  color: #e0e0e0;
-  font-size: 1.2rem;
+  color: var(--text-primary);
+  font-size: var(--font-size-lg);
+  font-weight: 600;
 }
 
 .squad-count {
-  color: #4fc3f7;
-  font-size: 1rem;
+  color: var(--accent-primary);
+  font-size: var(--font-size-md);
+  font-weight: 500;
+}
+
+.squad-role {
+  font-size: var(--font-size-xs);
+  padding: var(--space-xs) var(--space-sm);
+  background: var(--color-essence-dim);
+  color: var(--color-essence);
+  border-radius: var(--radius-sm);
+  text-transform: capitalize;
+  font-weight: 500;
 }
 
 .dismiss-squad {
   background: none;
   border: none;
-  color: #888;
+  color: var(--text-dim);
   font-size: 1.5rem;
   cursor: pointer;
   padding: 0;
   width: 2rem;
   height: 2rem;
   line-height: 1;
-  transition: color 0.2s;
+  transition: color var(--transition-fast);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .dismiss-squad:hover {
-  color: #f44336;
+  color: var(--color-danger);
 }
 
+/* ============================================
+   ACTION TOGGLES
+   ============================================ */
 .squad-actions {
   display: flex;
-  gap: 0.5rem;
-  margin-bottom: 1rem;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-md);
 }
 
 .action-toggle {
   flex: 1;
-  padding: 0.5rem;
-  border: 2px solid #3a3a3a;
-  border-radius: 6px;
+  padding: var(--space-sm);
+  border: 1px solid var(--border-dark);
+  border-radius: var(--radius-md);
   cursor: pointer;
-  font-weight: bold;
-  transition: all 0.2s;
+  font-weight: 600;
+  font-size: var(--font-size-sm);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  transition: all var(--transition-fast);
 }
 
 .action-toggle.available {
-  background: #4fc3f7;
-  color: #1a1a1a;
-  border-color: #4fc3f7;
+  background: var(--accent-dim);
+  color: var(--accent-primary);
+  border-color: var(--accent-border);
 }
 
 .action-toggle.available:hover {
-  background: #29b6f6;
+  background: rgba(77, 232, 178, 0.25);
+  border-color: var(--accent-primary);
+  box-shadow: 0 0 8px var(--accent-dim);
 }
 
 .action-toggle.used {
-  background: #2a2a2a;
-  color: #666;
-  border-color: #3a3a3a;
+  background: var(--bg-card);
+  color: var(--text-dim);
+  border-color: var(--border-dark);
 }
 
-.minions-list {
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
+/* ============================================
+   SHARED STAMINA POOL
+   ============================================ */
+.squad-stamina-pool {
+  margin-bottom: var(--space-md);
+  padding: var(--space-md);
+  background: var(--bg-darkest);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-dark);
 }
 
-.minion-row {
-  background: #2a2a2a;
-  padding: 0.75rem;
-  border-radius: 6px;
-  border: 1px solid #3a3a3a;
-}
-
-.minion-info {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 0.5rem;
-}
-
-.minion-name {
-  color: #e0e0e0;
+.stamina-label {
+  font-size: var(--font-size-sm);
+  color: var(--accent-primary);
   font-weight: 600;
+  margin-bottom: var(--space-sm);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
-.minion-hp {
-  color: #4fc3f7;
-  font-size: 0.9rem;
+.squad-health-bar {
+  height: 14px;
+  margin-bottom: var(--space-sm);
 }
 
 .health-bar {
   width: 100%;
-  height: 8px;
-  background: #1a1a1a;
-  border-radius: 4px;
+  height: 10px;
+  background: var(--bg-card);
+  border-radius: var(--radius-sm);
   overflow: hidden;
-  margin-bottom: 0.5rem;
+  margin-bottom: var(--space-sm);
 }
 
 .health-fill {
   height: 100%;
-  transition: width 0.3s, background 0.3s;
-  border-radius: 4px;
+  transition: width var(--transition-normal), background var(--transition-normal);
+  border-radius: var(--radius-sm);
 }
 
-.minion-controls {
+.squad-damage-controls {
   display: flex;
-  gap: 0.5rem;
-  justify-content: flex-end;
+  gap: var(--space-sm);
+  align-items: center;
+  flex-wrap: wrap;
 }
 
-.damage-btn,
-.heal-btn {
-  padding: 0.25rem 0.75rem;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-weight: bold;
-  transition: all 0.2s;
+.damage-input {
+  width: 60px;
+  padding: var(--space-xs) var(--space-sm);
+  border: 1px solid var(--border-dark);
+  border-radius: var(--radius-sm);
+  background: var(--bg-input);
+  color: var(--text-primary);
+  font-size: var(--font-size-sm);
+  text-align: center;
+}
+
+.damage-input:focus {
+  outline: none;
+  border-color: var(--accent-primary);
+  box-shadow: 0 0 0 2px var(--accent-dim);
 }
 
 .damage-btn {
-  background: #f44336;
+  padding: var(--space-xs) var(--space-sm);
+  border: none;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  font-weight: 600;
+  font-size: var(--font-size-sm);
+  transition: all var(--transition-fast);
+  background: var(--color-danger);
   color: white;
 }
 
 .damage-btn:hover {
-  background: #d32f2f;
+  background: #d63333;
+  box-shadow: 0 0 8px rgba(232, 84, 84, 0.4);
+}
+
+.damage-btn.apply {
+  background: var(--color-essence);
+}
+
+.damage-btn.apply:hover {
+  background: #9566d8;
+  box-shadow: 0 0 8px rgba(168, 125, 232, 0.4);
 }
 
 .heal-btn {
-  background: #4caf50;
-  color: white;
+  padding: var(--space-xs) var(--space-sm);
+  border: none;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  font-weight: 600;
+  font-size: var(--font-size-sm);
+  transition: all var(--transition-fast);
+  background: var(--color-success);
+  color: var(--bg-darkest);
 }
 
 .heal-btn:hover {
-  background: #388e3c;
+  background: #3dd89a;
+  box-shadow: 0 0 8px rgba(77, 232, 178, 0.4);
 }
 
-.minion-conditions {
+/* ============================================
+   MINION ICONS - Death Tracking
+   ============================================ */
+.minion-icons {
   display: flex;
-  gap: 0.25rem;
+  gap: var(--space-sm);
   flex-wrap: wrap;
-  margin-top: 0.5rem;
+  margin-bottom: var(--space-md);
+  padding: var(--space-sm);
+  background: var(--bg-card);
+  border-radius: var(--radius-md);
 }
 
-.condition-tag {
-  background: #ff9800;
-  color: #1a1a1a;
-  padding: 0.25rem 0.5rem;
-  border-radius: 4px;
-  font-size: 0.75rem;
-  font-weight: bold;
+.minion-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: var(--font-size-sm);
+  transition: all var(--transition-fast);
 }
 
-/* Squad Role Badge */
-.squad-role {
-  font-size: 0.75rem;
-  padding: 0.125rem 0.5rem;
-  background: rgba(124, 77, 255, 0.2);
-  color: #b388ff;
-  border-radius: 4px;
-  text-transform: capitalize;
+.minion-icon.alive {
+  background: var(--color-success-dim);
+  color: var(--color-success);
+  border: 2px solid var(--color-success);
+  box-shadow: 0 0 8px rgba(77, 232, 178, 0.4);
 }
 
-.squad-name {
-  cursor: pointer;
+.minion-icon.dead {
+  background: var(--bg-dark);
+  color: var(--text-dim);
+  border: 2px solid var(--border-dark);
+  text-decoration: line-through;
+  opacity: 0.6;
 }
 
-/* Combat Roll Section */
+.minion-icon-number {
+  line-height: 1;
+}
+
+/* ============================================
+   COMBAT ROLL SECTION
+   ============================================ */
 .squad-combat {
-  background: rgba(0, 0, 0, 0.2);
-  border-radius: 6px;
-  padding: 0.75rem;
-  margin-bottom: 1rem;
+  background: var(--bg-card);
+  border-radius: var(--radius-md);
+  padding: var(--space-md);
 }
 
 .roll-modifier-toggle {
-  margin-bottom: 0.5rem;
+  margin-bottom: var(--space-sm);
 }
 
 .modifier-btn {
-  padding: 0.25rem 0.5rem;
-  font-size: 0.75rem;
-  border: 1px solid #444;
-  border-radius: 4px;
-  background: #2a2a2a;
-  color: #eee;
+  padding: var(--space-xs) var(--space-sm);
+  font-size: var(--font-size-sm);
+  border: 1px solid var(--border-dark);
+  border-radius: var(--radius-sm);
+  background: var(--bg-dark);
+  color: var(--text-secondary);
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all var(--transition-fast);
+  font-weight: 500;
 }
 
 .modifier-btn:hover {
-  background: #333;
+  background: var(--bg-card-hover);
+  border-color: var(--accent-primary);
 }
 
 .modifier-btn.edge {
-  border-color: #66bb6a;
-  color: #66bb6a;
+  border-color: rgba(77, 232, 178, 0.5);
+  color: var(--color-success);
+  background: var(--color-success-dim);
 }
 
 .modifier-btn.bane {
-  border-color: #ef5350;
-  color: #ef5350;
+  border-color: rgba(232, 84, 84, 0.5);
+  color: var(--color-danger);
+  background: var(--color-danger-dim);
 }
 
 .combat-buttons {
   display: flex;
-  gap: 0.5rem;
+  gap: var(--space-sm);
   flex-wrap: wrap;
 }
 
 .roll-btn {
-  padding: 0.5rem 0.75rem;
-  font-size: 0.875rem;
-  font-weight: bold;
+  padding: var(--space-sm) var(--space-md);
+  font-size: var(--font-size-sm);
+  font-weight: 600;
   border: none;
-  border-radius: 6px;
+  border-radius: var(--radius-md);
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all var(--transition-fast);
+  flex: 1;
+  min-width: 120px;
 }
 
 .roll-btn.free-strike {
-  background: linear-gradient(135deg, #7c4dff, #651fff);
-  color: white;
+  background: linear-gradient(135deg, var(--accent-primary), var(--accent-glow));
+  color: var(--bg-darkest);
+  box-shadow: 0 2px 8px rgba(77, 232, 178, 0.3);
 }
 
-.roll-btn.free-strike:hover {
-  background: linear-gradient(135deg, #9c7cff, #7c4dff);
-  transform: scale(1.02);
+.roll-btn.free-strike:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(77, 232, 178, 0.5);
 }
 
 .roll-btn.signature {
-  background: linear-gradient(135deg, #ff9800, #f57c00);
+  background: linear-gradient(135deg, var(--color-essence), #8a5fd8);
   color: white;
+  box-shadow: 0 2px 8px rgba(168, 125, 232, 0.3);
 }
 
-.roll-btn.signature:hover {
-  background: linear-gradient(135deg, #ffab40, #ff9800);
-  transform: scale(1.02);
+.roll-btn.signature:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(168, 125, 232, 0.5);
 }
 
+.roll-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+/* ============================================
+   ROLL RESULTS
+   ============================================ */
 .roll-result {
   display: flex;
   align-items: center;
   flex-wrap: wrap;
-  gap: 0.5rem;
-  margin-top: 0.75rem;
-  padding: 0.5rem 0.75rem;
+  gap: var(--space-sm);
+  margin-top: var(--space-md);
+  padding: var(--space-sm) var(--space-md);
   border: 2px solid;
-  border-radius: 6px;
-  background: rgba(0, 0, 0, 0.3);
+  border-radius: var(--radius-md);
+  background: var(--bg-darkest);
   animation: fadeIn 0.3s ease;
 }
 
@@ -315,28 +418,28 @@
 }
 
 .result-label {
-  font-size: 0.75rem;
-  color: #888;
+  font-size: var(--font-size-xs);
+  color: var(--text-muted);
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }
 
 .result-total {
-  font-size: 1.5rem;
-  font-weight: bold;
+  font-size: var(--font-size-xl);
+  font-weight: 700;
 }
 
 .result-tier {
-  font-size: 0.75rem;
-  font-weight: bold;
+  font-size: var(--font-size-xs);
+  font-weight: 600;
   background: rgba(255, 255, 255, 0.1);
-  padding: 0.125rem 0.375rem;
-  border-radius: 4px;
+  padding: var(--space-xs) var(--space-sm);
+  border-radius: var(--radius-sm);
 }
 
 .result-damage {
-  font-size: 0.875rem;
-  color: #888;
+  font-size: var(--font-size-sm);
+  color: var(--text-secondary);
   margin-left: auto;
 }
 
@@ -347,114 +450,75 @@
 
 .signature-result .result-effect {
   width: 100%;
-  margin-top: 0.25rem;
-  padding-top: 0.5rem;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
-  font-size: 0.875rem;
-  color: #eee;
+  margin-top: var(--space-xs);
+  padding-top: var(--space-sm);
+  border-top: 1px solid var(--border-dark);
+  font-size: var(--font-size-sm);
+  color: var(--text-primary);
 }
 
-/* Shared Stamina Pool (SRD) */
-.squad-stamina-pool {
-  margin-bottom: 1rem;
-  padding: 0.75rem;
-  background: rgba(0, 0, 0, 0.2);
-  border-radius: 8px;
-}
-
-.stamina-label {
-  font-size: 0.875rem;
-  color: #4fc3f7;
-  font-weight: bold;
-  margin-bottom: 0.5rem;
-}
-
-.squad-health-bar {
-  height: 12px;
-  margin-bottom: 0.5rem;
-}
-
-.squad-damage-controls {
+/* ============================================
+   MINION LIST (Individual Row Style)
+   ============================================ */
+.minions-list {
   display: flex;
-  gap: 0.5rem;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.minion-row {
+  background: var(--bg-card);
+  padding: var(--space-sm);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-dark);
+}
+
+.minion-info {
+  display: flex;
+  justify-content: space-between;
   align-items: center;
-  flex-wrap: wrap;
+  margin-bottom: var(--space-xs);
 }
 
-.damage-input {
-  width: 60px;
-  padding: 0.25rem 0.5rem;
-  border: 1px solid #444;
-  border-radius: 4px;
-  background: #1a1a1a;
-  color: #eee;
-  font-size: 0.875rem;
-  text-align: center;
+.minion-name {
+  color: var(--text-primary);
+  font-weight: 600;
+  font-size: var(--font-size-sm);
 }
 
-.damage-input:focus {
-  outline: none;
-  border-color: #4fc3f7;
+.minion-hp {
+  color: var(--accent-primary);
+  font-size: var(--font-size-sm);
 }
 
-.damage-btn.apply {
-  background: #7c4dff;
-}
-
-.damage-btn.apply:hover {
-  background: #651fff;
-}
-
-/* Minion Icons - Visual death tracking */
-.minion-icons {
+.minion-controls {
   display: flex;
-  gap: 0.5rem;
-  flex-wrap: wrap;
-  margin-bottom: 1rem;
-  padding: 0.5rem;
-  background: rgba(0, 0, 0, 0.15);
-  border-radius: 6px;
+  gap: var(--space-xs);
+  justify-content: flex-end;
 }
 
-.minion-icon {
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
+.minion-conditions {
   display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: bold;
-  font-size: 0.875rem;
-  transition: all 0.3s ease;
+  gap: var(--space-xs);
+  flex-wrap: wrap;
+  margin-top: var(--space-xs);
 }
 
-.minion-icon.alive {
-  background: linear-gradient(135deg, #4caf50, #388e3c);
-  color: white;
-  box-shadow: 0 2px 8px rgba(76, 175, 80, 0.4);
+.condition-tag {
+  background: var(--color-warning);
+  color: var(--bg-darkest);
+  padding: var(--space-xs) var(--space-sm);
+  border-radius: var(--radius-sm);
+  font-size: var(--font-size-xs);
+  font-weight: 600;
 }
 
-.minion-icon.dead {
-  background: #444;
-  color: #888;
-  text-decoration: line-through;
-  opacity: 0.6;
-}
-
-.minion-icon-number {
-  line-height: 1;
-}
-
-/* Disabled button states */
-.roll-btn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-  transform: none !important;
-}
-
+/* ============================================
+   RESPONSIVE
+   ============================================ */
 @media (max-width: 768px) {
   .squad-tracker {
-    padding: 1rem;
+    padding: var(--space-md);
   }
 
   .squad-actions {
@@ -467,5 +531,9 @@
 
   .roll-btn {
     width: 100%;
+  }
+
+  .squad-damage-controls {
+    justify-content: center;
   }
 }

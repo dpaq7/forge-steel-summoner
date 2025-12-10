@@ -1,0 +1,113 @@
+/* Section Header - Draw Steel Character Sheet Style */
+
+.section-header-component {
+  margin-bottom: var(--space-md);
+}
+
+/* Main line with decorative borders */
+.section-header-line {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+}
+
+.section-header-line::before,
+.section-header-line::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--border-solid) 20%,
+    var(--accent-dim) 50%,
+    var(--border-solid) 80%,
+    transparent
+  );
+}
+
+/* Header text */
+.section-header-text {
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+/* Arrow indicator */
+.section-header-arrow {
+  text-align: center;
+  font-size: var(--font-size-xs);
+  color: var(--text-muted);
+  margin-top: calc(-1 * var(--space-xs));
+  line-height: 1;
+}
+
+/* Variant: Compact - less spacing */
+.section-header-component.compact {
+  margin-bottom: var(--space-sm);
+}
+
+.section-header-component.compact .section-header-text {
+  font-size: var(--font-size-xs);
+  letter-spacing: 0.1em;
+}
+
+.section-header-component.compact .section-header-line {
+  gap: var(--space-sm);
+}
+
+/* Variant: Subtle - less prominent */
+.section-header-component.subtle .section-header-line::before,
+.section-header-component.subtle .section-header-line::after {
+  background: var(--border-solid);
+}
+
+.section-header-component.subtle .section-header-text {
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+/* Accent variant - with glow */
+.section-header-component.accent .section-header-text {
+  color: var(--accent-bright);
+  text-shadow: var(--text-glow);
+}
+
+.section-header-component.accent .section-header-line::before,
+.section-header-component.accent .section-header-line::after {
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--border-glow) 20%,
+    var(--accent-dim) 50%,
+    var(--border-glow) 80%,
+    transparent
+  );
+}
+
+/* Collapsible variant - clickable */
+.section-header-component.collapsible {
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.section-header-component.collapsible:hover .section-header-text {
+  color: var(--accent-bright);
+}
+
+.section-header-component.collapsible:hover .section-header-arrow {
+  color: var(--accent-bright);
+}
+
+.section-header-component.collapsible.collapsed .section-header-arrow {
+  transform: rotate(-90deg);
+  transition: transform var(--transition-fast);
+}
+
+.section-header-component.collapsible.expanded .section-header-arrow {
+  transform: rotate(0deg);
+  transition: transform var(--transition-fast);
+}

@@ -1,0 +1,179 @@
+/* Stat Box - Draw Steel Character Sheet Style */
+
+.stat-box-component {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.stat-box-component.disabled {
+  opacity: 0.4;
+}
+
+/* Value box */
+.stat-box-value {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--border-solid);
+  border-radius: var(--radius-md);
+  background: var(--bg-medium);
+  color: var(--text-primary);
+  font-weight: 700;
+  transition: all var(--transition-fast);
+}
+
+/* Size variants */
+.stat-box-component.sm .stat-box-value {
+  min-width: 32px;
+  height: 28px;
+  font-size: var(--font-size-md);
+  padding: 0 var(--space-xs);
+}
+
+.stat-box-component.md .stat-box-value {
+  min-width: 44px;
+  height: 38px;
+  font-size: var(--font-size-lg);
+  padding: 0 var(--space-sm);
+}
+
+.stat-box-component.lg .stat-box-value {
+  min-width: 56px;
+  height: 48px;
+  font-size: var(--font-size-xl);
+  padding: 0 var(--space-md);
+}
+
+/* Label styling */
+.stat-box-label {
+  font-size: var(--font-size-xs);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-bone);
+  text-align: center;
+}
+
+.stat-box-component.sm .stat-box-label {
+  font-size: 0.6rem;
+}
+
+.stat-box-component.lg .stat-box-label {
+  font-size: var(--font-size-sm);
+}
+
+/* Sublabel for derived stats */
+.stat-box-sublabel {
+  font-size: 0.6rem;
+  color: var(--text-muted);
+  text-align: center;
+  margin-top: -1px;
+}
+
+/* Variant: Accent (cyan glow) */
+.stat-box-component.accent .stat-box-value {
+  border-color: var(--border-glow);
+  color: var(--accent-bright);
+}
+
+.stat-box-component.accent .stat-box-label {
+  color: var(--accent-bright);
+}
+
+/* Variant: Danger */
+.stat-box-component.danger .stat-box-value {
+  border-color: rgba(244, 67, 54, 0.4);
+  color: var(--danger);
+}
+
+.stat-box-component.danger .stat-box-label {
+  color: var(--danger);
+}
+
+/* Variant: Warning */
+.stat-box-component.warning .stat-box-value {
+  border-color: rgba(240, 198, 116, 0.4);
+  color: var(--warning);
+}
+
+.stat-box-component.warning .stat-box-label {
+  color: var(--warning);
+}
+
+/* Variant: Essence (purple) */
+.stat-box-component.essence .stat-box-value {
+  border-color: rgba(168, 125, 232, 0.4);
+  color: var(--essence);
+}
+
+.stat-box-component.essence .stat-box-label {
+  color: var(--essence);
+}
+
+/* Clickable state */
+.stat-box-component.clickable {
+  cursor: pointer;
+}
+
+.stat-box-component.clickable:hover .stat-box-value {
+  border-color: var(--accent-bright);
+  background: var(--bg-light);
+  box-shadow: var(--shadow-glow);
+}
+
+.stat-box-component.clickable:hover .stat-box-label {
+  color: var(--accent-bright);
+}
+
+.stat-box-component.clickable:focus {
+  outline: none;
+}
+
+.stat-box-component.clickable:focus-visible .stat-box-value {
+  outline: 2px solid var(--accent-bright);
+  outline-offset: 2px;
+}
+
+/* Active state */
+.stat-box-component.active .stat-box-value {
+  border-color: var(--accent-bright);
+  background: rgba(0, 230, 195, 0.1);
+  box-shadow: var(--shadow-glow);
+}
+
+.stat-box-component.active .stat-box-label {
+  color: var(--accent-bright);
+  text-shadow: var(--text-glow);
+}
+
+/* Variant active states */
+.stat-box-component.active.danger .stat-box-value {
+  border-color: var(--danger);
+  background: var(--danger-dim);
+  box-shadow: 0 0 12px rgba(244, 67, 54, 0.3);
+}
+
+.stat-box-component.active.warning .stat-box-value {
+  border-color: var(--warning);
+  background: var(--warning-dim);
+  box-shadow: 0 0 12px rgba(240, 198, 116, 0.3);
+}
+
+.stat-box-component.active.essence .stat-box-value {
+  border-color: var(--essence);
+  background: var(--essence-dim);
+  box-shadow: 0 0 12px rgba(168, 125, 232, 0.3);
+}
+
+/* Disabled clickable */
+.stat-box-component.clickable.disabled {
+  cursor: not-allowed;
+}
+
+.stat-box-component.clickable.disabled:hover .stat-box-value {
+  border-color: var(--border-solid);
+  background: var(--bg-medium);
+  box-shadow: none;
+}

@@ -1,0 +1,112 @@
+/* ============================================
+   DRAW STEEL SUMMONER - Design System
+   Color palette from Summoner cover art
+   ============================================ */
+
+:root {
+  /* === BACKGROUNDS === */
+  --bg-darkest: #050d0b;      /* Deepest shadows, inputs */
+  --bg-dark: #0a1a18;         /* Main app background */
+  --bg-medium: #1a3a32;       /* Cards, panels */
+  --bg-light: #2d5a4a;        /* Hover states, elevated elements */
+  --bg-hover: #3d5a4d;        /* Active hover */
+
+  /* === MAGICAL CYAN ACCENTS === */
+  --accent-bright: #00e6c3;   /* Primary accent, active states */
+  --accent-glow: #4aeadc;     /* Glowing effects */
+  --accent-soft: #7fffd4;     /* Subtle highlights */
+  --accent-dim: #3d8b7a;      /* Secondary/muted accent */
+
+  /* === TEXT === */
+  --text-primary: #e8e6e0;    /* Main text */
+  --text-secondary: #a8b4b0;  /* Secondary text */
+  --text-bone: #d4c8b0;       /* Labels, parchment feel */
+  --text-muted: #708880;      /* Disabled, hints */
+
+  /* === BORDERS === */
+  --border-glow: rgba(74, 234, 220, 0.25);
+  --border-solid: #3d6b5a;
+  --border-bright: #4aeadc;
+
+  /* === STATUS COLORS === */
+  --success: #4caf50;
+  --success-dim: rgba(76, 175, 80, 0.15);
+  --success-dark: #1a2a1a;
+  --danger: #f44336;
+  --danger-dim: rgba(244, 67, 54, 0.15);
+  --danger-dark: #2a1a1a;
+  --warning: #f0c674;
+  --warning-dim: rgba(240, 198, 116, 0.15);
+  --essence: #a87de8;
+  --essence-dim: rgba(168, 125, 232, 0.15);
+  --xp: #e8c844;
+  --xp-dim: rgba(232, 200, 68, 0.15);
+
+  /* === EFFECTS === */
+  --shadow-glow: 0 0 10px rgba(0, 230, 195, 0.3), 0 0 20px rgba(0, 230, 195, 0.15);
+  --shadow-glow-strong: 0 0 15px rgba(0, 230, 195, 0.5), 0 0 30px rgba(0, 230, 195, 0.25);
+  --shadow-card: 0 2px 8px rgba(0, 0, 0, 0.4);
+  --inner-glow: inset 0 0 20px rgba(0, 230, 195, 0.1);
+  --text-glow: 0 0 10px rgba(0, 230, 195, 0.5);
+
+  /* === SPACING === */
+  --space-xs: 0.25rem;
+  --space-sm: 0.5rem;
+  --space-md: 1rem;
+  --space-lg: 1.5rem;
+  --space-xl: 2rem;
+
+  /* === TYPOGRAPHY === */
+  --font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-size-xs: 0.65rem;
+  --font-size-sm: 0.75rem;
+  --font-size-md: 0.875rem;
+  --font-size-lg: 1rem;
+  --font-size-xl: 1.25rem;
+  --font-size-2xl: 1.5rem;
+
+  /* === BORDERS/RADIUS === */
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+  --radius-xl: 12px;
+
+  /* === TRANSITIONS === */
+  --transition-fast: 0.15s ease;
+  --transition-normal: 0.2s ease;
+  --transition-slow: 0.3s ease;
+}
+
+/* ============================================
+   LEGACY VARIABLE MAPPINGS
+   Map old variable names to new system
+   ============================================ */
+:root {
+  /* Background mappings */
+  --bg-card: var(--bg-medium);
+  --bg-card-hover: var(--bg-light);
+  --bg-input: var(--bg-darkest);
+
+  /* Accent mappings */
+  --accent-primary: var(--accent-bright);
+  --accent-border: var(--border-glow);
+
+  /* Border mappings */
+  --border-dark: var(--border-solid);
+  --border-light: var(--border-bright);
+
+  /* Text mappings - keep some for compatibility */
+  --text-dim: var(--text-muted);
+
+  /* Color mappings */
+  --color-danger: var(--danger);
+  --color-danger-dim: var(--danger-dim);
+  --color-warning: var(--warning);
+  --color-warning-dim: var(--warning-dim);
+  --color-success: var(--success);
+  --color-success-dim: var(--success-dim);
+  --color-essence: var(--essence);
+  --color-essence-dim: var(--essence-dim);
+  --color-xp: var(--xp);
+  --color-xp-dim: var(--xp-dim);
+}

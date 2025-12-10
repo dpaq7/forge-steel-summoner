@@ -220,22 +220,27 @@ const CharacterStatsPanel: React.FC<CharacterStatsPanelProps> = ({ onLevelUp }) 
         </div>
       </div>
 
-      {/* Row 2: Characteristics */}
+      {/* Row 2: Characteristics - Stat Box Style */}
       <div className="panel-row chars-row">
         <div className="char clickable" onClick={() => rollCharacteristic('might')} title="Click to roll Might test">
-          <span className="lbl">MGT</span><span className="val">{chars.might >= 0 ? '+' : ''}{chars.might}</span>
+          <span className="val">{chars.might >= 0 ? '+' : ''}{chars.might}</span>
+          <span className="lbl">Might</span>
         </div>
         <div className="char clickable" onClick={() => rollCharacteristic('agility')} title="Click to roll Agility test">
-          <span className="lbl">AGI</span><span className="val">{chars.agility >= 0 ? '+' : ''}{chars.agility}</span>
+          <span className="val">{chars.agility >= 0 ? '+' : ''}{chars.agility}</span>
+          <span className="lbl">Agility</span>
         </div>
         <div className="char clickable primary" onClick={() => rollCharacteristic('reason')} title="Click to roll Reason test">
-          <span className="lbl">REA</span><span className="val">{chars.reason >= 0 ? '+' : ''}{chars.reason}</span>
+          <span className="val">{chars.reason >= 0 ? '+' : ''}{chars.reason}</span>
+          <span className="lbl">Reason</span>
         </div>
         <div className="char clickable" onClick={() => rollCharacteristic('intuition')} title="Click to roll Intuition test">
-          <span className="lbl">INT</span><span className="val">{chars.intuition >= 0 ? '+' : ''}{chars.intuition}</span>
+          <span className="val">{chars.intuition >= 0 ? '+' : ''}{chars.intuition}</span>
+          <span className="lbl">Intuition</span>
         </div>
         <div className="char clickable" onClick={() => rollCharacteristic('presence')} title="Click to roll Presence test">
-          <span className="lbl">PRE</span><span className="val">{chars.presence >= 0 ? '+' : ''}{chars.presence}</span>
+          <span className="val">{chars.presence >= 0 ? '+' : ''}{chars.presence}</span>
+          <span className="lbl">Presence</span>
         </div>
         <div className="divider" />
         <button className={`roll-mod-btn ${rollModifier}`} onClick={cycleRollModifier} title="Toggle Edge/Bane">
@@ -243,24 +248,24 @@ const CharacterStatsPanel: React.FC<CharacterStatsPanelProps> = ({ onLevelUp }) 
         </button>
         <div className="divider" />
         <div className="char">
-          <span className="lbl">SPD</span>
           <span className="val">
             {hero.speed}
             {totalBonuses.speed > 0 && <span className="equip-bonus">+{totalBonuses.speed}</span>}
           </span>
+          <span className="lbl">Speed</span>
         </div>
         <div className="char">
-          <span className="lbl">STB</span>
           <span className="val">
             {hero.stability}
             {totalBonuses.stability > 0 && <span className="equip-bonus">+{totalBonuses.stability}</span>}
           </span>
+          <span className="lbl">Stability</span>
         </div>
         {/* Damage Bonus from Equipment */}
         {totalBonuses.damage > 0 && (
           <div className="char equip-damage">
-            <span className="lbl">DMG</span>
             <span className="val damage-bonus">+{totalBonuses.damage}</span>
+            <span className="lbl">Damage</span>
           </div>
         )}
 

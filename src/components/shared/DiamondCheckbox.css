@@ -1,0 +1,141 @@
+/* Diamond Checkbox - Draw Steel Character Sheet Style */
+.diamond-checkbox {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-sm);
+  cursor: pointer;
+  user-select: none;
+}
+
+.diamond-checkbox.disabled {
+  cursor: not-allowed;
+  opacity: 0.4;
+}
+
+/* Diamond Shape */
+.diamond-shape {
+  display: inline-block;
+  transform: rotate(45deg);
+  border: 1px solid var(--border-solid);
+  background: transparent;
+  transition: all var(--transition-fast);
+}
+
+/* Size variants */
+.diamond-checkbox.sm .diamond-shape {
+  width: 8px;
+  height: 8px;
+}
+
+.diamond-checkbox.md .diamond-shape {
+  width: 12px;
+  height: 12px;
+}
+
+.diamond-checkbox.lg .diamond-shape {
+  width: 16px;
+  height: 16px;
+}
+
+/* Color variants - unchecked state */
+.diamond-checkbox.accent .diamond-shape {
+  border-color: var(--border-glow);
+}
+
+.diamond-checkbox.essence .diamond-shape {
+  border-color: rgba(168, 125, 232, 0.4);
+}
+
+.diamond-checkbox.danger .diamond-shape {
+  border-color: rgba(244, 67, 54, 0.4);
+}
+
+.diamond-checkbox.warning .diamond-shape {
+  border-color: rgba(240, 198, 116, 0.4);
+}
+
+.diamond-checkbox.success .diamond-shape {
+  border-color: rgba(76, 175, 80, 0.4);
+}
+
+/* Checked state - filled diamond */
+.diamond-checkbox.checked .diamond-shape {
+  background: var(--accent-bright);
+  border-color: var(--accent-bright);
+  box-shadow: var(--shadow-glow);
+}
+
+.diamond-checkbox.checked.essence .diamond-shape {
+  background: var(--essence);
+  border-color: var(--essence);
+  box-shadow: 0 0 8px rgba(168, 125, 232, 0.5);
+}
+
+.diamond-checkbox.checked.danger .diamond-shape {
+  background: var(--danger);
+  border-color: var(--danger);
+  box-shadow: 0 0 8px rgba(244, 67, 54, 0.5);
+}
+
+.diamond-checkbox.checked.warning .diamond-shape {
+  background: var(--warning);
+  border-color: var(--warning);
+  box-shadow: 0 0 8px rgba(240, 198, 116, 0.5);
+}
+
+.diamond-checkbox.checked.success .diamond-shape {
+  background: var(--success);
+  border-color: var(--success);
+  box-shadow: 0 0 8px rgba(76, 175, 80, 0.5);
+}
+
+/* Hover state */
+.diamond-checkbox:not(.disabled):hover .diamond-shape {
+  border-color: var(--accent-bright);
+  box-shadow: 0 0 6px var(--border-glow);
+}
+
+.diamond-checkbox:not(.disabled).essence:hover .diamond-shape {
+  border-color: var(--essence);
+  box-shadow: 0 0 6px rgba(168, 125, 232, 0.3);
+}
+
+.diamond-checkbox:not(.disabled).danger:hover .diamond-shape {
+  border-color: var(--danger);
+  box-shadow: 0 0 6px rgba(244, 67, 54, 0.3);
+}
+
+.diamond-checkbox:not(.disabled).warning:hover .diamond-shape {
+  border-color: var(--warning);
+  box-shadow: 0 0 6px rgba(240, 198, 116, 0.3);
+}
+
+/* Focus state */
+.diamond-checkbox:focus {
+  outline: none;
+}
+
+.diamond-checkbox:focus-visible .diamond-shape {
+  outline: 2px solid var(--accent-bright);
+  outline-offset: 2px;
+}
+
+/* Label styling */
+.diamond-label {
+  font-size: var(--font-size-sm);
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.diamond-checkbox.checked .diamond-label {
+  color: var(--text-primary);
+}
+
+.diamond-checkbox.sm .diamond-label {
+  font-size: var(--font-size-xs);
+}
+
+.diamond-checkbox.lg .diamond-label {
+  font-size: var(--font-size-md);
+}
