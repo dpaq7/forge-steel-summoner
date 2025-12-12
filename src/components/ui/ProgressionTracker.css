@@ -40,6 +40,10 @@
 }
 
 .victories-label {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
   font-size: 0.65rem;
   font-weight: 600;
   text-transform: uppercase;
@@ -47,6 +51,36 @@
   color: var(--text-muted);
   margin-bottom: 0.5rem;
   text-align: center;
+}
+
+.victories-label::before,
+.victories-label::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--border-solid) 20%,
+    var(--border-solid) 80%,
+    transparent
+  );
+}
+
+.victories-label::before {
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--border-solid)
+  );
+}
+
+.victories-label::after {
+  background: linear-gradient(
+    90deg,
+    var(--border-solid),
+    transparent
+  );
 }
 
 .victories-boxes {

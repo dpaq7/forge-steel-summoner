@@ -109,4 +109,61 @@
   --color-essence-dim: var(--essence-dim);
   --color-xp: var(--xp);
   --color-xp-dim: var(--xp-dim);
+
+  /* === ACTION CARD COLORS === */
+  /* Main Actions - Blue */
+  --action-main-bg: #1a2a3a;
+  --action-main-border: #4a90c2;
+  --action-main-accent: #64b5f6;
+  --action-main-glow: rgba(100, 181, 246, 0.3);
+  --action-main-header: #2a4a6a;
+
+  /* Maneuvers - Green */
+  --action-maneuver-bg: #2a3a1a;
+  --action-maneuver-border: #7cb342;
+  --action-maneuver-accent: #9ccc65;
+  --action-maneuver-glow: rgba(156, 204, 101, 0.3);
+  --action-maneuver-header: #3a5a2a;
+
+  /* Triggered Actions - Orange */
+  --action-triggered-bg: #3a2a1a;
+  --action-triggered-border: #ff9800;
+  --action-triggered-accent: #ffb74d;
+  --action-triggered-glow: rgba(255, 183, 77, 0.3);
+  --action-triggered-header: #5a3a1a;
+
+  /* Free Strikes - Pink */
+  --action-free-bg: #3a1a2a;
+  --action-free-border: #e91e63;
+  --action-free-accent: #f06292;
+  --action-free-glow: rgba(240, 98, 146, 0.3);
+  --action-free-header: #5a2a3a;
+
+  /* Heroic/Class Abilities - Purple */
+  --action-heroic-bg: #2a1a3a;
+  --action-heroic-border: #9c27b0;
+  --action-heroic-accent: #ba68c8;
+  --action-heroic-glow: rgba(186, 104, 200, 0.3);
+  --action-heroic-header: #3a2a5a;
+
+  /* Signature Abilities - Cyan */
+  --action-signature-bg: #1a3a3a;
+  --action-signature-border: #00bcd4;
+  --action-signature-accent: #4dd0e1;
+  --action-signature-glow: rgba(77, 208, 225, 0.3);
+  --action-signature-header: #1a4a4a;
+
+  /* Villain Actions - Red */
+  --action-villain-bg: #2a1a1a;
+  --action-villain-border: #b71c1c;
+  --action-villain-accent: #ef5350;
+  --action-villain-glow: rgba(239, 83, 80, 0.3);
+  --action-villain-header: #4a1a1a;
+
+  /* Utility/General - Gray */
+  --action-utility-bg: #1a2a2a;
+  --action-utility-border: #607d8b;
+  --action-utility-accent: #90a4ae;
+  --action-utility-glow: rgba(144, 164, 174, 0.3);
+  --action-utility-header: #2a3a3a;
 }

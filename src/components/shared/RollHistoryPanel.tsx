@@ -26,17 +26,6 @@ const RollHistoryPanel: React.FC = () => {
 
   return (
     <>
-      <button
-        className={`roll-history-toggle ${isHistoryOpen ? 'open' : ''}`}
-        onClick={toggleHistory}
-        title="Roll History"
-      >
-        <span className="dice-icon">2d10</span>
-        {history.length > 0 && (
-          <span className="history-count">{history.length}</span>
-        )}
-      </button>
-
       {isHistoryOpen && (
         <div className="roll-history-panel">
           <div className="history-header">

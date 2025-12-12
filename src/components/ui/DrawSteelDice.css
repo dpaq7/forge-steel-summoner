@@ -1,0 +1,503 @@
+/* ============================================
+   DRAW STEEL DICE - COMPACT HEADER VERSION
+   ============================================ */
+
+.draw-steel-dice {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  position: relative;
+}
+
+/* ============================================
+   SHARED DIE STYLES
+   ============================================ */
+
+.die {
+  position: relative;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  transition: transform 0.2s ease;
+}
+
+.die:hover:not(:disabled) {
+  transform: scale(1.1);
+}
+
+.die:active:not(:disabled) {
+  transform: scale(0.95);
+}
+
+.die:disabled {
+  cursor: not-allowed;
+  opacity: 0.8;
+}
+
+.die:focus-visible {
+  outline: none;
+}
+
+.die:focus-visible .die-border {
+  box-shadow: 0 0 0 2px var(--accent-primary);
+}
+
+/* ============================================
+   D20 DIE (POWER ROLL) - Diamond Shape
+   ============================================ */
+
+.d20-die {
+  width: 36px;
+  height: 42px;
+}
+
+.d20-die .die-border {
+  position: absolute;
+  inset: 0;
+  background: var(--border-dark);
+  clip-path: polygon(
+    50% 0%,
+    95% 25%,
+    95% 75%,
+    50% 100%,
+    5% 75%,
+    5% 25%
+  );
+  transition: all 0.2s ease;
+}
+
+.d20-die:hover:not(:disabled) .die-border {
+  background: var(--accent-dim);
+  box-shadow: 0 0 12px rgba(77, 232, 178, 0.4);
+}
+
+.d20-die .die-face {
+  position: absolute;
+  inset: 2px;
+  background: var(--bg-card);
+  clip-path: polygon(
+    50% 0%,
+    95% 25%,
+    95% 75%,
+    50% 100%,
+    5% 75%,
+    5% 25%
+  );
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Tier Colors for D20 */
+.d20-die.tier-1 .die-border {
+  background: var(--color-danger);
+}
+.d20-die.tier-1 .die-face {
+  background: linear-gradient(180deg, #3a1a1a 0%, #2a1515 100%);
+}
+.d20-die.tier-1 .die-result {
+  color: var(--color-danger);
+}
+
+.d20-die.tier-2 .die-border {
+  background: var(--color-warning);
+}
+.d20-die.tier-2 .die-face {
+  background: linear-gradient(180deg, #3a351a 0%, #2a2515 100%);
+}
+.d20-die.tier-2 .die-result {
+  color: var(--color-warning);
+}
+
+.d20-die.tier-3 .die-border {
+  background: var(--color-success);
+}
+.d20-die.tier-3 .die-face {
+  background: linear-gradient(180deg, #1a3a1a 0%, #152a15 100%);
+}
+.d20-die.tier-3 .die-result {
+  color: var(--color-success);
+}
+
+/* ============================================
+   D3 DIE - Small Hexagon Shape
+   ============================================ */
+
+.d3-die {
+  width: 32px;
+  height: 32px;
+}
+
+.d3-die .die-border {
+  position: absolute;
+  inset: 0;
+  background: var(--border-dark);
+  clip-path: polygon(
+    50% 0%,
+    100% 25%,
+    100% 75%,
+    50% 100%,
+    0% 75%,
+    0% 25%
+  );
+  transition: all 0.2s ease;
+}
+
+.d3-die:hover:not(:disabled) .die-border {
+  background: var(--accent-dim);
+  box-shadow: 0 0 10px rgba(77, 232, 178, 0.3);
+}
+
+.d3-die .die-face {
+  position: absolute;
+  inset: 2px;
+  background: var(--bg-card);
+  clip-path: polygon(
+    50% 0%,
+    100% 25%,
+    100% 75%,
+    50% 100%,
+    0% 75%,
+    0% 25%
+  );
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* d3 Result Styling */
+.d3-die.d3-result .die-border {
+  background: var(--accent-primary);
+}
+.d3-die.d3-result .die-face {
+  background: linear-gradient(180deg, #1a2a2a 0%, #152525 100%);
+}
+.d3-die .die-result {
+  color: var(--accent-primary);
+}
+.d3-die .die-icon {
+  color: var(--text-muted);
+}
+
+/* ============================================
+   DIE CONTENT
+   ============================================ */
+
+.die-icon {
+  font-size: 0.6rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+}
+
+.die-result {
+  font-size: 0.9rem;
+  font-weight: bold;
+  color: var(--text-primary);
+  text-shadow: 0 0 8px currentColor;
+}
+
+.rolling-indicator {
+  font-size: 1rem;
+  color: var(--accent-primary);
+  animation: spin 0.3s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* ============================================
+   ROLL MODIFIER BUTTON
+   ============================================ */
+
+.draw-steel-dice .roll-mod-btn {
+  padding: 0.35rem 0.6rem;
+  font-size: 0.65rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border-radius: 4px;
+  border: 1px solid var(--border-dark);
+  background: var(--bg-card);
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  min-width: 52px;
+}
+
+/* ============================================
+   ROLL HISTORY TOGGLE (INLINE)
+   ============================================ */
+
+.roll-history-toggle-inline {
+  position: relative;
+  width: 28px;
+  height: 28px;
+  border-radius: 4px;
+  border: 1px solid var(--border-dark, #3a4a4a);
+  background: var(--bg-card, #142020);
+  color: var(--text-muted, #707068);
+  font-weight: bold;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.roll-history-toggle-inline:hover {
+  border-color: var(--accent-primary, #4de8b2);
+  color: var(--accent-primary, #4de8b2);
+  box-shadow: 0 0 8px rgba(77, 232, 178, 0.3);
+}
+
+.roll-history-toggle-inline.open {
+  background: var(--accent-dim, rgba(77, 232, 178, 0.15));
+  border-color: var(--accent-primary, #4de8b2);
+  color: var(--accent-primary, #4de8b2);
+}
+
+.roll-history-toggle-inline .history-icon {
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.roll-history-toggle-inline .history-count {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  background: #ef5350;
+  color: white;
+  font-size: 0.65rem;
+  min-width: 16px;
+  height: 16px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 3px;
+}
+
+.draw-steel-dice .roll-mod-btn:hover {
+  background: var(--bg-card-hover);
+}
+
+.draw-steel-dice .roll-mod-btn.edge {
+  border-color: #5a9a4a;
+  color: #7aca6a;
+  background: rgba(90, 154, 74, 0.15);
+}
+
+.draw-steel-dice .roll-mod-btn.bane {
+  border-color: #9a4a5a;
+  color: #ca6a7a;
+  background: rgba(154, 74, 90, 0.15);
+}
+
+/* ============================================
+   RESULTS POPUP
+   ============================================ */
+
+.dice-results-popup {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  min-width: 180px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-dark);
+  border-radius: 6px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+  z-index: 100;
+  padding: 0.75rem;
+  animation: popup-appear 0.2s ease;
+}
+
+@keyframes popup-appear {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.close-results {
+  position: absolute;
+  top: 4px;
+  right: 6px;
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font-size: 1rem;
+  cursor: pointer;
+  padding: 0;
+  line-height: 1;
+}
+
+.close-results:hover {
+  color: var(--text-primary);
+}
+
+.result-section {
+  padding: 0.5rem;
+  border-radius: 4px;
+  background: var(--bg-darkest);
+  margin-bottom: 0.5rem;
+}
+
+.result-section:last-child {
+  margin-bottom: 0;
+}
+
+.result-section.power {
+  border-left: 3px solid var(--border-dark);
+}
+
+.result-section.power.tier-1 {
+  border-left-color: var(--color-danger);
+}
+
+.result-section.power.tier-2 {
+  border-left-color: var(--color-warning);
+}
+
+.result-section.power.tier-3 {
+  border-left-color: var(--color-success);
+}
+
+.result-section.d3 {
+  border-left: 3px solid var(--accent-primary);
+}
+
+.result-label {
+  font-size: 0.6rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-muted);
+  margin-bottom: 0.25rem;
+}
+
+.result-breakdown {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-family: monospace;
+  margin-bottom: 0.25rem;
+}
+
+.die-val {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+}
+
+.op {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+}
+
+.char-mod {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--accent-primary);
+}
+
+.result-total {
+  font-size: 1.1rem;
+  font-weight: bold;
+  color: var(--text-primary);
+}
+
+.result-section.tier-1 .result-total {
+  color: var(--color-danger);
+}
+
+.result-section.tier-2 .result-total {
+  color: var(--color-warning);
+}
+
+.result-section.tier-3 .result-total {
+  color: var(--color-success);
+}
+
+.result-section.d3 .result-total {
+  color: var(--accent-primary);
+}
+
+.result-tier {
+  font-size: 0.65rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.crit-badge {
+  padding: 0.1rem 0.3rem;
+  background: var(--accent-primary);
+  color: var(--bg-darkest);
+  border-radius: 3px;
+  font-size: 0.55rem;
+  font-weight: bold;
+  animation: crit-pulse 0.5s ease-in-out infinite alternate;
+}
+
+@keyframes crit-pulse {
+  from { box-shadow: 0 0 4px var(--accent-primary); }
+  to { box-shadow: 0 0 12px var(--accent-primary); }
+}
+
+.result-mod {
+  font-size: 0.6rem;
+  color: var(--text-muted);
+  font-style: italic;
+  margin-top: 0.25rem;
+}
+
+/* ============================================
+   ROLLING ANIMATION
+   ============================================ */
+
+.die.rolling {
+  animation: dice-shake 0.1s ease-in-out infinite;
+}
+
+@keyframes dice-shake {
+  0%, 100% { transform: rotate(-4deg) scale(1.05); }
+  50% { transform: rotate(4deg) scale(0.95); }
+}
+
+.die.rolling .die-border {
+  animation: dice-glow 0.15s ease-in-out infinite alternate;
+}
+
+@keyframes dice-glow {
+  from {
+    box-shadow: 0 0 8px var(--accent-glow, rgba(77, 232, 178, 0.5));
+    background: var(--accent-dim);
+  }
+  to {
+    box-shadow: 0 0 18px var(--accent-primary);
+    background: var(--accent-primary);
+  }
+}
+
+/* ============================================
+   RESPONSIVE
+   ============================================ */
+
+@media (max-width: 600px) {
+  .dice-results-popup {
+    left: auto;
+    right: 0;
+  }
+}

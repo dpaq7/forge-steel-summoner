@@ -19,8 +19,8 @@ const EssenceTracker: React.FC<EssenceTrackerProps> = ({
   className = '',
 }) => {
   const handleIncrement = useCallback(() => {
-    if (current < max) onCurrentChange(current + 1);
-  }, [current, max, onCurrentChange]);
+    if (current < 99) onCurrentChange(current + 1);
+  }, [current, onCurrentChange]);
 
   const handleDecrement = useCallback(() => {
     if (current > 0) onCurrentChange(current - 1);
@@ -46,14 +46,13 @@ const EssenceTracker: React.FC<EssenceTrackerProps> = ({
             <button
               className="essence-btn"
               onClick={handleIncrement}
-              disabled={current >= max}
+              disabled={current >= 99}
               aria-label="Increase essence"
               type="button"
             >
               +
             </button>
           </div>
-          <span className="essence-max">/ {max}</span>
         </div>
       </div>
 

@@ -11,7 +11,7 @@ const nixieSoakreed: MinionTemplate = {
   id: 'fey_nixie_soakreed',
   name: 'Nixie Soakreed',
   essenceCost: 1,
-  minionsPerSummon: 3,
+  minionsPerSummon: 1, // Signature: 1 minion per essence spent
   size: '1T',
   speed: 5,
   stamina: 2,
@@ -47,7 +47,7 @@ const pixieBellringer: MinionTemplate = {
   id: 'fey_pixie_bellringer',
   name: 'Pixie Bellringer',
   essenceCost: 1,
-  minionsPerSummon: 3,
+  minionsPerSummon: 1, // Signature: 1 minion per essence spent
   size: '1T',
   speed: 4,
   stamina: 2,
@@ -84,7 +84,7 @@ const spriteDandeknight: MinionTemplate = {
   id: 'fey_sprite_dandeknight',
   name: 'Sprite Dandeknight',
   essenceCost: 1,
-  minionsPerSummon: 3,
+  minionsPerSummon: 1, // Signature: 1 minion per essence spent
   size: '1T',
   speed: 5,
   stamina: 2,

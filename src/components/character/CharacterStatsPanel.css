@@ -76,7 +76,7 @@
   gap: var(--space-sm);
 }
 
-.lvl-btn, .notes-btn, .respite-btn {
+.lvl-btn, .notes-btn, .respite-btn, .minimize-btn {
   padding: 0.35rem 0.75rem;
   border-radius: var(--radius-sm);
   font-size: var(--font-size-sm);
@@ -122,6 +122,29 @@
 .notes-btn:hover {
   border-color: var(--accent-primary);
   color: var(--accent-primary);
+}
+
+.minimize-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border-dark);
+  color: var(--text-muted);
+}
+
+.minimize-btn:hover {
+  border-color: var(--accent-primary);
+  color: var(--accent-primary);
+}
+
+.minimize-btn .minimize-icon {
+  font-size: 0.6rem;
+  transition: transform 0.2s ease;
+}
+
+.minimize-btn:hover .minimize-icon {
+  transform: translateY(-1px);
 }
 
 .respite-btn {
@@ -644,7 +667,7 @@
 .cond-dropdown {
   position: absolute;
   top: 100%;
-  left: 0;
+  right: 0;
   margin-top: var(--space-xs);
   background: var(--bg-card);
   border: 1px solid var(--border-light);

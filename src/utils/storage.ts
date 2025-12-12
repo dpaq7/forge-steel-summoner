@@ -49,6 +49,7 @@ const migrateCharacter = (character: Partial<SummonerHero>): SummonerHero => {
     progressionChoices: character.progressionChoices ?? {},
     activeConditions: character.activeConditions ?? [],
     equippedItems: character.equippedItems ?? [],
+    minionPortraits: character.minionPortraits ?? {},
     // Refresh portfolio with latest data
     portfolio: portfolio ?? character.portfolio,
     // Refresh recovery values

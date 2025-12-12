@@ -406,6 +406,7 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ onComplete }) => 
       items: [],
       notes: '',
       portraitUrl: null,
+      minionPortraits: {},
       activeConditions: [],
       progressionChoices: {},
       activeProjects: [],

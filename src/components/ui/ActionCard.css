@@ -1,0 +1,589 @@
+/* ============================================
+   ACTION CARD - BASE STYLES
+   ============================================ */
+
+.action-card {
+  /* Default colors (utility) */
+  --card-bg: var(--action-utility-bg, #1a2a2a);
+  --card-border: var(--action-utility-border, #607d8b);
+  --card-accent: var(--action-utility-accent, #90a4ae);
+  --card-glow: var(--action-utility-glow, rgba(144, 164, 174, 0.3));
+  --card-header: var(--action-utility-header, #2a3a3a);
+
+  position: relative;
+  width: 100%;
+  max-width: 400px;
+  min-width: 280px;
+  font-size: 0.875rem;
+  transition: transform 0.2s ease;
+}
+
+.action-card:hover {
+  transform: translateY(-2px);
+}
+
+/* ============================================
+   TYPE-SPECIFIC COLORS
+   ============================================ */
+
+.action-card.action-main {
+  --card-bg: var(--action-main-bg, #1a2a3a);
+  --card-border: var(--action-main-border, #4a90c2);
+  --card-accent: var(--action-main-accent, #64b5f6);
+  --card-glow: var(--action-main-glow, rgba(100, 181, 246, 0.3));
+  --card-header: var(--action-main-header, #2a4a6a);
+}
+
+.action-card.action-maneuver {
+  --card-bg: var(--action-maneuver-bg, #2a3a1a);
+  --card-border: var(--action-maneuver-border, #7cb342);
+  --card-accent: var(--action-maneuver-accent, #9ccc65);
+  --card-glow: var(--action-maneuver-glow, rgba(156, 204, 101, 0.3));
+  --card-header: var(--action-maneuver-header, #3a5a2a);
+}
+
+.action-card.action-triggered {
+  --card-bg: var(--action-triggered-bg, #3a2a1a);
+  --card-border: var(--action-triggered-border, #ff9800);
+  --card-accent: var(--action-triggered-accent, #ffb74d);
+  --card-glow: var(--action-triggered-glow, rgba(255, 183, 77, 0.3));
+  --card-header: var(--action-triggered-header, #5a3a1a);
+}
+
+.action-card.action-free {
+  --card-bg: var(--action-free-bg, #3a1a2a);
+  --card-border: var(--action-free-border, #e91e63);
+  --card-accent: var(--action-free-accent, #f06292);
+  --card-glow: var(--action-free-glow, rgba(240, 98, 146, 0.3));
+  --card-header: var(--action-free-header, #5a2a3a);
+}
+
+.action-card.action-heroic {
+  --card-bg: var(--action-heroic-bg, #2a1a3a);
+  --card-border: var(--action-heroic-border, #9c27b0);
+  --card-accent: var(--action-heroic-accent, #ba68c8);
+  --card-glow: var(--action-heroic-glow, rgba(186, 104, 200, 0.3));
+  --card-header: var(--action-heroic-header, #3a2a5a);
+}
+
+.action-card.action-signature {
+  --card-bg: var(--action-signature-bg, #1a3a3a);
+  --card-border: var(--action-signature-border, #00bcd4);
+  --card-accent: var(--action-signature-accent, #4dd0e1);
+  --card-glow: var(--action-signature-glow, rgba(77, 208, 225, 0.3));
+  --card-header: var(--action-signature-header, #1a4a4a);
+}
+
+.action-card.action-villain {
+  --card-bg: var(--action-villain-bg, #2a1a1a);
+  --card-border: var(--action-villain-border, #b71c1c);
+  --card-accent: var(--action-villain-accent, #ef5350);
+  --card-glow: var(--action-villain-glow, rgba(239, 83, 80, 0.3));
+  --card-header: var(--action-villain-header, #4a1a1a);
+}
+
+/* ============================================
+   CARD FRAME (Border Layer)
+   ============================================ */
+
+.action-card-border {
+  position: absolute;
+  inset: 0;
+  background: var(--card-border);
+  clip-path: polygon(
+    1% 0%,
+    99% 0%,
+    100% 1%,
+    100% 99%,
+    99% 100%,
+    1% 100%,
+    0% 99%,
+    0% 1%
+  );
+  transition: all 0.2s ease;
+}
+
+.action-card:hover .action-card-border {
+  box-shadow: 0 0 15px var(--card-glow);
+}
+
+/* ============================================
+   CARD CONTENT (Inner Layer)
+   ============================================ */
+
+.action-card-content {
+  position: relative;
+  margin: 2px;
+  background: var(--card-bg);
+  clip-path: polygon(
+    1% 0%,
+    99% 0%,
+    100% 1%,
+    100% 99%,
+    99% 100%,
+    1% 100%,
+    0% 99%,
+    0% 1%
+  );
+  display: flex;
+  flex-direction: column;
+}
+
+/* ============================================
+   HEADER
+   ============================================ */
+
+.action-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: stretch;
+  background: var(--card-header);
+  border-bottom: 1px solid var(--card-border);
+}
+
+.header-left {
+  flex: 1;
+  padding: 0.5rem 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+}
+
+.action-type-label {
+  font-size: 0.6rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--card-accent);
+  transition: text-shadow 0.2s ease;
+}
+
+.action-card:hover .action-type-label {
+  text-shadow: 0 0 8px var(--card-accent);
+}
+
+.action-name {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text-primary, #f5f5f0);
+  line-height: 1.2;
+}
+
+.action-card:hover .action-name {
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
+}
+
+/* ============================================
+   COST BOX
+   ============================================ */
+
+.action-cost-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem 0.75rem;
+  min-width: 50px;
+  background: var(--bg-darkest, #0a1212);
+  border-left: 1px solid var(--card-border);
+}
+
+.cost-icon {
+  font-size: 0.7rem;
+  color: var(--card-accent);
+}
+
+.cost-value {
+  font-size: 1.25rem;
+  font-weight: bold;
+  color: var(--card-accent);
+  line-height: 1;
+}
+
+.cost-label {
+  font-size: 0.5rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-muted, #707068);
+  margin-top: 0.125rem;
+}
+
+/* ============================================
+   TAGS ROW
+   ============================================ */
+
+.action-tags-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  padding: 0.5rem 0.75rem;
+  background: var(--bg-dark, #0d1a1a);
+  border-bottom: 1px solid var(--card-border);
+}
+
+.action-tag {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.7rem;
+  color: var(--text-muted, #707068);
+}
+
+.action-tag.active {
+  color: var(--card-accent);
+}
+
+.tag-diamond {
+  font-size: 0.6rem;
+}
+
+.tag-label {
+  text-transform: capitalize;
+}
+
+/* ============================================
+   CARD BODY
+   ============================================ */
+
+.action-card-body {
+  padding: 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+/* ============================================
+   FIELDS (Target, Distance, Area)
+   ============================================ */
+
+.action-field {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+}
+
+.action-field.trigger-field {
+  padding: 0.5rem;
+  background: rgba(255, 183, 77, 0.1);
+  border: 1px solid var(--action-triggered-border, #ff9800);
+  border-radius: 3px;
+  margin-bottom: 0.25rem;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.trigger-field .field-label {
+  color: var(--action-triggered-accent, #ffb74d);
+}
+
+.field-label {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--text-muted, #707068);
+  text-transform: capitalize;
+  white-space: nowrap;
+}
+
+.field-separator {
+  color: var(--card-border);
+  font-size: 0.6rem;
+  opacity: 0.5;
+}
+
+.field-value {
+  font-size: 0.8rem;
+  color: var(--text-primary, #f5f5f0);
+}
+
+/* ============================================
+   POWER ROLL SECTION
+   ============================================ */
+
+.action-power-roll {
+  margin-top: 0.5rem;
+  padding: 0.75rem;
+  background: var(--bg-darkest, #0a1212);
+  border: 1px solid var(--card-border);
+  border-radius: 4px;
+}
+
+.power-roll-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.power-roll-formula {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--card-accent);
+  font-family: monospace;
+}
+
+.roll-button {
+  margin-left: auto;
+  padding: 0.25rem 0.75rem;
+  background: var(--card-border);
+  border: none;
+  border-radius: 3px;
+  color: var(--bg-darkest, #0a1212);
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.roll-button:hover {
+  background: var(--card-accent);
+  box-shadow: 0 0 10px var(--card-glow);
+}
+
+/* ============================================
+   TIER RESULTS
+   ============================================ */
+
+.power-roll-tiers {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+}
+
+.tier-result {
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+  padding: 0.375rem 0.5rem;
+  background: var(--bg-dark, #0d1a1a);
+  border-left: 3px solid transparent;
+  border-radius: 2px;
+  transition: all 0.2s ease;
+}
+
+.tier-result.tier-1 {
+  border-left-color: var(--color-danger, #e85454);
+}
+
+.tier-result.tier-2 {
+  border-left-color: var(--color-warning, #e8a844);
+}
+
+.tier-result.tier-3 {
+  border-left-color: var(--color-success, #4de8b2);
+}
+
+.tier-result.active {
+  background: var(--bg-card, #142020);
+  box-shadow: 0 0 10px var(--card-glow);
+}
+
+.tier-badge {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--text-secondary, #b8b8b0);
+}
+
+.tier-result.tier-1 .tier-badge { color: var(--color-danger, #e85454); }
+.tier-result.tier-2 .tier-badge { color: var(--color-warning, #e8a844); }
+.tier-result.tier-3 .tier-badge { color: var(--color-success, #4de8b2); }
+
+.tier-threshold {
+  font-weight: 400;
+  color: var(--text-muted, #707068);
+  margin-left: 0.25rem;
+}
+
+.tier-effect {
+  font-size: 0.75rem;
+  color: var(--text-secondary, #b8b8b0);
+  line-height: 1.4;
+}
+
+/* ============================================
+   ROLL RESULT DISPLAY
+   ============================================ */
+
+.action-card .roll-result {
+  margin-top: 0.5rem;
+  padding: 0.5rem;
+  text-align: center;
+  font-size: 0.85rem;
+  color: var(--text-primary, #f5f5f0);
+  background: var(--bg-card, #142020);
+  border-radius: 3px;
+  animation: action-result-flash 0.3s ease;
+}
+
+.action-card .roll-result.tier-1 { background: rgba(232, 84, 84, 0.2); }
+.action-card .roll-result.tier-2 { background: rgba(232, 168, 68, 0.2); }
+.action-card .roll-result.tier-3 { background: rgba(77, 232, 178, 0.2); }
+
+@keyframes action-result-flash {
+  0% { transform: scale(1.05); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+/* ============================================
+   EFFECT TEXT
+   ============================================ */
+
+.action-effect {
+  margin-top: 0.5rem;
+  padding: 0.5rem;
+  background: var(--bg-dark, #0d1a1a);
+  border-radius: 3px;
+}
+
+.effect-label {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--card-accent);
+  margin-right: 0.5rem;
+}
+
+.effect-text {
+  font-size: 0.8rem;
+  color: var(--text-secondary, #b8b8b0);
+  line-height: 1.5;
+}
+
+/* ============================================
+   NOTES
+   ============================================ */
+
+.action-notes {
+  padding: 0.375rem 0.5rem;
+  background: rgba(255, 255, 255, 0.03);
+  border-left: 2px solid var(--text-muted, #707068);
+  font-size: 0.75rem;
+  font-style: italic;
+  color: var(--text-muted, #707068);
+}
+
+/* ============================================
+   KEYWORDS FOOTER
+   ============================================ */
+
+.action-keywords {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  background: var(--bg-darkest, #0a1212);
+  border-top: 1px solid var(--card-border);
+}
+
+.keywords-label {
+  font-size: 0.65rem;
+  font-weight: 600;
+  color: var(--text-muted, #707068);
+  text-transform: uppercase;
+}
+
+.keywords-list {
+  font-size: 0.75rem;
+  color: var(--text-secondary, #b8b8b0);
+}
+
+/* ============================================
+   EXPAND/COLLAPSE TOGGLE
+   ============================================ */
+
+.expand-toggle {
+  position: absolute;
+  bottom: 0.25rem;
+  right: 0.25rem;
+  width: 24px;
+  height: 24px;
+  background: var(--bg-card, #142020);
+  border: 1px solid var(--card-border);
+  border-radius: 3px;
+  color: var(--text-muted, #707068);
+  font-size: 0.6rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
+}
+
+.expand-toggle:hover {
+  background: var(--card-border);
+  color: var(--text-primary, #f5f5f0);
+}
+
+/* ============================================
+   COMPACT MODE
+   ============================================ */
+
+.action-card.compact:not(.expanded) .action-card-body {
+  display: none;
+}
+
+.action-card.compact:not(.expanded) .action-keywords {
+  border-top: none;
+}
+
+/* ============================================
+   RESPONSIVE
+   ============================================ */
+
+@media (max-width: 400px) {
+  .action-card {
+    font-size: 0.8rem;
+    min-width: 260px;
+  }
+
+  .action-name {
+    font-size: 0.9rem;
+  }
+
+  .action-tags-row {
+    gap: 0.5rem;
+  }
+
+  .power-roll-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .roll-button {
+    margin-left: 0;
+    margin-top: 0.5rem;
+    width: 100%;
+  }
+}
+
+/* ============================================
+   ACTION CARDS GRID
+   ============================================ */
+
+.action-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 1rem;
+  padding: 1rem;
+}
+
+/* ============================================
+   ACTIONS BY TYPE LAYOUT
+   ============================================ */
+
+.actions-by-type {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.action-category h3 {
+  margin: 0 0 1rem 0;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-primary, #f5f5f0);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  border-bottom: 1px solid var(--border-dark, #2a3a3a);
+  padding-bottom: 0.5rem;
+}

@@ -1,0 +1,444 @@
+/* ============================================
+   ABILITIES VIEW - COMBINED
+   ============================================ */
+
+.abilities-view-combined {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+/* ============================================
+   CLASS ABILITIES SECTION
+   ============================================ */
+
+.class-abilities-section {
+  background: var(--bg-card);
+  border: 1px solid var(--border-dark);
+  border-radius: var(--radius-lg);
+  padding: 1.5rem;
+}
+
+.section-header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.section-header-row h2 {
+  margin: 0;
+  color: var(--accent-primary);
+  font-size: 1.25rem;
+  letter-spacing: 0.05em;
+}
+
+/* Turn Reminder Pills */
+.turn-reminder {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+}
+
+.reminder-label {
+  color: var(--text-muted);
+  margin-right: 0.25rem;
+}
+
+.reminder-action {
+  padding: 0.25rem 0.6rem;
+  border-radius: var(--radius-sm);
+  font-weight: 600;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.reminder-action.move {
+  background: rgba(129, 199, 132, 0.2);
+  color: #81c784;
+  border: 1px solid rgba(129, 199, 132, 0.4);
+}
+
+.reminder-action.maneuver {
+  background: rgba(255, 183, 77, 0.2);
+  color: #ffb74d;
+  border: 1px solid rgba(255, 183, 77, 0.4);
+}
+
+.reminder-action.main {
+  background: var(--accent-dim);
+  color: var(--accent-primary);
+  border: 1px solid var(--accent-primary);
+}
+
+.reminder-plus {
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+/* Abilities Grid */
+.class-abilities-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 1rem;
+}
+
+@media (max-width: 800px) {
+  .class-abilities-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ============================================
+   ACTION REFERENCE SECTION
+   ============================================ */
+
+.action-reference-section {
+  background: var(--bg-card);
+  border: 1px solid var(--border-dark);
+  border-radius: var(--radius-lg);
+  padding: 1rem;
+}
+
+.reference-title {
+  margin: 0 0 1rem 0.5rem;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+/* Accordion */
+.reference-accordion {
+  margin-bottom: 0.5rem;
+}
+
+.accordion-header {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  background: var(--bg-dark);
+  border: 1px solid var(--border-dark);
+  border-radius: var(--radius-md);
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.accordion-header:hover {
+  background: var(--bg-card-hover);
+  border-color: var(--border-light);
+  color: var(--text-primary);
+}
+
+.accordion-header.open {
+  background: var(--accent-dim);
+  border-color: var(--accent-primary);
+  color: var(--accent-primary);
+  border-radius: var(--radius-md) var(--radius-md) 0 0;
+}
+
+.accordion-icon {
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  color: var(--accent-primary);
+}
+
+.accordion-count {
+  margin-left: auto;
+  background: var(--bg-darkest);
+  padding: 0.2rem 0.5rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.accordion-content {
+  background: var(--bg-dark);
+  border: 1px solid var(--border-dark);
+  border-top: none;
+  border-radius: 0 0 var(--radius-md) var(--radius-md);
+  padding: 1rem;
+}
+
+.section-note {
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  margin: 0 0 1rem 0;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--border-dark);
+}
+
+.no-content {
+  color: var(--text-muted);
+  font-style: italic;
+  margin: 0;
+}
+
+/* ============================================
+   OVERVIEW GRID
+   ============================================ */
+
+.overview-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.75rem;
+  margin-bottom: 1.25rem;
+}
+
+@media (max-width: 1100px) {
+  .overview-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  .overview-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.overview-card {
+  background: var(--bg-card);
+  border-radius: var(--radius-md);
+  padding: 1rem;
+  border-left: 3px solid var(--accent-primary);
+}
+
+.overview-card.move {
+  border-left-color: #81c784;
+}
+
+.overview-card.maneuver {
+  border-left-color: #ffb74d;
+}
+
+.overview-card.main {
+  border-left-color: var(--accent-primary);
+}
+
+.overview-card.triggered {
+  border-left-color: #ce93d8;
+}
+
+.overview-card h4 {
+  margin: 0 0 0.5rem 0;
+  font-size: 0.9rem;
+}
+
+.overview-card.move h4 { color: #81c784; }
+.overview-card.maneuver h4 { color: #ffb74d; }
+.overview-card.main h4 { color: var(--accent-primary); }
+.overview-card.triggered h4 { color: #ce93d8; }
+
+.overview-card ul {
+  margin: 0;
+  padding-left: 1rem;
+  color: var(--text-secondary);
+  font-size: 0.8rem;
+}
+
+.overview-card li {
+  margin-bottom: 0.2rem;
+}
+
+.overview-card li strong {
+  color: var(--text-primary);
+}
+
+/* Turn Flow */
+.turn-flow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  padding: 1rem;
+  background: var(--bg-card);
+  border-radius: var(--radius-md);
+}
+
+.turn-phase {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.phase-num {
+  width: 28px;
+  height: 28px;
+  background: var(--accent-primary);
+  color: var(--bg-darkest);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 0.85rem;
+  margin-bottom: 0.35rem;
+}
+
+.phase-name {
+  color: var(--text-secondary);
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+.flow-arrow {
+  color: var(--accent-primary);
+  font-size: 1.25rem;
+  font-weight: bold;
+}
+
+@media (max-width: 600px) {
+  .turn-flow {
+    flex-direction: column;
+  }
+
+  .flow-arrow {
+    transform: rotate(90deg);
+  }
+}
+
+/* ============================================
+   REFERENCE CARDS GRID
+   ============================================ */
+
+.ref-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 0.75rem;
+}
+
+@media (max-width: 600px) {
+  .ref-cards-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Reference Action Card */
+.ref-action-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-dark);
+  border-radius: var(--radius-md);
+  padding: 1rem;
+}
+
+.ref-action-card.command {
+  border-color: #9c27b0;
+  background: rgba(156, 39, 176, 0.08);
+}
+
+.ref-action-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.ref-action-header h4 {
+  margin: 0;
+  font-size: 0.95rem;
+  color: var(--text-primary);
+}
+
+.ref-action-type {
+  font-size: 0.7rem;
+  padding: 0.2rem 0.5rem;
+  border-radius: var(--radius-sm);
+  text-transform: capitalize;
+  font-weight: 600;
+}
+
+.ref-action-type.action {
+  background: rgba(76, 175, 80, 0.2);
+  color: #81c784;
+}
+
+.ref-action-type.maneuver {
+  background: rgba(255, 183, 77, 0.2);
+  color: #ffb74d;
+}
+
+.ref-action-type.freeManeuver {
+  background: rgba(255, 152, 0, 0.2);
+  color: #ffb74d;
+}
+
+.ref-action-type.triggered {
+  background: rgba(156, 39, 176, 0.2);
+  color: #ce93d8;
+}
+
+.ref-action-type.freeTriggered {
+  background: rgba(186, 104, 200, 0.2);
+  color: #ce93d8;
+}
+
+.ref-action-trigger {
+  background: rgba(156, 39, 176, 0.12);
+  padding: 0.4rem 0.6rem;
+  border-radius: var(--radius-sm);
+  margin-bottom: 0.5rem;
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+}
+
+.ref-action-trigger strong {
+  color: #ce93d8;
+}
+
+.ref-action-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-bottom: 0.5rem;
+  font-size: 0.8rem;
+}
+
+.meta-item {
+  color: var(--text-secondary);
+}
+
+.meta-label {
+  color: var(--text-muted);
+  margin-right: 0.25rem;
+}
+
+.ref-action-keywords {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+  margin-bottom: 0.5rem;
+}
+
+.ref-keyword {
+  background: var(--accent-dim);
+  color: var(--accent-primary);
+  padding: 0.15rem 0.4rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.7rem;
+}
+
+.ref-action-effect {
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+  line-height: 1.4;
+}
+
+.ref-action-effect strong {
+  color: #81c784;
+}

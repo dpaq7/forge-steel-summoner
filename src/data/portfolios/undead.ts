@@ -13,7 +13,7 @@ const husk: MinionTemplate = {
   id: 'undead_husk',
   name: 'Husk',
   essenceCost: 1,
-  minionsPerSummon: 3,
+  minionsPerSummon: 1, // Signature: 1 minion per essence spent
   size: '1M',
   speed: 5,
   stamina: 2,
@@ -45,7 +45,7 @@ const skeleton: MinionTemplate = {
   id: 'undead_skeleton',
   name: 'Skeleton',
   essenceCost: 1,
-  minionsPerSummon: 3,
+  minionsPerSummon: 1, // Signature: 1 minion per essence spent
   size: '1M',
   speed: 6,
   stamina: 2,
@@ -77,7 +77,7 @@ const shrieker: MinionTemplate = {
   id: 'undead_shrieker',
   name: 'Shrieker',
   essenceCost: 1,
-  minionsPerSummon: 3,
+  minionsPerSummon: 1, // Signature: 1 minion per essence spent
   size: '1M',
   speed: 4,
   stamina: 1,

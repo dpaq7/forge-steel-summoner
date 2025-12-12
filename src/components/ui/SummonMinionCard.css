@@ -1,0 +1,626 @@
+/* ============================================
+   SUMMON MINION CARD - READ-ONLY DISPLAY
+   ============================================ */
+
+.summon-minion-card {
+  position: relative;
+  width: 100%;
+  max-width: 360px;
+  min-width: 300px;
+  opacity: 1;
+}
+
+.summon-minion-card.disabled {
+  opacity: 0.5;
+}
+
+/* === CARD FRAME === */
+.summon-card-border {
+  position: absolute;
+  inset: 0;
+  background: var(--border-dark);
+  clip-path: polygon(
+    1.5% 0%,
+    98.5% 0%,
+    100% 1.5%,
+    100% 98.5%,
+    98.5% 100%,
+    1.5% 100%,
+    0% 98.5%,
+    0% 1.5%
+  );
+  transition: background 0.2s ease, box-shadow 0.2s ease;
+}
+
+.summon-minion-card:hover:not(.disabled) .summon-card-border {
+  background: var(--accent-dim, #3d8b7a);
+  box-shadow: 0 0 10px rgba(77, 232, 178, 0.3);
+}
+
+.summon-minion-card.is-signature .summon-card-border {
+  background: var(--color-warning, #e8a844);
+  box-shadow: 0 0 12px rgba(232, 168, 68, 0.25);
+}
+
+.summon-minion-card.is-signature:hover:not(.disabled) .summon-card-border {
+  box-shadow: 0 0 18px rgba(232, 168, 68, 0.4);
+}
+
+/* === CARD CONTENT === */
+.summon-card-content {
+  position: relative;
+  margin: 2px;
+  background: var(--bg-dark);
+  clip-path: polygon(
+    1.5% 0%,
+    98.5% 0%,
+    100% 1.5%,
+    100% 98.5%,
+    98.5% 100%,
+    1.5% 100%,
+    0% 98.5%,
+    0% 1.5%
+  );
+  display: flex;
+  flex-direction: column;
+}
+
+/* ============================================
+   HEADER SECTION
+   ============================================ */
+
+.summon-header {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 0.6rem;
+  padding: 0.6rem;
+  background: var(--bg-card);
+  border-bottom: 1px solid var(--border-dark);
+}
+
+/* === PORTRAIT === */
+.summon-portrait {
+  position: relative;
+  width: 60px;
+  height: 70px;
+  flex-shrink: 0;
+}
+
+.summon-portrait.editable {
+  cursor: pointer;
+}
+
+.summon-portrait-input {
+  position: absolute;
+  width: 0;
+  height: 0;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.summon-portrait-border {
+  position: absolute;
+  inset: 0;
+  background: var(--border-dark);
+  clip-path: polygon(
+    50% 0%,
+    100% 25%,
+    100% 75%,
+    50% 100%,
+    0% 75%,
+    0% 25%
+  );
+  transition: all 0.2s ease;
+}
+
+.summon-portrait.editable:hover .summon-portrait-border {
+  background: var(--accent-dim, #3d8b7a);
+}
+
+.summon-portrait-inner {
+  position: absolute;
+  inset: 2px;
+  background: var(--bg-darkest);
+  clip-path: polygon(
+    50% 0%,
+    100% 25%,
+    100% 75%,
+    50% 100%,
+    0% 75%,
+    0% 25%
+  );
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.summon-portrait-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center top;
+}
+
+.summon-portrait-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.summon-portrait-placeholder .placeholder-icon {
+  width: 20px;
+  height: 20px;
+  color: var(--text-muted);
+  opacity: 0.5;
+}
+
+.summon-portrait-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(5, 13, 11, 0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  clip-path: polygon(
+    50% 0%,
+    100% 25%,
+    100% 75%,
+    50% 100%,
+    0% 75%,
+    0% 25%
+  );
+}
+
+.summon-portrait-remove {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--color-danger, #e85454);
+  border: none;
+  color: white;
+  font-size: 0.8rem;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.summon-portrait-error {
+  position: absolute;
+  bottom: -14px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 0.5rem;
+  color: var(--color-danger, #e85454);
+  white-space: nowrap;
+}
+
+/* === IDENTITY === */
+.summon-identity {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0.25rem;
+  min-width: 0;
+}
+
+.summon-name {
+  margin: 0;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.summon-role-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.summon-role {
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 0.15rem 0.4rem;
+  border-radius: 3px;
+  background: var(--bg-darkest);
+  color: var(--text-secondary);
+}
+
+/* Role colors */
+.summon-role.role-controller { color: #64b5f6; border: 1px solid #64b5f6; }
+.summon-role.role-support { color: #81c784; border: 1px solid #81c784; }
+.summon-role.role-harrier { color: #ffb74d; border: 1px solid #ffb74d; }
+.summon-role.role-artillery { color: #e57373; border: 1px solid #e57373; }
+.summon-role.role-defender { color: #90a4ae; border: 1px solid #90a4ae; }
+.summon-role.role-hexer { color: #ba68c8; border: 1px solid #ba68c8; }
+.summon-role.role-brute { color: #a1887f; border: 1px solid #a1887f; }
+.summon-role.role-ambusher { color: #4db6ac; border: 1px solid #4db6ac; }
+
+.signature-badge {
+  font-size: 0.55rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 0.1rem 0.35rem;
+  border-radius: 3px;
+  background: var(--color-warning, #e8a844);
+  color: var(--bg-darkest);
+  font-weight: 600;
+}
+
+/* === COST/COUNT === */
+.summon-cost-count {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  align-items: center;
+}
+
+.cost-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.1rem;
+}
+
+.cost-circle {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 2px solid var(--border-dark);
+  background: var(--bg-darkest);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.85rem;
+  font-weight: bold;
+  color: var(--text-primary);
+}
+
+.cost-label {
+  font-size: 0.5rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-muted);
+}
+
+/* ============================================
+   STATS ROW
+   ============================================ */
+
+.summon-stats-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr) 1.3fr;
+  border-bottom: 1px solid var(--border-dark);
+}
+
+.summon-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 0.35rem 0.2rem;
+  border-right: 1px solid var(--border-dark);
+  background: var(--bg-darkest);
+}
+
+.summon-stat:last-child {
+  border-right: none;
+}
+
+.summon-stat .stat-label {
+  font-size: 0.5rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-muted);
+  margin-bottom: 0.1rem;
+}
+
+.summon-stat .stat-value {
+  font-size: 0.9rem;
+  font-weight: bold;
+  color: var(--text-primary);
+}
+
+/* ============================================
+   DETAIL FIELDS
+   ============================================ */
+
+.summon-details {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  padding: 0.5rem;
+  background: var(--bg-dark);
+}
+
+.summon-detail-row {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.7rem;
+}
+
+.summon-detail-row .detail-label {
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+.summon-detail-row .detail-value {
+  color: var(--text-secondary);
+}
+
+.summon-detail-row .detail-value.damage-type {
+  text-transform: capitalize;
+  color: var(--accent-primary);
+}
+
+/* ============================================
+   CHARACTERISTICS
+   ============================================ */
+
+.summon-characteristics {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 0.75rem;
+  padding: 0.5rem;
+  background: var(--bg-card);
+  border-top: 1px solid var(--border-dark);
+  border-bottom: 1px solid var(--border-dark);
+  justify-content: center;
+}
+
+.char-item {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  opacity: 0.5;
+}
+
+.char-item.active {
+  opacity: 1;
+}
+
+.char-circle {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 1px solid var(--border-dark);
+  background: var(--bg-darkest);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.6rem;
+  font-weight: bold;
+  color: var(--text-muted);
+}
+
+.char-item.active .char-circle {
+  border-color: var(--accent-primary);
+  color: var(--accent-primary);
+}
+
+.char-name {
+  font-size: 0.55rem;
+  text-transform: capitalize;
+  color: var(--text-muted);
+}
+
+.char-item.active .char-name {
+  color: var(--text-secondary);
+}
+
+/* ============================================
+   KEYWORDS
+   ============================================ */
+
+.summon-keywords {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+  padding: 0.4rem 0.5rem;
+  background: var(--bg-dark);
+}
+
+.keyword-tag {
+  font-size: 0.55rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 0.1rem 0.35rem;
+  border-radius: 2px;
+  background: var(--bg-card);
+  color: var(--text-muted);
+  border: 1px solid var(--border-dark);
+}
+
+/* ============================================
+   TRAITS
+   ============================================ */
+
+.summon-traits {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+  padding: 0.35rem 0.5rem;
+  background: var(--bg-dark);
+  border-top: 1px solid var(--border-dark);
+}
+
+.trait-item {
+  font-size: 0.6rem;
+}
+
+.trait-item .trait-name {
+  color: var(--accent-primary);
+  font-weight: 500;
+}
+
+.trait-item:not(:last-child)::after {
+  content: ' · ';
+  color: var(--text-muted);
+}
+
+/* ============================================
+   SIGNATURE ABILITY
+   ============================================ */
+
+.summon-sig-ability {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.35rem 0.5rem;
+  background: var(--bg-card);
+  border-top: 1px solid var(--border-dark);
+}
+
+.summon-sig-ability .sig-name {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--color-essence, #a87de8);
+}
+
+.summon-sig-ability .sig-meta {
+  font-size: 0.6rem;
+  color: var(--text-muted);
+}
+
+/* ============================================
+   SUMMON CONTROLS
+   ============================================ */
+
+.summon-controls {
+  display: flex;
+  gap: 0.35rem;
+  padding: 0.5rem;
+  background: var(--bg-dark);
+}
+
+.summon-controls .qty-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: 4px;
+  border: 1px solid var(--border-dark);
+  background: var(--bg-card);
+  color: var(--text-secondary);
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.summon-controls .qty-btn:hover:not(:disabled) {
+  border-color: var(--accent-primary);
+  color: var(--accent-primary);
+}
+
+.summon-controls .qty-btn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.summon-controls .summon-btn {
+  flex: 1;
+  padding: 0.5rem;
+  border-radius: 4px;
+  border: 1px solid var(--accent-primary);
+  background: var(--accent-dim, rgba(77, 232, 178, 0.15));
+  color: var(--accent-primary);
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.1rem;
+}
+
+.summon-controls .summon-btn:hover:not(.disabled) {
+  background: var(--accent-primary);
+  color: var(--bg-darkest);
+}
+
+.summon-controls .summon-btn.disabled {
+  border-color: var(--border-dark);
+  background: var(--bg-card);
+  color: var(--text-muted);
+  cursor: not-allowed;
+}
+
+.summon-controls .summon-btn .summon-action {
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.summon-controls .summon-btn .summon-count {
+  font-size: 0.65rem;
+  font-weight: 400;
+  opacity: 0.8;
+}
+
+.summon-controls .summon-btn .summon-reason {
+  font-size: 0.65rem;
+  font-weight: 400;
+}
+
+/* Signature card summon button */
+.summon-minion-card.is-signature .summon-controls .summon-btn:not(.disabled) {
+  border-color: var(--color-warning, #e8a844);
+  background: rgba(232, 168, 68, 0.15);
+  color: var(--color-warning, #e8a844);
+}
+
+.summon-minion-card.is-signature .summon-controls .summon-btn:hover:not(.disabled) {
+  background: var(--color-warning, #e8a844);
+  color: var(--bg-darkest);
+}
+
+/* ============================================
+   RESPONSIVE
+   ============================================ */
+
+@media (max-width: 360px) {
+  .summon-header {
+    grid-template-columns: auto 1fr;
+    grid-template-rows: auto auto;
+  }
+
+  .summon-cost-count {
+    grid-column: 1 / -1;
+    flex-direction: row;
+    justify-content: center;
+    padding-top: 0.4rem;
+  }
+
+  .summon-stats-row {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .summon-stat.wide {
+    grid-column: span 3;
+  }
+
+  .summon-characteristics {
+    gap: 0.35rem 0.5rem;
+  }
+}
+
+/* ============================================
+   ANIMATIONS
+   ============================================ */
+
+@keyframes signature-glow {
+  0%, 100% {
+    box-shadow: 0 0 12px rgba(232, 168, 68, 0.25);
+  }
+  50% {
+    box-shadow: 0 0 18px rgba(232, 168, 68, 0.4);
+  }
+}
+
+.summon-minion-card.is-signature:not(.disabled) .summon-card-border {
+  animation: signature-glow 3s ease-in-out infinite;
+}

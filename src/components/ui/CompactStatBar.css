@@ -1,0 +1,495 @@
+/* ============================================
+   COMPACT STAT BAR
+   ============================================ */
+
+.compact-stat-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.75rem;
+
+  /* Pill/Tablet shape */
+  background: linear-gradient(180deg, var(--bg-card) 0%, var(--bg-dark) 100%);
+  border: 1px solid var(--border-dark);
+  border-radius: 25px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+
+  /* Sizing */
+  height: 40px;
+  max-width: 100%;
+  overflow: hidden;
+
+  /* Subtle inner glow */
+  box-shadow:
+    0 2px 10px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+/* ============================================
+   MINI PORTRAIT
+   ============================================ */
+
+.compact-portrait {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 2px solid var(--border-dark);
+  background: var(--bg-darkest);
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.compact-portrait-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.compact-portrait-placeholder {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+/* ============================================
+   CHARACTER NAME
+   ============================================ */
+
+.compact-name {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100px;
+}
+
+/* ============================================
+   DIVIDERS
+   ============================================ */
+
+.compact-divider {
+  color: var(--border-dark);
+  font-size: 0.9rem;
+  opacity: 0.5;
+  flex-shrink: 0;
+}
+
+/* ============================================
+   STAT ITEMS
+   ============================================ */
+
+.compact-stat {
+  display: flex;
+  align-items: center;
+  gap: 0.2rem;
+  font-size: 0.75rem;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.compact-stat .stat-icon {
+  font-size: 0.7rem;
+}
+
+.compact-stat .stat-label {
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+.compact-stat .stat-value {
+  font-weight: bold;
+  color: var(--text-primary);
+}
+
+.compact-stat .stat-separator {
+  color: var(--text-muted);
+  margin: 0 1px;
+}
+
+.compact-stat .stat-max {
+  color: var(--text-muted);
+  font-weight: 400;
+}
+
+/* Level */
+.compact-stat.level .stat-value {
+  color: var(--accent-primary);
+}
+
+/* Stamina Colors */
+.compact-stat.stamina .stat-icon {
+  color: var(--color-danger);
+}
+
+.compact-stat.stamina.healthy .stat-value {
+  color: var(--text-primary);
+}
+
+.compact-stat.stamina.wounded .stat-value {
+  color: var(--color-warning);
+}
+
+.compact-stat.stamina.critical .stat-value {
+  color: var(--color-danger);
+  animation: critical-pulse 1s ease-in-out infinite;
+}
+
+@keyframes critical-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}
+
+/* Essence */
+.compact-stat.essence .stat-icon,
+.compact-stat.essence .stat-value {
+  color: var(--color-essence);
+}
+
+/* Recoveries */
+.compact-stat.recoveries .stat-icon {
+  color: var(--color-success);
+}
+
+/* Surges */
+.compact-stat.surges .stat-icon,
+.compact-stat.surges .stat-value {
+  color: var(--color-warning);
+}
+
+/* ============================================
+   MINI VICTORIES TRACKER
+   ============================================ */
+
+.compact-victories {
+  display: flex;
+  gap: 2px;
+  align-items: center;
+}
+
+.mini-victory {
+  width: 6px;
+  height: 10px;
+  background: var(--bg-darkest);
+  border: 1px solid var(--border-dark);
+  border-radius: 1px;
+}
+
+.mini-victory.filled {
+  background: #ba68c8;
+  border-color: #ba68c8;
+  box-shadow: 0 0 4px rgba(186, 104, 200, 0.5);
+}
+
+/* ============================================
+   COMPACT CHARACTERISTICS
+   ============================================ */
+
+.compact-characteristics {
+  display: flex;
+  gap: 0.35rem;
+}
+
+.compact-char {
+  font-size: 0.65rem;
+  font-weight: 600;
+  font-family: monospace;
+  color: var(--text-muted);
+  padding: 0.125rem 0.25rem;
+  background: var(--bg-darkest);
+  border-radius: 3px;
+}
+
+/* ============================================
+   MINI CONDITIONS
+   ============================================ */
+
+.compact-conditions {
+  display: flex;
+  align-items: center;
+  gap: 0.2rem;
+}
+
+.mini-condition {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  font-size: 0.7rem;
+  background: rgba(232, 84, 84, 0.2);
+  border: 1px solid rgba(232, 84, 84, 0.4);
+  border-radius: 3px;
+  cursor: default;
+}
+
+.mini-condition-more {
+  font-size: 0.55rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  padding: 0 0.2rem;
+}
+
+/* ============================================
+   MINI DICE CONTROLS
+   ============================================ */
+
+.compact-dice-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.mini-roll-btn {
+  width: 32px;
+  height: 24px;
+  border-radius: 4px;
+  background: var(--bg-darkest);
+  border: 1px solid var(--border-dark);
+  color: var(--text-muted);
+  font-size: 0.6rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.mini-roll-btn:hover:not(:disabled) {
+  background: var(--bg-card-hover);
+  border-color: var(--accent-primary);
+  color: var(--accent-primary);
+}
+
+.mini-roll-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.mini-roll-btn.rolling {
+  animation: mini-shake 0.1s ease-in-out infinite;
+}
+
+@keyframes mini-shake {
+  0%, 100% { transform: rotate(-3deg); }
+  50% { transform: rotate(3deg); }
+}
+
+.mini-rolling {
+  animation: mini-spin 0.3s linear infinite;
+}
+
+@keyframes mini-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.mini-result {
+  font-size: 0.75rem;
+  font-weight: bold;
+  text-shadow: 0 0 6px currentColor;
+}
+
+.mini-dice-icon {
+  font-size: 0.55rem;
+  text-transform: uppercase;
+}
+
+/* Tier colors for roll result */
+.mini-roll-btn.tier-1 {
+  border-color: var(--color-danger);
+  background: rgba(232, 84, 84, 0.15);
+}
+
+.mini-roll-btn.tier-2 {
+  border-color: var(--color-warning);
+  background: rgba(232, 168, 68, 0.15);
+}
+
+.mini-roll-btn.tier-3 {
+  border-color: var(--color-success);
+  background: rgba(77, 232, 178, 0.15);
+}
+
+/* Modifier button */
+.mini-mod-btn {
+  width: 20px;
+  height: 20px;
+  border-radius: 3px;
+  background: var(--bg-darkest);
+  border: 1px solid var(--border-dark);
+  color: var(--text-muted);
+  font-size: 0.6rem;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
+}
+
+.mini-mod-btn:hover {
+  background: var(--bg-card-hover);
+}
+
+.mini-mod-btn.edge {
+  border-color: #5a9a4a;
+  color: #7aca6a;
+  background: rgba(90, 154, 74, 0.15);
+}
+
+.mini-mod-btn.bane {
+  border-color: #9a4a5a;
+  color: #ca6a7a;
+  background: rgba(154, 74, 90, 0.15);
+}
+
+/* History button */
+.mini-history-btn {
+  position: relative;
+  width: 20px;
+  height: 20px;
+  border-radius: 3px;
+  background: var(--bg-darkest);
+  border: 1px solid var(--border-dark);
+  color: var(--text-muted);
+  font-size: 0.6rem;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
+}
+
+.mini-history-btn:hover {
+  border-color: var(--accent-primary);
+  color: var(--accent-primary);
+}
+
+.mini-history-btn.open {
+  background: var(--accent-dim);
+  border-color: var(--accent-primary);
+  color: var(--accent-primary);
+}
+
+.mini-history-count {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  background: #ef5350;
+  color: white;
+  font-size: 0.5rem;
+  min-width: 12px;
+  height: 12px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 2px;
+}
+
+/* ============================================
+   EXPAND BUTTON
+   ============================================ */
+
+.compact-expand-btn {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--bg-card-hover);
+  border: 1px solid var(--border-dark);
+  color: var(--text-primary);
+  font-size: 0.7rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: all 0.2s ease;
+  margin-left: auto;
+}
+
+.compact-expand-btn:hover {
+  background: var(--accent-dim);
+  border-color: var(--accent-primary);
+  box-shadow: 0 0 10px rgba(77, 232, 178, 0.3);
+}
+
+.compact-expand-btn .expand-icon {
+  transition: transform 0.2s ease;
+}
+
+.compact-expand-btn:hover .expand-icon {
+  transform: translateY(2px);
+}
+
+/* ============================================
+   RESPONSIVE COMPACT BAR
+   ============================================ */
+
+@media (max-width: 1100px) {
+  .compact-characteristics {
+    display: none; /* Hide characteristics on smaller screens */
+  }
+}
+
+@media (max-width: 900px) {
+  .compact-conditions {
+    display: none; /* Hide conditions */
+  }
+}
+
+@media (max-width: 800px) {
+  .compact-victories {
+    display: none; /* Hide victories tracker */
+  }
+
+  .compact-name {
+    max-width: 60px;
+  }
+
+  .mini-mod-btn,
+  .mini-history-btn {
+    display: none; /* Keep only roll button */
+  }
+}
+
+@media (max-width: 600px) {
+  .compact-stat-bar {
+    padding: 0.375rem 0.5rem;
+    gap: 0.35rem;
+    height: 36px;
+    border-radius: 18px;
+  }
+
+  .compact-portrait {
+    width: 24px;
+    height: 24px;
+  }
+
+  .compact-name {
+    display: none; /* Hide name, show only portrait */
+  }
+
+  .compact-stat.recoveries,
+  .compact-stat.surges {
+    display: none; /* Prioritize stamina and essence */
+  }
+
+  .mini-roll-btn {
+    width: 28px;
+    height: 20px;
+    font-size: 0.5rem;
+  }
+}
+
+@media (max-width: 450px) {
+  .compact-dice-controls {
+    display: none; /* Hide dice on very small screens */
+  }
+}

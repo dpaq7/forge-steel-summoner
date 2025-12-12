@@ -89,6 +89,7 @@ export interface SummonerHero {
   items: Item[];
   notes: string;
   portraitUrl: string | null; // Character portrait image (base64)
+  minionPortraits: Record<string, string | null>; // Minion ID -> portrait image (base64)
 
   // Active conditions affecting the hero
   activeConditions: ActiveCondition[];

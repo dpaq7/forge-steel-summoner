@@ -13,7 +13,7 @@ const abyssalBabbler: MinionTemplate = {
   id: 'demon_abyssal_babbler',
   name: 'Abyssal Babbler',
   essenceCost: 1,
-  minionsPerSummon: 3,
+  minionsPerSummon: 1, // Signature: 1 minion per essence spent
   size: '1S',
   speed: 5,
   stamina: 2,
@@ -48,7 +48,7 @@ const moteOfBlight: MinionTemplate = {
   id: 'demon_mote_of_blight',
   name: 'Mote of Blight',
   essenceCost: 1,
-  minionsPerSummon: 3,
+  minionsPerSummon: 1, // Signature: 1 minion per essence spent
   size: '1M',
   speed: 5,
   stamina: 2,
@@ -83,7 +83,7 @@ const spineGoblin: MinionTemplate = {
   id: 'demon_spine_goblin',
   name: 'Spine Goblin',
   essenceCost: 1,
-  minionsPerSummon: 3,
+  minionsPerSummon: 1, // Signature: 1 minion per essence spent
   size: '1M',
   speed: 7,
   stamina: 2,

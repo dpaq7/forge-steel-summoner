@@ -1,11 +1,10 @@
 import React, { useState } from 'react';
 import { useSummonerContext } from '../../context/SummonerContext';
 import { useCombatContext } from '../../context/CombatContext';
-import { useRollHistory } from '../../context/RollHistoryContext';
 import { useConditions, SaveResult, BleedingDamageResult } from '../../hooks/useConditions';
 import { useEquipment } from '../../hooks/useEquipment';
 import { ALL_CONDITIONS, ConditionDefinition } from '../../data/conditions';
-import { performPowerRoll, getTierColor, RollModifier, PowerRollResult } from '../../utils/dice';
+import { RollModifier } from '../../utils/dice';
 import { Characteristic, ConditionId } from '../../types';
 import PentagonStatBox from '../ui/PentagonStatBox';
 import StatBox from '../shared/StatBox';
@@ -13,6 +12,7 @@ import ProgressionTracker from '../ui/ProgressionTracker';
 import ResourcePanel from '../ui/ResourcePanel';
 import SurgesTracker from '../ui/SurgesTracker';
 import SectionHeader from '../shared/SectionHeader';
+import DrawSteelDice from '../ui/DrawSteelDice';
 import './CharacterStatsPanel.css';
 
 // XP thresholds for each level (minimum XP required)
@@ -30,12 +30,12 @@ const XP_THRESHOLDS: Record<number, number> = {
 
 interface CharacterStatsPanelProps {
   onLevelUp: () => void;
+  onMinimize?: () => void;
 }
 
-const CharacterStatsPanel: React.FC<CharacterStatsPanelProps> = ({ onLevelUp }) => {
+const CharacterStatsPanel: React.FC<CharacterStatsPanelProps> = ({ onLevelUp, onMinimize }) => {
   const { hero, updateHero } = useSummonerContext();
   const { essenceState, spendEssence, gainEssence, isInCombat, startCombat, endCombat } = useCombatContext();
-  const { addRoll } = useRollHistory();
   const {
     addCondition,
     removeCondition,
@@ -50,7 +50,7 @@ const CharacterStatsPanel: React.FC<CharacterStatsPanelProps> = ({ onLevelUp }) 
   const [editingNotes, setEditingNotes] = useState(false);
   const [notesValue, setNotesValue] = useState('');
   const [rollModifier, setRollModifier] = useState<RollModifier>('normal');
-  const [lastRoll, setLastRoll] = useState<{ char: string; result: PowerRollResult } | null>(null);
+  const [pendingCharacteristic, setPendingCharacteristic] = useState<{ name: string; value: number } | null>(null);
   const [showRespiteConfirm, setShowRespiteConfirm] = useState(false);
   const [showConditionDropdown, setShowConditionDropdown] = useState(false);
   const [lastSaveResult, setLastSaveResult] = useState<SaveResult | null>(null);
@@ -158,12 +158,7 @@ const CharacterStatsPanel: React.FC<CharacterStatsPanelProps> = ({ onLevelUp }) 
 
   const rollCharacteristic = (char: Characteristic) => {
     const value = chars[char];
-    const result = performPowerRoll(value, rollModifier);
-    setLastRoll({ char: charLabels[char], result });
-    addRoll(result, `${charLabels[char]} Test`, 'hero');
-
-    // Auto-clear the roll result after 5 seconds
-    setTimeout(() => setLastRoll(null), 5000);
+    setPendingCharacteristic({ name: charLabels[char], value });
   };
 
   const cycleRollModifier = () => {
@@ -210,14 +205,6 @@ const CharacterStatsPanel: React.FC<CharacterStatsPanelProps> = ({ onLevelUp }) 
           <span className="tag formation">{hero.formation}</span>
         </div>
         <div className="identity-actions">
-          <button
-            className="respite-btn"
-            onClick={() => setShowRespiteConfirm(true)}
-            disabled={isInCombat}
-            title={isInCombat ? "Cannot respite during combat" : "Take a respite to convert victories to XP and restore resources"}
-          >
-            Respite
-          </button>
           {!isInCombat ? (
             <button className="draw-steel-btn" onClick={startCombat}>
               Draw Steel!
@@ -227,6 +214,14 @@ const CharacterStatsPanel: React.FC<CharacterStatsPanelProps> = ({ onLevelUp }) 
               End Combat
             </button>
           )}
+          <button
+            className="respite-btn"
+            onClick={() => setShowRespiteConfirm(true)}
+            disabled={isInCombat}
+            title={isInCombat ? "Cannot respite during combat" : "Take a respite to convert victories to XP and restore resources"}
+          >
+            Respite
+          </button>
           {hero.level < 10 && xpInfo.canLevelUp && (
             <button className="lvl-btn ready" onClick={onLevelUp}>Level Up!</button>
           )}
@@ -234,6 +229,12 @@ const CharacterStatsPanel: React.FC<CharacterStatsPanelProps> = ({ onLevelUp }) 
             <button className="lvl-btn" onClick={onLevelUp} disabled>Level Up</button>
           )}
           <button className="notes-btn" onClick={openNotes}>Notes</button>
+          {onMinimize && (
+            <button className="minimize-btn" onClick={onMinimize} title="Minimize header (Ctrl+Shift+H)">
+              <span className="minimize-icon">&#9650;</span>
+              Minimize
+            </button>
+          )}
         </div>
       </div>
 
@@ -246,31 +247,26 @@ const CharacterStatsPanel: React.FC<CharacterStatsPanelProps> = ({ onLevelUp }) 
               value={chars.might}
               label="Might"
               onClick={() => rollCharacteristic('might')}
-              active={lastRoll?.char === 'Might'}
             />
             <PentagonStatBox
               value={chars.agility}
               label="Agility"
               onClick={() => rollCharacteristic('agility')}
-              active={lastRoll?.char === 'Agility'}
             />
             <PentagonStatBox
               value={chars.reason}
               label="Reason"
               onClick={() => rollCharacteristic('reason')}
-              active={lastRoll?.char === 'Reason'}
             />
             <PentagonStatBox
               value={chars.intuition}
               label="Intuition"
               onClick={() => rollCharacteristic('intuition')}
-              active={lastRoll?.char === 'Intuition'}
             />
             <PentagonStatBox
               value={chars.presence}
               label="Presence"
               onClick={() => rollCharacteristic('presence')}
-              active={lastRoll?.char === 'Presence'}
             />
           </div>
         </div>
@@ -344,9 +340,12 @@ const CharacterStatsPanel: React.FC<CharacterStatsPanelProps> = ({ onLevelUp }) 
 
       {/* Row 2.5: Derived Stats, Roll Controls & Conditions */}
       <div className="panel-row derived-row">
-        <button className={`roll-mod-btn ${rollModifier}`} onClick={cycleRollModifier} title="Toggle Edge/Bane">
-          {rollModifier === 'edge' ? 'Edge' : rollModifier === 'bane' ? 'Bane' : 'Normal'}
-        </button>
+        <DrawSteelDice
+          rollModifier={rollModifier}
+          onCycleModifier={cycleRollModifier}
+          pendingCharacteristic={pendingCharacteristic}
+          onCharacteristicRollComplete={() => setPendingCharacteristic(null)}
+        />
 
         <div className="derived-stats">
           <StatBox
@@ -420,20 +419,6 @@ const CharacterStatsPanel: React.FC<CharacterStatsPanelProps> = ({ onLevelUp }) 
           )}
         </div>
 
-        {/* Roll Result Display */}
-        {lastRoll && (
-          <div className="roll-result-inline" style={{ borderColor: getTierColor(lastRoll.result.tier) }}>
-            <span className="roll-char">{lastRoll.char}</span>
-            <span className="roll-total" style={{ color: getTierColor(lastRoll.result.tier) }}>
-              {lastRoll.result.total}
-            </span>
-            <span className="roll-breakdown">
-              ({lastRoll.result.naturalRoll}{lastRoll.result.modifier >= 0 ? '+' : ''}{lastRoll.result.modifier})
-            </span>
-            <span className="roll-tier">T{lastRoll.result.tier}</span>
-            <button className="dismiss-roll" onClick={() => setLastRoll(null)}>×</button>
-          </div>
-        )}
       </div>
 
       {/* Notes Modal */}

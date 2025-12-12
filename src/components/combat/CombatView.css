@@ -2,64 +2,78 @@
    COMBAT VIEW - Draw Steel Summoner Style
    ============================================ */
 
-/* Main Layout */
+/* Main Layout - Vertical Stack (page scrolls) */
 .combat-view-merged {
-  display: grid;
-  grid-template-columns: 320px 1fr;
+  display: flex;
+  flex-direction: column;
   gap: var(--space-lg);
 }
 
-/* Left Panel */
-.combat-left-panel {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-md);
-  overflow-y: auto;
+/* Top Panel - Active Squads (Horizontal) */
+.combat-top-panel {
+  /* No constraints - flows naturally */
+}
+
+/* Bottom Panel - Summon Cards */
+.combat-bottom-panel {
+  /* No overflow constraints - let page scroll */
 }
 
 /* ============================================
-   CONSTRAINTS BAR
+   SQUADS HEADER WITH INLINE CONSTRAINTS
    ============================================ */
-.combat-constraints {
+.squads-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-md);
+  padding-bottom: var(--space-sm);
+  border-bottom: 1px solid var(--border-dark);
+}
+
+.squads-header h3 {
+  margin: 0;
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--accent-primary);
+}
+
+.combat-constraints-inline {
   display: flex;
   gap: var(--space-sm);
-  padding: var(--space-md);
-  background: var(--bg-card);
-  border: 1px solid var(--border-dark);
-  border-radius: var(--radius-lg);
 }
 
-.constraint {
-  flex: 1;
+.constraint-inline {
   display: flex;
-  flex-direction: column;
   align-items: center;
-  padding: var(--space-sm);
+  gap: var(--space-xs);
+  padding: var(--space-xs) var(--space-sm);
   background: var(--bg-dark);
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-sm);
   border: 1px solid var(--border-dark);
 }
 
-.constraint-label {
+.constraint-inline .constraint-label {
   font-size: var(--font-size-xs);
   color: var(--text-muted);
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  margin-bottom: 2px;
 }
 
-.constraint-value {
-  font-size: var(--font-size-xl);
+.constraint-inline .constraint-value {
+  font-size: var(--font-size-md);
   font-weight: 700;
   color: var(--text-primary);
 }
 
-.constraint-value.essence-val {
+.constraint-inline .constraint-value.essence-val {
   color: var(--color-essence);
   text-shadow: 0 0 8px rgba(168, 125, 232, 0.4);
 }
 
-.constraint-value.at-cap {
+.constraint-inline .constraint-value.at-cap {
   color: var(--color-danger);
   animation: pulse-danger 1.5s ease-in-out infinite;
 }
@@ -67,6 +81,19 @@
 @keyframes pulse-danger {
   0%, 100% { opacity: 1; }
   50% { opacity: 0.7; }
+}
+
+/* Horizontal Squads List */
+.squads-list-horizontal {
+  display: flex;
+  gap: var(--space-md);
+  overflow-x: auto;
+  padding-bottom: var(--space-sm);
+}
+
+.squads-list-horizontal .squad-card {
+  flex-shrink: 0;
+  width: 320px;
 }
 
 /* ============================================
@@ -77,8 +104,6 @@
   border: 1px solid var(--border-dark);
   border-radius: var(--radius-lg);
   padding: var(--space-md);
-  flex: 1;
-  overflow-y: auto;
 }
 
 .summon-panel h3 {
@@ -104,6 +129,50 @@
 .summon-grid {
   display: flex;
   flex-direction: column;
+  gap: var(--space-md);
+}
+
+/* New Card Grid Layout */
+.summon-cards-grid {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+}
+
+.summon-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+.summon-section .section-header {
+  margin: 0;
+  font-size: var(--font-size-sm);
+  color: var(--accent-primary);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  padding-bottom: var(--space-sm);
+  border-bottom: 1px solid var(--border-dark);
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+.summon-section .section-header::before,
+.summon-section .section-header::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--border-dark));
+}
+
+.summon-section .section-header::after {
+  background: linear-gradient(90deg, var(--border-dark), transparent);
+}
+
+.summon-cards-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   gap: var(--space-md);
 }
 
@@ -206,42 +275,25 @@
 }
 
 /* ============================================
-   RIGHT PANEL - SQUADS
+   NO SQUADS MESSAGE
    ============================================ */
-.combat-right-panel {
-  display: flex;
-  flex-direction: column;
-}
-
-.squads-header h3 {
-  margin: 0 0 var(--space-md) 0;
-  font-size: var(--font-size-sm);
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  color: var(--accent-primary);
-}
-
 .no-squads {
   background: var(--bg-card);
   border: 1px dashed var(--border-dark);
   border-radius: var(--radius-lg);
-  padding: var(--space-xl);
+  padding: var(--space-lg);
   text-align: center;
   color: var(--text-muted);
+}
+
+.no-squads p {
+  margin: 0;
 }
 
 .no-squads .hint {
   font-size: var(--font-size-sm);
   color: var(--text-dim);
   margin-top: var(--space-sm);
-}
-
-.squads-list {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
-  gap: var(--space-md);
-  padding-right: var(--space-xs);
 }
 
 /* ============================================
@@ -1030,12 +1082,37 @@
 /* ============================================
    RESPONSIVE
    ============================================ */
-@media (max-width: 800px) {
-  .combat-view-merged {
+@media (max-width: 900px) {
+  .squads-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-sm);
+  }
+
+  .combat-constraints-inline {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .squads-list-horizontal .squad-card {
+    width: 280px;
+  }
+
+  .summon-cards-row {
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  }
+}
+
+@media (max-width: 600px) {
+  .squads-list-horizontal .squad-card {
+    width: 260px;
+  }
+
+  .summon-cards-row {
     grid-template-columns: 1fr;
   }
 
-  .squads-list {
-    grid-template-columns: 1fr;
+  .constraint-inline .constraint-label {
+    display: none;
   }
 }

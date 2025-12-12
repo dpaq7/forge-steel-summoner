@@ -5,14 +5,11 @@ import { useSquads } from '../../hooks/useSquads';
 import { usePortfolio } from '../../hooks/usePortfolio';
 import { useEssence } from '../../hooks/useEssence';
 import { useStaminaStates } from '../../hooks/useStaminaStates';
-import { useConditions, SaveResult, BleedingDamageResult } from '../../hooks/useConditions';
 import { useRollHistory } from '../../context/RollHistoryContext';
-import { Squad, MinionTemplate, ConditionId } from '../../types';
+import { Squad, MinionTemplate } from '../../types';
 import { calculateMaxMinions } from '../../utils/calculations';
 import { performPowerRoll, PowerRollResult, getTierColor, RollModifier } from '../../utils/dice';
-import { ALL_CONDITIONS, CONDITIONS } from '../../data/conditions';
-import TurnFlowGuide from './TurnFlowGuide';
-import ActionEconomyPanel from './ActionEconomyPanel';
+import SummonMinionCard from '../ui/SummonMinionCard';
 import './CombatView.css';
 
 const CombatView: React.FC = () => {
@@ -21,28 +18,14 @@ const CombatView: React.FC = () => {
   const { createSquad, addSquad, removeSquad, updateSquad, damageSquad, healSquad } = useSquads();
   const { getSignatureMinions, getUnlockedMinions, getMinionById, getActualEssenceCost, isMinionUnlockedByLevel, getRequiredLevel, isSignatureMinion } = usePortfolio();
   const { canAffordMinion, spendForMinion, currentEssence } = useEssence();
-  const { getSquadStaminaState, getStateColor, getStateLabel, getStaminaState } = useStaminaStates();
-  const {
-    addCondition,
-    removeCondition,
-    hasCondition,
-    getActiveConditions,
-    getConditionDef,
-    attemptSave,
-    applyBleedingDamage,
-  } = useConditions();
+  const { getSquadStaminaState, getStateColor, getStateLabel } = useStaminaStates();
   const { addRoll } = useRollHistory();
 
   const [rollStates, setRollStates] = useState<Record<string, { result: PowerRollResult; type: string }>>({});
   const [rollModifiers, setRollModifiers] = useState<Record<string, RollModifier>>({});
   const [damageInput, setDamageInput] = useState<Record<string, string>>({});
-  const [selectedMinion, setSelectedMinion] = useState<MinionTemplate | null>(null);
   // Track summon quantities per minion type (in multiples of minionsPerSummon)
   const [summonMultipliers, setSummonMultipliers] = useState<Record<string, number>>({});
-  const [heroStaminaInput, setHeroStaminaInput] = useState<string>('');
-  const [showConditionDropdown, setShowConditionDropdown] = useState(false);
-  const [lastSaveResult, setLastSaveResult] = useState<SaveResult | null>(null);
-  const [lastBleedingResult, setLastBleedingResult] = useState<BleedingDamageResult | null>(null);
 
   if (!hero) return null;
 
@@ -78,6 +61,21 @@ const CombatView: React.FC = () => {
     const baseCost = getActualEssenceCost(minion);
     const totalCost = baseCost * multiplier;
     return { multiplier, totalMinions, totalCost };
+  };
+
+  // Get minion portrait URL
+  const getMinionPortrait = (minionId: string): string | null => {
+    return hero.minionPortraits?.[minionId] ?? null;
+  };
+
+  // Handle minion portrait change
+  const handleMinionPortraitChange = (minionId: string, imageUrl: string | null) => {
+    updateHero({
+      minionPortraits: {
+        ...(hero.minionPortraits || {}),
+        [minionId]: imageUrl,
+      },
+    });
   };
 
   // Check if we can summon a minion (with multiplier)
@@ -168,9 +166,7 @@ const CombatView: React.FC = () => {
 
   // Squad management functions
   const handleDismissSquad = (squadId: string) => {
-    if (confirm('Dismiss this entire squad?')) {
-      removeSquad(squadId);
-    }
+    removeSquad(squadId);
   };
 
   // Sacrifice a signature minion for 1 essence (1/turn)
@@ -243,439 +239,37 @@ const CombatView: React.FC = () => {
 
   return (
     <div className="combat-view-merged">
-      {/* Left Panel: Turn Flow + Summon */}
-      <div className="combat-left-panel">
-        <TurnFlowGuide />
-
-        {/* Essence & Constraints */}
-        <div className="combat-constraints">
-          <div className="constraint essence-constraint">
-            <span className="constraint-label">Essence</span>
-            <span className="constraint-value essence-val">{currentEssence}</span>
-          </div>
-          <div className="constraint minion-constraint">
-            <span className="constraint-label">Minions</span>
-            <span className={`constraint-value ${totalActiveMinions >= maxMinions ? 'at-cap' : ''}`}>
-              {totalActiveMinions}/{maxMinions}
-            </span>
-          </div>
-          <div className="constraint squad-constraint">
-            <span className="constraint-label">Squads</span>
-            <span className={`constraint-value ${squadCount >= maxSquads ? 'at-cap' : ''}`}>
-              {squadCount}/{maxSquads}
-            </span>
-          </div>
-        </div>
-
-        {/* Hero Stamina Panel with Winded/Dying States */}
-        {(() => {
-          const heroState = getStaminaState(hero.stamina.current, hero.stamina.max);
-          const heroStateLabel = getStateLabel(heroState.currentState);
-          const heroHealthPct = Math.max(0, (hero.stamina.current / hero.stamina.max) * 100);
-
-          const handleHeroDamage = (amount: number) => {
-            const newStamina = hero.stamina.current - amount;
-            updateHero({
-              stamina: { ...hero.stamina, current: newStamina }
-            });
-            // Check for death
-            if (newStamina <= heroState.deathThreshold) {
-              alert(`${hero.name} has DIED! (Stamina: ${newStamina} <= Death threshold: ${heroState.deathThreshold})`);
-            }
-          };
-
-          const handleHeroHeal = (amount: number) => {
-            const newStamina = Math.min(hero.stamina.max, hero.stamina.current + amount);
-            updateHero({
-              stamina: { ...hero.stamina, current: newStamina }
-            });
-          };
-
-          return (
-            <div className={`hero-stamina-panel state-${heroState.currentState}`}>
-              <div className="hero-stamina-header">
-                <span className="hero-stamina-title">{hero.name}</span>
-                {heroStateLabel && (
-                  <span className={`stamina-state state-${heroState.currentState}`}>
-                    {heroStateLabel}
-                  </span>
-                )}
-              </div>
-
-              <div className="hero-hp-bar-container">
-                <div className="hero-hp-bar">
-                  <div
-                    className="hp-fill"
-                    style={{
-                      width: `${heroHealthPct}%`,
-                      background: getStateColor(heroState.currentState)
-                    }}
-                  />
-                  {/* Winded threshold marker at 50% */}
-                  <div className="winded-marker" style={{ left: '50%' }} title={`Winded: ${heroState.windedValue}`} />
-                </div>
-                <span className="hero-hp-text">
-                  {hero.stamina.current}/{hero.stamina.max}
-                </span>
-              </div>
-
-              <div className="hero-stamina-thresholds">
-                <span className="threshold winded" title="Winded threshold">
-                  Winded: ≤{heroState.windedValue}
-                </span>
-                <span className="threshold death" title="Death threshold">
-                  Death: ≤{heroState.deathThreshold}
-                </span>
-              </div>
-
-              <div className="hero-damage-controls">
-                <button onClick={() => handleHeroDamage(1)}>-1</button>
-                <button onClick={() => handleHeroDamage(5)}>-5</button>
-                <input
-                  type="number"
-                  placeholder="Dmg"
-                  value={heroStaminaInput}
-                  onChange={e => setHeroStaminaInput(e.target.value)}
-                />
-                <button
-                  onClick={() => {
-                    const dmg = parseInt(heroStaminaInput || '0');
-                    if (dmg !== 0) {
-                      if (dmg > 0) handleHeroDamage(dmg);
-                      else handleHeroHeal(-dmg);
-                      setHeroStaminaInput('');
-                    }
-                  }}
-                >
-                  Apply
-                </button>
-                <button onClick={() => handleHeroHeal(1)} className="heal-btn">+1</button>
-                <button onClick={() => handleHeroHeal(hero.recoveries.value)} className="heal-btn recovery" title={`Use Recovery (${hero.recoveries.value} HP)`}>
-                  Rec
-                </button>
-              </div>
-
-              {/* Conditions Section */}
-              <div className="conditions-section">
-                <div className="conditions-header">
-                  <span className="conditions-label">Conditions</span>
-                  <div className="condition-dropdown-wrapper">
-                    <button
-                      className="add-condition-btn"
-                      onClick={() => setShowConditionDropdown(!showConditionDropdown)}
-                    >
-                      + Add
-                    </button>
-                    {showConditionDropdown && (
-                      <div className="condition-dropdown">
-                        {ALL_CONDITIONS.map(condition => {
-                          const isActive = hasCondition(condition.id);
-                          return (
-                            <button
-                              key={condition.id}
-                              className={`condition-option ${isActive ? 'active' : ''}`}
-                              onClick={() => {
-                                if (isActive) {
-                                  removeCondition(condition.id);
-                                } else {
-                                  addCondition(condition.id);
-                                }
-                                setShowConditionDropdown(false);
-                              }}
-                              title={condition.primaryEffect}
-                            >
-                              <span className="condition-icon">{condition.icon}</span>
-                              <span className="condition-name">{condition.name}</span>
-                              {isActive && <span className="condition-check">✓</span>}
-                            </button>
-                          );
-                        })}
-                      </div>
-                    )}
-                  </div>
-                </div>
-
-                {/* Active Conditions Display */}
-                {getActiveConditions().length > 0 && (
-                  <div className="active-conditions">
-                    {getActiveConditions().map(activeCondition => {
-                      const def = getConditionDef(activeCondition.conditionId);
-                      return (
-                        <div
-                          key={activeCondition.conditionId}
-                          className={`condition-badge ${def.saveEnds ? 'saveable' : 'manual'}`}
-                          title={`${def.name}: ${def.primaryEffect}\n\nEnds via: ${def.saveRequired}`}
-                          onClick={() => {
-                            if (def.saveEnds) {
-                              const result = attemptSave(activeCondition.conditionId);
-                              setLastSaveResult(result);
-                              setTimeout(() => setLastSaveResult(null), 3000);
-                            } else {
-                              if (confirm(`Remove ${def.name}? (${def.saveRequired})`)) {
-                                removeCondition(activeCondition.conditionId);
-                              }
-                            }
-                          }}
-                        >
-                          <span className="badge-icon">{def.icon}</span>
-                          <span className="badge-name">{def.name}</span>
-                          {def.saveEnds && <span className="save-hint">🎲</span>}
-                        </div>
-                      );
-                    })}
-                  </div>
-                )}
-
-                {/* Save Result Toast */}
-                {lastSaveResult && (
-                  <div className={`save-result-toast ${lastSaveResult.success ? 'success' : 'failure'}`}>
-                    <strong>{lastSaveResult.conditionName}</strong> Save: {lastSaveResult.roll}
-                    {lastSaveResult.success
-                      ? ` ≥ 6 - SUCCESS! ${lastSaveResult.removed ? 'Condition removed.' : ''}`
-                      : ' < 6 - FAILED'}
-                  </div>
-                )}
-
-                {/* Bleeding Damage Result Toast */}
-                {lastBleedingResult && (
-                  <div className="bleeding-result-toast">
-                    🩸 Bleeding: 1d6 ({lastBleedingResult.roll}) + {hero.level} = <strong>{lastBleedingResult.total} damage</strong>
-                    <span className="trigger-source">({lastBleedingResult.trigger})</span>
-                  </div>
-                )}
-
-                {/* Bleeding Action Trigger Button */}
-                {hasCondition('bleeding') && (
-                  <div className="bleeding-trigger-section">
-                    <span className="bleeding-trigger-label">
-                      🩸 Bleeding triggers on: Main Action, Triggered Action, Might/Agility Power Rolls
-                    </span>
-                    <div className="bleeding-trigger-buttons">
-                      <button
-                        className="bleeding-trigger-btn"
-                        onClick={() => {
-                          const result = applyBleedingDamage('Main Action');
-                          if (result) {
-                            setLastBleedingResult(result);
-                            setTimeout(() => setLastBleedingResult(null), 3000);
-                          }
-                        }}
-                      >
-                        Main Action
-                      </button>
-                      <button
-                        className="bleeding-trigger-btn"
-                        onClick={() => {
-                          const result = applyBleedingDamage('Triggered Action');
-                          if (result) {
-                            setLastBleedingResult(result);
-                            setTimeout(() => setLastBleedingResult(null), 3000);
-                          }
-                        }}
-                      >
-                        Triggered
-                      </button>
-                      <button
-                        className="bleeding-trigger-btn"
-                        onClick={() => {
-                          const result = applyBleedingDamage('Might/Agility Roll');
-                          if (result) {
-                            setLastBleedingResult(result);
-                            setTimeout(() => setLastBleedingResult(null), 3000);
-                          }
-                        }}
-                      >
-                        Power Roll
-                      </button>
-                    </div>
-                  </div>
-                )}
-              </div>
-
-              {heroState.isDying && (
-                <div className="dying-warning">
-                  ⚠️ DYING: Bleeding (cannot be removed), cannot Catch Breath
-                </div>
-              )}
-            </div>
-          );
-        })()}
-
-        {/* Summon Panel */}
-        <div className="summon-panel">
-          <h3>Summon Minions</h3>
-          {!isInCombat && <div className="not-in-combat">Start combat to summon</div>}
-
-          <div className="summon-grid">
-            {/* Signature Minions */}
-            <div className="summon-section">
-              <h4>Signature (1 Ess)</h4>
-              {signatureMinions.map(minion => {
-                const check = canSummon(minion);
-                const { totalMinions, totalCost } = getSummonInfo(minion);
-                return (
-                  <div key={minion.id} className="summon-row">
-                    <button
-                      className="qty-btn"
-                      onClick={() => adjustSummonMultiplier(minion.id, -1)}
-                      disabled={getSummonMultiplier(minion.id) <= 1}
-                    >
-                      -
-                    </button>
-                    <button
-                      className={`summon-btn ${check.canSummon ? 'available' : 'unavailable'}`}
-                      onClick={() => handleSummon(minion)}
-                      disabled={!check.canSummon}
-                      title={check.canSummon ? `Summon ${totalMinions}x ${minion.name}` : check.reason}
-                    >
-                      <span className="minion-name">{minion.name}</span>
-                      <span className="minion-info">×{totalMinions} {minion.role}</span>
-                      <span className="minion-cost">{totalCost}</span>
-                    </button>
-                    <button
-                      className="qty-btn"
-                      onClick={() => adjustSummonMultiplier(minion.id, 1)}
-                    >
-                      +
-                    </button>
-                  </div>
-                );
-              })}
-            </div>
-
-            {/* 3-Essence Minions */}
-            {unlockedMinions.filter(m => m.essenceCost === 3).length > 0 && (
-              <div className="summon-section">
-                <h4>3 Essence</h4>
-                {unlockedMinions.filter(m => m.essenceCost === 3).map(minion => {
-                  const check = canSummon(minion);
-                  const { totalMinions, totalCost } = getSummonInfo(minion);
-                  return (
-                    <div key={minion.id} className="summon-row">
-                      <button
-                        className="qty-btn"
-                        onClick={() => adjustSummonMultiplier(minion.id, -1)}
-                        disabled={getSummonMultiplier(minion.id) <= 1}
-                      >
-                        -
-                      </button>
-                      <button
-                        className={`summon-btn ${check.canSummon ? 'available' : 'unavailable'}`}
-                        onClick={() => handleSummon(minion)}
-                        disabled={!check.canSummon}
-                        title={check.canSummon ? `Summon ${totalMinions}x ${minion.name}` : check.reason}
-                      >
-                        <span className="minion-name">{minion.name}</span>
-                        <span className="minion-info">×{totalMinions} {minion.role}</span>
-                        <span className="minion-cost">{totalCost}</span>
-                      </button>
-                      <button
-                        className="qty-btn"
-                        onClick={() => adjustSummonMultiplier(minion.id, 1)}
-                      >
-                        +
-                      </button>
-                    </div>
-                  );
-                })}
-              </div>
-            )}
-
-            {/* 5-Essence Minions */}
-            {unlockedMinions.filter(m => m.essenceCost === 5).length > 0 && (
-              <div className="summon-section">
-                <h4>5 Essence</h4>
-                {unlockedMinions.filter(m => m.essenceCost === 5).map(minion => {
-                  const check = canSummon(minion);
-                  const { totalMinions, totalCost } = getSummonInfo(minion);
-                  return (
-                    <div key={minion.id} className="summon-row">
-                      <button
-                        className="qty-btn"
-                        onClick={() => adjustSummonMultiplier(minion.id, -1)}
-                        disabled={getSummonMultiplier(minion.id) <= 1}
-                      >
-                        -
-                      </button>
-                      <button
-                        className={`summon-btn ${check.canSummon ? 'available' : 'unavailable'}`}
-                        onClick={() => handleSummon(minion)}
-                        disabled={!check.canSummon}
-                        title={check.canSummon ? `Summon ${totalMinions}x ${minion.name}` : check.reason}
-                      >
-                        <span className="minion-name">{minion.name}</span>
-                        <span className="minion-info">×{totalMinions} {minion.role}</span>
-                        <span className="minion-cost">{totalCost}</span>
-                      </button>
-                      <button
-                        className="qty-btn"
-                        onClick={() => adjustSummonMultiplier(minion.id, 1)}
-                      >
-                        +
-                      </button>
-                    </div>
-                  );
-                })}
-              </div>
-            )}
-
-            {/* 7-Essence Minions */}
-            {unlockedMinions.filter(m => m.essenceCost === 7).length > 0 && (
-              <div className="summon-section">
-                <h4>7 Essence</h4>
-                {unlockedMinions.filter(m => m.essenceCost === 7).map(minion => {
-                  const check = canSummon(minion);
-                  const { totalMinions, totalCost } = getSummonInfo(minion);
-                  return (
-                    <div key={minion.id} className="summon-row">
-                      <button
-                        className="qty-btn"
-                        onClick={() => adjustSummonMultiplier(minion.id, -1)}
-                        disabled={getSummonMultiplier(minion.id) <= 1}
-                      >
-                        -
-                      </button>
-                      <button
-                        className={`summon-btn ${check.canSummon ? 'available' : 'unavailable'}`}
-                        onClick={() => handleSummon(minion)}
-                        disabled={!check.canSummon}
-                        title={check.canSummon ? `Summon ${totalMinions}x ${minion.name}` : check.reason}
-                      >
-                        <span className="minion-name">{minion.name}</span>
-                        <span className="minion-info">×{totalMinions} {minion.role}</span>
-                        <span className="minion-cost">{totalCost}</span>
-                      </button>
-                      <button
-                        className="qty-btn"
-                        onClick={() => adjustSummonMultiplier(minion.id, 1)}
-                      >
-                        +
-                      </button>
-                    </div>
-                  );
-                })}
-              </div>
-            )}
-          </div>
-        </div>
-      </div>
-
-      {/* Right Panel: Action Economy + Active Squads */}
-      <div className="combat-right-panel">
-        {/* Action Economy Reference */}
-        <ActionEconomyPanel />
-
+      {/* Top Panel: Active Squads (Horizontal) */}
+      <div className="combat-top-panel">
         <div className="squads-header">
           <h3>Active Squads</h3>
+          <div className="combat-constraints-inline">
+            <div className="constraint-inline essence-constraint">
+              <span className="constraint-label">Essence</span>
+              <span className="constraint-value essence-val">{currentEssence}</span>
+            </div>
+            <div className="constraint-inline minion-constraint">
+              <span className="constraint-label">Minions</span>
+              <span className={`constraint-value ${totalActiveMinions >= maxMinions ? 'at-cap' : ''}`}>
+                {totalActiveMinions}/{maxMinions}
+              </span>
+            </div>
+            <div className="constraint-inline squad-constraint">
+              <span className="constraint-label">Squads</span>
+              <span className={`constraint-value ${squadCount >= maxSquads ? 'at-cap' : ''}`}>
+                {squadCount}/{maxSquads}
+              </span>
+            </div>
+          </div>
         </div>
 
         {hero.activeSquads.length === 0 ? (
           <div className="no-squads">
             <p>No active squads</p>
-            <p className="hint">{isInCombat ? 'Use the summon panel to call forth minions' : 'Start combat to begin'}</p>
+            <p className="hint">{isInCombat ? 'Use the summon panel below to call forth minions' : 'Start combat to begin'}</p>
           </div>
         ) : (
-          <div className="squads-list">
+          <div className="squads-list-horizontal">
             {hero.activeSquads.map(squad => {
               const template = getMinionById(squad.templateId);
               if (!template) return null;
@@ -716,7 +310,7 @@ const CombatView: React.FC = () => {
                       />
                     </div>
                     <span className="hp-text">{squad.currentStamina}/{squad.maxStamina}</span>
-                    {stateLabel && (
+                    {staminaState.currentState !== 'healthy' && (
                       <span className={`stamina-state state-${staminaState.currentState}`}>
                         {stateLabel}
                       </span>
@@ -726,45 +320,39 @@ const CombatView: React.FC = () => {
                   {/* Minion Icons */}
                   <div className="minion-icons">
                     {squad.members.map((m, i) => (
-                      <div key={m.id} className={`minion-icon ${m.isAlive ? 'alive' : 'dead'}`} title={`#${i + 1}: ${m.isAlive ? 'Alive' : 'Dead'}`}>
+                      <span key={i} className={`minion-icon ${m.isAlive ? 'alive' : 'dead'}`}>
                         {i + 1}
-                      </div>
+                      </span>
                     ))}
                   </div>
 
                   {/* Damage Controls */}
                   <div className="damage-controls">
-                    <button onClick={() => handleDamageSquad(squad.id, 1)}>-1</button>
-                    <button onClick={() => handleDamageSquad(squad.id, 5)}>-5</button>
+                    <button onClick={() => damageSquad(squad.id, 1)}>-1</button>
+                    <button onClick={() => damageSquad(squad.id, 5)}>-5</button>
                     <input
                       type="number"
                       placeholder="Dmg"
                       value={damageInput[squad.id] || ''}
-                      onChange={e => setDamageInput(prev => ({ ...prev, [squad.id]: e.target.value }))}
-                    />
-                    <button
-                      onClick={() => {
-                        const dmg = parseInt(damageInput[squad.id] || '0');
-                        if (dmg > 0) {
-                          handleDamageSquad(squad.id, dmg);
+                      onChange={(e) => setDamageInput(prev => ({ ...prev, [squad.id]: e.target.value }))}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') {
+                          const val = parseInt(damageInput[squad.id] || '0');
+                          if (val > 0) damageSquad(squad.id, val);
                           setDamageInput(prev => ({ ...prev, [squad.id]: '' }));
                         }
                       }}
-                    >
-                      Apply
-                    </button>
-                    <button onClick={() => healSquad(squad.id, 1)} className="heal-btn">+1</button>
+                    />
+                    <button className="heal-btn" onClick={() => healSquad(squad.id, 1)}>+1</button>
+                    <button className="heal-btn" onClick={() => healSquad(squad.id, 5)}>+5</button>
                   </div>
 
-                  {/* Action Toggles */}
+                  {/* Roll Modifier */}
                   <div className="action-toggles">
-                    <button className={squad.hasMoved ? 'used' : ''} onClick={() => toggleSquadMoved(squad)}>
-                      {squad.hasMoved ? 'Moved' : 'Move'}
-                    </button>
-                    <button className={squad.hasActed ? 'used' : ''} onClick={() => toggleSquadActed(squad)}>
-                      {squad.hasActed ? 'Acted' : 'Act'}
-                    </button>
-                    <button className={`mod-btn ${rollMod}`} onClick={() => cycleRollModifier(squad.id)}>
+                    <button
+                      className={`mod-btn ${rollMod}`}
+                      onClick={() => cycleRollModifier(squad.id)}
+                    >
                       {rollMod === 'edge' ? 'Edge' : rollMod === 'bane' ? 'Bane' : 'Normal'}
                     </button>
                   </div>
@@ -787,62 +375,57 @@ const CombatView: React.FC = () => {
                         {template.signatureAbility.name}
                       </button>
                     )}
-                    {/* Sacrifice button - only for signature minions */}
-                    {isSignatureMinion(template) && (
-                      <button
-                        className={`roll-btn sacrifice ${hasSacrificedThisTurn ? 'used' : ''}`}
-                        onClick={() => handleSacrifice(squad)}
-                        disabled={hasSacrificedThisTurn || alive === 0}
-                        title={hasSacrificedThisTurn ? 'Already sacrificed this turn' : 'Kill one minion to gain 1 essence (1/turn)'}
-                      >
-                        Sacrifice (+1 Ess)
-                      </button>
-                    )}
+                    <button
+                      className={`roll-btn sacrifice ${hasSacrificedThisTurn ? 'used' : ''}`}
+                      onClick={() => handleSacrifice(squad)}
+                      disabled={hasSacrificedThisTurn || alive === 0}
+                      title={hasSacrificedThisTurn ? 'Already sacrificed this turn' : 'Sacrifice a minion'}
+                    >
+                      Sacrifice
+                    </button>
                   </div>
-
-                  {/* Traits */}
-                  {template.traits.length > 0 && (
-                    <div className="minion-traits">
-                      {template.traits.map((trait, idx) => (
-                        <div key={idx} className="trait">
-                          <span className="trait-name">{trait.name}:</span>
-                          <span className="trait-desc">{trait.description}</span>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-
-                  {/* Signature Ability Description */}
-                  {template.signatureAbility && (
-                    <div className="sig-ability-info">
-                      <span className="sig-name">{template.signatureAbility.name}:</span>
-                      <span className="sig-desc">
-                        {template.signatureAbility.distance} · {template.signatureAbility.target}
-                      </span>
-                    </div>
-                  )}
 
                   {/* Roll Results */}
                   {freeStrikeResult && (
-                    <div className="roll-result" style={{ borderColor: getTierColor(freeStrikeResult.result.tier) }}>
-                      <span style={{ color: getTierColor(freeStrikeResult.result.tier) }}>
+                    <div
+                      className="roll-result"
+                      style={{ borderLeftColor: getTierColor(freeStrikeResult.result.tier) }}
+                    >
+                      <strong style={{ color: getTierColor(freeStrikeResult.result.tier) }}>
                         {freeStrikeResult.result.total}
-                      </span>
+                      </strong>
                       <span className="tier">T{freeStrikeResult.result.tier}</span>
                       <span className="dmg">= {template.freeStrike * alive} dmg</span>
                     </div>
                   )}
-                  {sigResult && template.signatureAbility?.powerRoll && (
-                    <div className="roll-result sig" style={{ borderColor: getTierColor(sigResult.result.tier) }}>
-                      <span style={{ color: getTierColor(sigResult.result.tier) }}>
+                  {sigResult && (
+                    <div
+                      className="roll-result"
+                      style={{ borderLeftColor: getTierColor(sigResult.result.tier) }}
+                    >
+                      <strong style={{ color: getTierColor(sigResult.result.tier) }}>
                         {sigResult.result.total}
-                      </span>
+                      </strong>
                       <span className="tier">T{sigResult.result.tier}</span>
-                      <div className="effect">
-                        {sigResult.result.tier === 1 && template.signatureAbility.powerRoll.tier1}
-                        {sigResult.result.tier === 2 && template.signatureAbility.powerRoll.tier2}
-                        {sigResult.result.tier === 3 && template.signatureAbility.powerRoll.tier3}
-                      </div>
+                      <span className="effect">{template.signatureAbility?.name}</span>
+                    </div>
+                  )}
+
+                  {/* Minion Traits */}
+                  {(template.traits?.length > 0 || template.signatureAbility) && (
+                    <div className="minion-traits">
+                      {template.traits?.map((trait, i) => (
+                        <div key={i} className="trait">
+                          <span className="trait-name">{trait.name}:</span>
+                          <span className="trait-desc">{trait.description}</span>
+                        </div>
+                      ))}
+                      {template.signatureAbility && (
+                        <div className="sig-ability-info">
+                          <span className="sig-name">{template.signatureAbility.name}:</span>
+                          <span className="sig-desc">{template.signatureAbility.effect}</span>
+                        </div>
+                      )}
                     </div>
                   )}
                 </div>
@@ -850,6 +433,131 @@ const CombatView: React.FC = () => {
             })}
           </div>
         )}
+      </div>
+
+      {/* Bottom Panel: Summon */}
+      <div className="combat-bottom-panel">
+        {/* Summon Panel */}
+        <div className="summon-panel">
+          <h3>Summon Minions</h3>
+          {!isInCombat && <div className="not-in-combat">Start combat to summon</div>}
+
+          <div className="summon-cards-grid">
+            {/* Signature Minions */}
+            <div className="summon-section">
+              <h4 className="section-header">Signature Minions</h4>
+              <div className="summon-cards-row">
+                {signatureMinions.map(minion => {
+                  const check = canSummon(minion);
+                  const { totalMinions, totalCost, multiplier } = getSummonInfo(minion);
+                  return (
+                    <SummonMinionCard
+                      key={minion.id}
+                      minion={minion}
+                      isSignature={true}
+                      canSummon={check.canSummon}
+                      reason={check.reason}
+                      totalMinions={totalMinions}
+                      totalCost={totalCost}
+                      multiplier={multiplier}
+                      imageUrl={getMinionPortrait(minion.id)}
+                      onSummon={() => handleSummon(minion)}
+                      onAdjustMultiplier={(delta) => adjustSummonMultiplier(minion.id, delta)}
+                      onImageChange={(url) => handleMinionPortraitChange(minion.id, url)}
+                    />
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* 3-Essence Minions */}
+            {unlockedMinions.filter(m => m.essenceCost === 3).length > 0 && (
+              <div className="summon-section">
+                <h4 className="section-header">3 Essence Minions</h4>
+                <div className="summon-cards-row">
+                  {unlockedMinions.filter(m => m.essenceCost === 3).map(minion => {
+                    const check = canSummon(minion);
+                    const { totalMinions, totalCost, multiplier } = getSummonInfo(minion);
+                    return (
+                      <SummonMinionCard
+                        key={minion.id}
+                        minion={minion}
+                        isSignature={false}
+                        canSummon={check.canSummon}
+                        reason={check.reason}
+                        totalMinions={totalMinions}
+                        totalCost={totalCost}
+                        multiplier={multiplier}
+                        imageUrl={getMinionPortrait(minion.id)}
+                        onSummon={() => handleSummon(minion)}
+                        onAdjustMultiplier={(delta) => adjustSummonMultiplier(minion.id, delta)}
+                        onImageChange={(url) => handleMinionPortraitChange(minion.id, url)}
+                      />
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
+            {/* 5-Essence Minions */}
+            {unlockedMinions.filter(m => m.essenceCost === 5).length > 0 && (
+              <div className="summon-section">
+                <h4 className="section-header">5 Essence Minions</h4>
+                <div className="summon-cards-row">
+                  {unlockedMinions.filter(m => m.essenceCost === 5).map(minion => {
+                    const check = canSummon(minion);
+                    const { totalMinions, totalCost, multiplier } = getSummonInfo(minion);
+                    return (
+                      <SummonMinionCard
+                        key={minion.id}
+                        minion={minion}
+                        isSignature={false}
+                        canSummon={check.canSummon}
+                        reason={check.reason}
+                        totalMinions={totalMinions}
+                        totalCost={totalCost}
+                        multiplier={multiplier}
+                        imageUrl={getMinionPortrait(minion.id)}
+                        onSummon={() => handleSummon(minion)}
+                        onAdjustMultiplier={(delta) => adjustSummonMultiplier(minion.id, delta)}
+                        onImageChange={(url) => handleMinionPortraitChange(minion.id, url)}
+                      />
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
+            {/* 7-Essence Minions */}
+            {unlockedMinions.filter(m => m.essenceCost === 7).length > 0 && (
+              <div className="summon-section">
+                <h4 className="section-header">7 Essence Minions</h4>
+                <div className="summon-cards-row">
+                  {unlockedMinions.filter(m => m.essenceCost === 7).map(minion => {
+                    const check = canSummon(minion);
+                    const { totalMinions, totalCost, multiplier } = getSummonInfo(minion);
+                    return (
+                      <SummonMinionCard
+                        key={minion.id}
+                        minion={minion}
+                        isSignature={false}
+                        canSummon={check.canSummon}
+                        reason={check.reason}
+                        totalMinions={totalMinions}
+                        totalCost={totalCost}
+                        multiplier={multiplier}
+                        imageUrl={getMinionPortrait(minion.id)}
+                        onSummon={() => handleSummon(minion)}
+                        onAdjustMultiplier={(delta) => adjustSummonMultiplier(minion.id, delta)}
+                        onImageChange={(url) => handleMinionPortraitChange(minion.id, url)}
+                      />
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
       </div>
     </div>
   );

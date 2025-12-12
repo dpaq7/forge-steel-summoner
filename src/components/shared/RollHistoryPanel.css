@@ -1,56 +1,9 @@
-.roll-history-toggle {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  width: 56px;
-  height: 56px;
-  border-radius: 50%;
-  border: 2px solid var(--accent-color, #7c4dff);
-  background: linear-gradient(135deg, var(--accent-color, #7c4dff), var(--accent-dark, #651fff));
-  color: white;
-  font-weight: bold;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 4px 12px rgba(124, 77, 255, 0.4);
-  transition: all 0.2s ease;
-  z-index: 1000;
-}
-
-.roll-history-toggle:hover {
-  transform: scale(1.1);
-  box-shadow: 0 6px 16px rgba(124, 77, 255, 0.5);
-}
-
-.roll-history-toggle.open {
-  background: var(--accent-dark, #651fff);
-}
-
-.dice-icon {
-  font-size: 1rem;
-}
-
-.history-count {
-  position: absolute;
-  top: -4px;
-  right: -4px;
-  background: #ef5350;
-  color: white;
-  font-size: 0.75rem;
-  min-width: 20px;
-  height: 20px;
-  border-radius: 10px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0 4px;
-}
+/* Note: Toggle button styles are now in DrawSteelDice.css */
 
 .roll-history-panel {
   position: fixed;
-  bottom: 90px;
-  right: 20px;
+  top: 140px;
+  left: 16px;
   width: 320px;
   max-height: 400px;
   background: var(--bg-primary, #1a1a1a);
@@ -61,13 +14,13 @@
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  animation: slideUp 0.2s ease;
+  animation: slideDown 0.2s ease;
 }
 
-@keyframes slideUp {
+@keyframes slideDown {
   from {
     opacity: 0;
-    transform: translateY(20px);
+    transform: translateY(-10px);
   }
   to {
     opacity: 1;

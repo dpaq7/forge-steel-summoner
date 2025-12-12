@@ -1,0 +1,637 @@
+/* ============================================
+   SIGNATURE MINION CARD - MAIN STYLES
+   ============================================ */
+
+.signature-minion-card {
+  position: relative;
+  width: 100%;
+  max-width: 400px;
+  min-width: 320px;
+}
+
+/* === CARD FRAME (Border Layer) === */
+.minion-card-border {
+  position: absolute;
+  inset: 0;
+  background: var(--border-dark);
+  clip-path: polygon(
+    1.5% 0%,
+    98.5% 0%,
+    100% 1.5%,
+    100% 98.5%,
+    98.5% 100%,
+    1.5% 100%,
+    0% 98.5%,
+    0% 1.5%
+  );
+  transition: background 0.2s ease, box-shadow 0.2s ease;
+}
+
+.signature-minion-card:hover .minion-card-border {
+  background: var(--accent-dim, #3d8b7a);
+  box-shadow: 0 0 10px rgba(77, 232, 178, 0.3);
+}
+
+.signature-minion-card.is-signature .minion-card-border {
+  background: var(--color-warning, #e8a844);
+  box-shadow: 0 0 15px rgba(232, 168, 68, 0.3);
+}
+
+/* === CARD CONTENT (Inner Layer) === */
+.minion-card-content {
+  position: relative;
+  margin: 2px;
+  background: var(--bg-dark);
+  clip-path: polygon(
+    1.5% 0%,
+    98.5% 0%,
+    100% 1.5%,
+    100% 98.5%,
+    98.5% 100%,
+    1.5% 100%,
+    0% 98.5%,
+    0% 1.5%
+  );
+  display: flex;
+  flex-direction: column;
+}
+
+/* ============================================
+   HEADER SECTION
+   ============================================ */
+
+.minion-header {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 0.75rem;
+  padding: 0.75rem;
+  background: var(--bg-card);
+  border-bottom: 1px solid var(--border-dark);
+}
+
+/* === PORTRAIT === */
+.minion-portrait {
+  position: relative;
+  width: 70px;
+  height: 80px;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.minion-portrait-input {
+  position: absolute;
+  width: 0;
+  height: 0;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.minion-portrait-border {
+  position: absolute;
+  inset: 0;
+  background: var(--border-dark);
+  clip-path: polygon(
+    50% 0%,
+    100% 25%,
+    100% 75%,
+    50% 100%,
+    0% 75%,
+    0% 25%
+  );
+  transition: all 0.2s ease;
+}
+
+.minion-portrait:hover .minion-portrait-border {
+  background: var(--accent-dim, #3d8b7a);
+  box-shadow: 0 0 10px rgba(77, 232, 178, 0.3);
+}
+
+.minion-portrait-inner {
+  position: absolute;
+  inset: 2px;
+  background: var(--bg-darkest);
+  clip-path: polygon(
+    50% 0%,
+    100% 25%,
+    100% 75%,
+    50% 100%,
+    0% 75%,
+    0% 25%
+  );
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.minion-portrait-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center top;
+}
+
+.minion-portrait-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.125rem;
+  padding: 0.5rem;
+}
+
+.minion-portrait-placeholder .placeholder-icon {
+  width: 24px;
+  height: 24px;
+  color: var(--text-muted);
+}
+
+.minion-portrait-placeholder .placeholder-text {
+  font-size: 0.5rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-muted);
+  text-align: center;
+}
+
+.minion-portrait:hover .placeholder-icon {
+  color: var(--accent-dim, #3d8b7a);
+}
+
+.minion-portrait:hover .placeholder-text {
+  color: var(--text-secondary);
+}
+
+.minion-portrait-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(5, 13, 11, 0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  clip-path: polygon(
+    50% 0%,
+    100% 25%,
+    100% 75%,
+    50% 100%,
+    0% 75%,
+    0% 25%
+  );
+}
+
+.minion-portrait-remove {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--color-danger, #e85454);
+  border: none;
+  color: white;
+  font-size: 0.9rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.minion-portrait-remove:hover {
+  transform: scale(1.1);
+  box-shadow: 0 0 10px rgba(232, 84, 84, 0.5);
+}
+
+.minion-portrait-error {
+  position: absolute;
+  bottom: -18px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 0.55rem;
+  color: var(--color-danger, #e85454);
+  white-space: nowrap;
+}
+
+/* === IDENTITY (Role & Signature) === */
+.minion-identity {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0.5rem;
+  min-width: 0;
+}
+
+.minion-role-input {
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  background: var(--bg-darkest);
+  border: 1px solid var(--border-dark);
+  border-radius: 3px;
+  color: var(--text-primary);
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.minion-role-input:focus {
+  outline: none;
+  border-color: var(--accent-primary);
+  box-shadow: 0 0 10px rgba(77, 232, 178, 0.3);
+}
+
+.minion-role-input::placeholder {
+  color: var(--text-muted);
+  font-weight: 400;
+}
+
+.minion-signature-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.signature-label {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-muted);
+}
+
+.signature-minion-card.is-signature .signature-label {
+  color: var(--color-warning, #e8a844);
+}
+
+/* === DIAMOND CHECKBOX === */
+.diamond-checkbox {
+  width: 14px;
+  height: 14px;
+  background: transparent;
+  border: 2px solid var(--border-dark);
+  transform: rotate(45deg);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  padding: 0;
+}
+
+.diamond-checkbox:hover {
+  border-color: var(--accent-dim, #3d8b7a);
+}
+
+.diamond-checkbox.checked {
+  background: var(--accent-primary);
+  border-color: var(--accent-primary);
+  box-shadow: 0 0 10px rgba(77, 232, 178, 0.3);
+}
+
+.signature-minion-card.is-signature .diamond-checkbox.checked {
+  background: var(--color-warning, #e8a844);
+  border-color: var(--color-warning, #e8a844);
+  box-shadow: 0 0 8px rgba(232, 168, 68, 0.3);
+}
+
+/* === COST & COUNT === */
+.minion-cost-count {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.cost-count-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.125rem;
+}
+
+.cost-count-circle {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 2px solid var(--border-dark);
+  background: var(--bg-darkest);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
+}
+
+.cost-count-circle:focus-within {
+  border-color: var(--accent-primary);
+  box-shadow: 0 0 10px rgba(77, 232, 178, 0.3);
+}
+
+.cost-count-circle input {
+  width: 100%;
+  height: 100%;
+  background: transparent;
+  border: none;
+  color: var(--text-primary);
+  font-size: 0.9rem;
+  font-weight: bold;
+  text-align: center;
+  padding: 0;
+}
+
+.cost-count-circle input:focus {
+  outline: none;
+}
+
+/* Remove spinner buttons */
+.cost-count-circle input[type="number"]::-webkit-inner-spin-button,
+.cost-count-circle input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.cost-count-circle input[type="number"] {
+  -moz-appearance: textfield;
+}
+
+.cost-count-label {
+  font-size: 0.55rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-muted);
+}
+
+/* ============================================
+   STATS ROW
+   ============================================ */
+
+.minion-stats-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr) 1.5fr;
+  border-bottom: 1px solid var(--border-dark);
+}
+
+.minion-stat-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem 0.25rem;
+  border-right: 1px solid var(--border-dark);
+  background: var(--bg-darkest);
+}
+
+.minion-stat-box:last-child {
+  border-right: none;
+}
+
+.minion-stat-box .stat-label {
+  font-size: 0.55rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-muted);
+  margin-bottom: 0.125rem;
+  text-align: center;
+}
+
+.minion-stat-box .stat-value {
+  width: 36px;
+  padding: 0.25rem;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 2px;
+  color: var(--text-primary);
+  font-size: 1rem;
+  font-weight: bold;
+  text-align: center;
+}
+
+.minion-stat-box .stat-value:focus {
+  outline: none;
+  border-color: var(--accent-primary);
+  background: var(--bg-dark);
+}
+
+/* Remove spinner buttons */
+.minion-stat-box .stat-value[type="number"]::-webkit-inner-spin-button,
+.minion-stat-box .stat-value[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.minion-stat-box .stat-value[type="number"] {
+  -moz-appearance: textfield;
+}
+
+/* ============================================
+   DETAIL FIELDS
+   ============================================ */
+
+.minion-details {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 0.75rem;
+  background: var(--bg-dark);
+}
+
+.minion-detail-field {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.detail-label {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  white-space: nowrap;
+  min-width: fit-content;
+}
+
+.detail-separator {
+  color: var(--border-dark);
+  font-size: 0.6rem;
+  flex-shrink: 0;
+}
+
+.detail-separator::after {
+  content: '───';
+}
+
+.detail-input {
+  flex: 1;
+  padding: 0.25rem 0.5rem;
+  background: var(--bg-darkest);
+  border: 1px solid var(--border-dark);
+  border-radius: 2px;
+  color: var(--text-primary);
+  font-size: 0.8rem;
+}
+
+.detail-input:focus {
+  outline: none;
+  border-color: var(--accent-primary);
+  box-shadow: 0 0 10px rgba(77, 232, 178, 0.3);
+}
+
+/* ============================================
+   CHARACTERISTICS
+   ============================================ */
+
+.minion-characteristics {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem 1.25rem;
+  padding: 0.75rem;
+  background: var(--bg-card);
+  border-top: 1px solid var(--border-dark);
+  border-bottom: 1px solid var(--border-dark);
+}
+
+.characteristic-toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+}
+
+.characteristic-circle {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 2px solid var(--border-dark);
+  background: transparent;
+  transition: all 0.15s ease;
+}
+
+.characteristic-toggle:hover .characteristic-circle {
+  border-color: var(--accent-dim, #3d8b7a);
+}
+
+.characteristic-toggle.active .characteristic-circle {
+  background: var(--accent-primary);
+  border-color: var(--accent-primary);
+  box-shadow: 0 0 10px rgba(77, 232, 178, 0.3);
+}
+
+.characteristic-name {
+  font-size: 0.7rem;
+  text-transform: capitalize;
+  color: var(--text-muted);
+  transition: color 0.15s ease;
+}
+
+.characteristic-toggle:hover .characteristic-name {
+  color: var(--text-secondary);
+}
+
+.characteristic-toggle.active .characteristic-name {
+  color: var(--text-primary);
+}
+
+/* ============================================
+   KEYWORDS
+   ============================================ */
+
+.minion-keywords-section {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem;
+  background: var(--bg-dark);
+}
+
+.keywords-label {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+.keywords-input {
+  flex: 1;
+  padding: 0.375rem 0.5rem;
+  background: var(--bg-darkest);
+  border: 1px solid var(--border-dark);
+  border-radius: 2px;
+  color: var(--text-primary);
+  font-size: 0.8rem;
+}
+
+.keywords-input:focus {
+  outline: none;
+  border-color: var(--accent-primary);
+  box-shadow: 0 0 10px rgba(77, 232, 178, 0.3);
+}
+
+.keywords-input::placeholder {
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+/* ============================================
+   DELETE BUTTON
+   ============================================ */
+
+.minion-delete-btn {
+  margin: 0.75rem;
+  padding: 0.5rem 1rem;
+  background: transparent;
+  border: 1px solid var(--color-danger, #e85454);
+  border-radius: 3px;
+  color: var(--color-danger, #e85454);
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.minion-delete-btn:hover {
+  background: var(--color-danger, #e85454);
+  color: white;
+}
+
+/* ============================================
+   RESPONSIVE
+   ============================================ */
+
+@media (max-width: 400px) {
+  .minion-header {
+    grid-template-columns: auto 1fr;
+    grid-template-rows: auto auto;
+  }
+
+  .minion-cost-count {
+    grid-column: 1 / -1;
+    flex-direction: row;
+    justify-content: center;
+    padding-top: 0.5rem;
+  }
+
+  .minion-stats-row {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .minion-stat-box:nth-child(4),
+  .minion-stat-box:nth-child(5) {
+    grid-column: span 1;
+  }
+
+  .minion-stat-box.wide {
+    grid-column: span 3;
+  }
+
+  .minion-characteristics {
+    justify-content: center;
+  }
+}
+
+/* ============================================
+   ANIMATIONS
+   ============================================ */
+
+@keyframes signature-pulse {
+  0%, 100% {
+    box-shadow: 0 0 10px rgba(232, 168, 68, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(232, 168, 68, 0.4), 0 0 30px rgba(232, 168, 68, 0.2);
+  }
+}
+
+.signature-minion-card.is-signature .minion-card-border {
+  animation: signature-pulse 3s ease-in-out infinite;
+}

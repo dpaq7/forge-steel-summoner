@@ -13,7 +13,7 @@ const emberSprite: MinionTemplate = {
   id: 'elemental_ember_sprite',
   name: 'Ember Sprite',
   essenceCost: 1,
-  minionsPerSummon: 3,
+  minionsPerSummon: 1, // Signature: 1 minion per essence spent
   size: '1S',
   speed: 6,
   stamina: 2,
@@ -35,7 +35,7 @@ const stonekin: MinionTemplate = {
   id: 'elemental_stonekin',
   name: 'Stonekin',
   essenceCost: 1,
-  minionsPerSummon: 3,
+  minionsPerSummon: 1, // Signature: 1 minion per essence spent
   size: '1M',
   speed: 4,
   stamina: 3,
@@ -57,7 +57,7 @@ const zephyrWisp: MinionTemplate = {
   id: 'elemental_zephyr_wisp',
   name: 'Zephyr Wisp',
   essenceCost: 1,
-  minionsPerSummon: 3,
+  minionsPerSummon: 1, // Signature: 1 minion per essence spent
   size: '1M',
   speed: 8,
   stamina: 1,

@@ -1,29 +1,25 @@
 import { useState, useEffect } from 'react';
 import { useSummonerContext } from './context/SummonerContext';
 import { useCombatContext } from './context/CombatContext';
-import { useRollHistory } from './context/RollHistoryContext';
 import CharacterCreation from './components/creation/CharacterCreation';
 import CharacterManager from './components/character/CharacterManager';
 import CharacterStatsPanel from './components/character/CharacterStatsPanel';
 import CharacterDetailsView from './components/character/CharacterDetailsView';
 import LevelUp from './components/character/LevelUp';
 import CombatView from './components/combat/CombatView';
-import ActionsView from './components/combat/ActionsView';
+import AbilitiesView from './components/abilities/AbilitiesView';
 import ProjectsView from './components/projects/ProjectsView';
 import MagicItemsView from './components/items/MagicItemsView';
 import InventoryView from './components/inventory/InventoryView';
-import AbilityCard from './components/shared/AbilityCard';
 import RollHistoryPanel from './components/shared/RollHistoryPanel';
-import { Ability } from './types';
-import { PowerRollResult } from './utils/dice';
+import CollapsibleHeader from './components/ui/CollapsibleHeader';
 import './App.css';
 
-type View = 'character' | 'abilities' | 'actions' | 'combat' | 'projects' | 'items' | 'inventory';
+type View = 'character' | 'abilities' | 'combat' | 'projects' | 'items' | 'inventory';
 
 function App() {
   const { hero, setHero } = useSummonerContext();
-  const { isInCombat, startCombat, endCombat, setOnCombatStartCallback } = useCombatContext();
-  const { addRoll } = useRollHistory();
+  const { isInCombat, startCombat, endCombat, setOnCombatStartCallback, essenceState } = useCombatContext();
   const [darkMode, setDarkMode] = useState(true);
   const [activeView, setActiveView] = useState<View>('character');
   const [showCharacterManager, setShowCharacterManager] = useState(false);
@@ -35,10 +31,6 @@ function App() {
     setOnCombatStartCallback(() => setActiveView('combat'));
     return () => setOnCombatStartCallback(null);
   }, [setOnCombatStartCallback]);
-
-  const handleAbilityRoll = (ability: Ability, result: PowerRollResult) => {
-    addRoll(result, ability.name, 'ability');
-  };
 
   const handleCreateNew = () => {
     setHero(null);
@@ -95,8 +87,29 @@ function App() {
         </div>
       </header>
 
-      {/* Persistent Character Stats Panel */}
-      <CharacterStatsPanel onLevelUp={() => setShowLevelUp(true)} />
+      {/* Collapsible Character Stats Panel */}
+      <CollapsibleHeader
+        compactData={{
+          name: hero.name,
+          level: hero.level,
+          portraitUrl: hero.portraitUrl || null,
+          stamina: {
+            current: hero.stamina.current,
+            max: hero.stamina.max,
+          },
+          essence: essenceState.currentEssence,
+          recoveries: {
+            current: hero.recoveries.current,
+            max: hero.recoveries.max,
+          },
+          surges: hero.surges,
+          victories: hero.victories,
+          maxVictories: 12,
+          characteristics: hero.characteristics,
+        }}
+      >
+        <CharacterStatsPanel onLevelUp={() => setShowLevelUp(true)} />
+      </CollapsibleHeader>
 
       {/* Navigation Tabs */}
       <nav className="view-tabs">
@@ -113,16 +126,10 @@ function App() {
           Abilities
         </button>
         <button
-          className={activeView === 'actions' ? 'active' : ''}
-          onClick={() => setActiveView('actions')}
-        >
-          Actions
-        </button>
-        <button
           className={activeView === 'combat' ? 'active' : ''}
           onClick={() => setActiveView('combat')}
         >
-          Combat & Minions
+          Minions
         </button>
         <button
           className={activeView === 'projects' ? 'active' : ''}
@@ -148,46 +155,7 @@ function App() {
       <main className="app-main">
         {activeView === 'character' && <CharacterDetailsView />}
 
-        {activeView === 'actions' && <ActionsView />}
-
-        {activeView === 'abilities' && (
-          <div className="abilities-view">
-            <div className="abilities-grid">
-              {/* Formation & Quick Command */}
-              <div className="info-card formation-card">
-                <h3>Formation: {hero.formation.charAt(0).toUpperCase() + hero.formation.slice(1)}</h3>
-                <div className="quick-command">
-                  <strong>{hero.quickCommand.name}</strong>
-                  <p>{hero.quickCommand.description}</p>
-                </div>
-              </div>
-
-              {/* Portfolio Summary */}
-              <div className="info-card portfolio-card">
-                <h3>Portfolio: {hero.portfolio.type.charAt(0).toUpperCase() + hero.portfolio.type.slice(1)}</h3>
-                <div className="portfolio-summary">
-                  <p><strong>Signatures:</strong> {hero.portfolio.signatureMinions.map(m => m.name).join(', ')}</p>
-                  <p><strong>Unlocked:</strong> {hero.portfolio.unlockedMinions.length} minion types</p>
-                </div>
-              </div>
-            </div>
-
-            {/* Abilities */}
-            <div className="abilities-section">
-              <h3>Class Abilities</h3>
-              <div className="abilities-list">
-                {hero.abilities.map((ability) => (
-                  <AbilityCard
-                    key={ability.id}
-                    ability={ability}
-                    characteristics={hero.characteristics}
-                    onRoll={handleAbilityRoll}
-                  />
-                ))}
-              </div>
-            </div>
-          </div>
-        )}
+        {activeView === 'abilities' && <AbilitiesView />}
 
         {activeView === 'combat' && <CombatView />}
 
