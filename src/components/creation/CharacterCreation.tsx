@@ -1,12 +1,15 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useSummonerContext } from '../../context/SummonerContext';
 import { SummonerHero, SummonerCircle, Formation, Ancestry, Culture, Career, Kit, MinionTemplate } from '../../types';
+import { HeroClass } from '../../types/hero';
 import { ancestries, cultures, careers, kits, getSelectableLanguages, languages as allLanguages } from '../../data/reference-data';
 import { portfolios } from '../../data/portfolios';
 import { formations } from '../../data/formations';
 import { circleToPortfolio } from '../../types/summoner';
 import { summonerAbilitiesByLevel } from '../../data/abilities/summoner-abilities';
 import { skills, getSkillsByGroup, SkillGroup, Skill, isSkillGroup, findSkillByName } from '../../data/skills';
+import { classDefinitions, getClassRoleColor, getSubclassTypeName } from '../../data/classes/class-definitions';
+import ClassSelector from './ClassSelector';
 import {
   generateId,
   calculateMaxStamina,
@@ -18,9 +21,32 @@ import {
   calculateEssencePerTurn,
 } from '../../utils/calculations';
 
-type Step = 'name' | 'ancestry' | 'culture' | 'cultureSkills' | 'career' | 'careerSkills' | 'languages' | 'circle' | 'signatureMinions' | 'formation' | 'kit' | 'characteristics';
+type Step = 'name' | 'class' | 'subclass' | 'ancestry' | 'culture' | 'cultureSkills' | 'career' | 'careerSkills' | 'languages' | 'circle' | 'signatureMinions' | 'formation' | 'kit' | 'characteristics';
 
-const ALL_STEPS: Step[] = ['name', 'ancestry', 'culture', 'cultureSkills', 'career', 'careerSkills', 'languages', 'circle', 'signatureMinions', 'formation', 'kit', 'characteristics'];
+// Base steps that all classes share
+const BASE_STEPS: Step[] = ['name', 'class', 'ancestry', 'culture', 'cultureSkills', 'career', 'careerSkills', 'languages', 'kit', 'characteristics'];
+
+// Summoner-specific steps (inserted after languages)
+const SUMMONER_STEPS: Step[] = ['circle', 'signatureMinions', 'formation'];
+
+// Get steps for a specific class
+function getStepsForClass(heroClass: HeroClass | null): Step[] {
+  if (!heroClass) return ['name', 'class'];
+
+  if (heroClass === 'summoner') {
+    // Insert summoner steps after languages, before kit
+    const steps = [...BASE_STEPS];
+    const langIndex = steps.indexOf('languages');
+    steps.splice(langIndex + 1, 0, ...SUMMONER_STEPS);
+    return steps;
+  }
+
+  // For other classes, use base steps (subclass can be added later)
+  return BASE_STEPS;
+}
+
+// Legacy constant for backward compatibility
+const ALL_STEPS: Step[] = getStepsForClass('summoner');
 
 interface CharacterCreationProps {
   onComplete?: () => void;
@@ -38,6 +64,7 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ onComplete }) => 
 
   const [step, setStep] = useState<Step>('name');
   const [name, setName] = useState('');
+  const [selectedClass, setSelectedClass] = useState<HeroClass | null>(null);
   const [selectedAncestry, setSelectedAncestry] = useState<Ancestry | null>(null);
   const [selectedCulture, setSelectedCulture] = useState<Culture | null>(null);
   const [selectedCareer, setSelectedCareer] = useState<Career | null>(null);
@@ -45,6 +72,9 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ onComplete }) => 
   const [selectedSignatureMinions, setSelectedSignatureMinions] = useState<MinionTemplate[]>([]);
   const [selectedFormation, setSelectedFormation] = useState<Formation | null>(null);
   const [selectedKit, setSelectedKit] = useState<Kit | null>(null);
+
+  // Get the steps for the current class selection
+  const currentSteps = useMemo(() => getStepsForClass(selectedClass), [selectedClass]);
 
   // Standard array values for Draw Steel: 2, 2, 1, 0, -1
   const STANDARD_ARRAY = [2, 2, 1, 0, -1];
@@ -269,6 +299,11 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ onComplete }) => 
     switch (step) {
       case 'name':
         return name.trim().length > 0;
+      case 'class':
+        return selectedClass !== null;
+      case 'subclass':
+        // Subclass selection - for now, optional
+        return true;
       case 'ancestry':
         return selectedAncestry !== null;
       case 'culture':
@@ -300,18 +335,18 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ onComplete }) => 
   };
 
   const handleNext = () => {
-    const currentIndex = ALL_STEPS.indexOf(step);
-    if (currentIndex < ALL_STEPS.length - 1) {
-      setStep(ALL_STEPS[currentIndex + 1]);
+    const currentIndex = currentSteps.indexOf(step);
+    if (currentIndex < currentSteps.length - 1) {
+      setStep(currentSteps[currentIndex + 1]);
     } else {
       createCharacter();
     }
   };
 
   const handleBack = () => {
-    const currentIndex = ALL_STEPS.indexOf(step);
+    const currentIndex = currentSteps.indexOf(step);
     if (currentIndex > 0) {
-      setStep(ALL_STEPS[currentIndex - 1]);
+      setStep(currentSteps[currentIndex - 1]);
     }
   };
 
@@ -579,7 +614,7 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ onComplete }) => 
         return (
           <div className="creation-step name-step">
             <h2>Choose Your Name</h2>
-            <p className="step-description">Enter a name for your summoner</p>
+            <p className="step-description">Enter a name for your hero</p>
             <div className="name-input-container">
               <input
                 type="text"
@@ -590,6 +625,14 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ onComplete }) => 
               />
             </div>
           </div>
+        );
+
+      case 'class':
+        return (
+          <ClassSelector
+            selectedClass={selectedClass}
+            onSelect={setSelectedClass}
+          />
         );
 
       case 'ancestry':
@@ -990,10 +1033,13 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ onComplete }) => 
           <div
             className="progress-fill"
             style={{
-              width: `${((ALL_STEPS.indexOf(step) + 1) / ALL_STEPS.length) * 100}%`,
+              width: `${((currentSteps.indexOf(step) + 1) / currentSteps.length) * 100}%`,
             }}
           />
         </div>
+        <span className="progress-text">
+          Step {currentSteps.indexOf(step) + 1} of {currentSteps.length}
+        </span>
       </div>
 
       {renderStep()}

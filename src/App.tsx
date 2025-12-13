@@ -65,7 +65,7 @@ function App() {
     return (
       <div className="app dark-mode">
         <header className="app-header">
-          <h1>Forge Steel Summoner</h1>
+          <h1>Mettle</h1>
           <div className="header-actions">
             <button onClick={() => setShowCharacterManager(true)} className="manage-chars-btn">
               Manage Characters
@@ -93,7 +93,7 @@ function App() {
     <div className="app dark-mode">
       {/* Minimal Header */}
       <header className="app-header compact">
-        <h1>Forge Steel Summoner</h1>
+        <h1>Mettle</h1>
         <div className="header-actions">
           <button onClick={() => setShowCharacterManager(true)} className="manage-chars-btn">
             Characters

@@ -1,8 +1,8 @@
 {
   "$schema": "../node_modules/@tauri-apps/cli/config.schema.json",
-  "productName": "Forge Steel Summoner",
-  "version": "0.2.1",
-  "identifier": "com.forgesteel.summoner",
+  "productName": "Mettle",
+  "version": "0.3.0",
+  "identifier": "com.mettle.app",
   "build": {
     "frontendDist": "../dist",
     "devUrl": "http://localhost:5173",
@@ -13,7 +13,7 @@
     "withGlobalTauri": true,
     "windows": [
       {
-        "title": "Forge Steel Summoner",
+        "title": "Mettle",
         "width": 1200,
         "height": 800,
         "minWidth": 800,

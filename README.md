@@ -1,16 +1,16 @@
-# Forge Steel Summoner
+# Mettle
 
-A desktop companion app for **Draw Steel** Summoner class characters. Built with React, TypeScript, and Tauri for native macOS support.
+**Mettle** is a character manager for the Draw Steel TTRPG by MCDM. Manage heroes across all 10 classes with class-specific themes, mechanics tracking, and comprehensive character sheets.
 
 ## Features
 
-- **Character Creation & Management** - Create and manage Summoner heroes
-- **Portfolio System** - Elemental, Demon, and Undead minion portfolios
-- **Combat Tracker** - Track minions, conditions, and stamina in combat
-- **Power Rolls** - 2d10 power roll system with edge/bane support
-- **Magic Items** - Equip items with automatic stat bonus tracking
-- **Projects** - Track crafting and research projects
-- **Inventory** - Equipment slots with visual bonus indicators
+- **All 10 Hero Classes**: Censor, Conduit, Elementalist, Fury, Null, Shadow, Summoner, Tactician, Talent, Troubadour
+- **Class Themes**: Unique color palettes auto-applied per class
+- **Heroic Resource Tracking**: Class-specific resource mechanics
+- **Full Character Creation**: Ancestry, Culture, Career, Class, and more
+- **Summoner Minion Management**: Complete portfolio and squad tracking
+- **Magic Items & Projects**: Track equipment and downtime activities
+- **Power Rolls**: 2d10 power roll system with edge/bane support
 
 ## Installation
 
@@ -33,9 +33,15 @@ npm run tauri:dev
 npm run tauri build -- --target universal-apple-darwin
 ```
 
+## Version History
+
+- **v0.3.0** - Mettle: Full Draw Steel support for all 10 classes
+- **v0.2.x** - Forge Steel Summoner: Summoner-focused character manager
+- **v0.1.x** - Initial development
+
 ## Attribution
 
-This project is a fork of [Forge Steel](https://github.com/andyaiken/forgesteel) by Andy Aiken, adapted specifically for the Summoner class with a native desktop experience via Tauri.
+Originally forked from [Forge Steel](https://github.com/andyaiken/forgesteel) by Andy Aiken.
 
 **Draw Steel** is a tabletop roleplaying game by MCDM Productions.
 

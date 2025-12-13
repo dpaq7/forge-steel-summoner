@@ -1,5 +1,7 @@
 import React, { useState, useRef } from 'react';
 import { useSummonerContext } from '../../context/SummonerContext';
+import { Hero, isSummonerHero } from '../../types/hero';
+import { classDefinitions } from '../../data/classes/class-definitions';
 import {
   getAllCharacters,
   deleteCharacter,
@@ -8,6 +10,26 @@ import {
   StoredCharacter,
 } from '../../utils/storage';
 import './CharacterManager.css';
+
+// Get display details for a hero based on their class
+const getHeroDisplayInfo = (hero: Hero): { class: string; subinfo: string } => {
+  const classDef = classDefinitions[hero.heroClass];
+  const className = classDef?.name ?? 'Unknown';
+
+  if (isSummonerHero(hero)) {
+    const portfolioType = hero.portfolio?.type ?? 'unknown';
+    return {
+      class: className,
+      subinfo: `${portfolioType.charAt(0).toUpperCase() + portfolioType.slice(1)} Portfolio, ${hero.formation} Formation`,
+    };
+  }
+
+  // For other classes, show their subclass if selected
+  return {
+    class: className,
+    subinfo: classDef?.role ?? '',
+  };
+};
 
 interface CharacterManagerProps {
   onClose: () => void;
@@ -132,12 +154,8 @@ const CharacterManager: React.FC<CharacterManagerProps> = ({ onClose, onCreateNe
                     {hero?.id === character.id && <span className="active-badge">Active</span>}
                   </div>
                   <div className="character-details">
-                    <span className="detail">Level {character.level} Summoner</span>
-                    <span className="detail">
-                      {character.data.portfolio.type.charAt(0).toUpperCase() +
-                       character.data.portfolio.type.slice(1)} Portfolio
-                    </span>
-                    <span className="detail">{character.data.formation} Formation</span>
+                    <span className="detail">Level {character.level} {getHeroDisplayInfo(character.data).class}</span>
+                    <span className="detail">{getHeroDisplayInfo(character.data).subinfo}</span>
                   </div>
                   <div className="character-meta">
                     <span className="last-modified">
