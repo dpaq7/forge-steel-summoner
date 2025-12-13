@@ -90,6 +90,8 @@ export interface SummonerHero {
   notes: string;
   portraitUrl: string | null; // Character portrait image (base64)
   minionPortraits: Record<string, string | null>; // Minion ID -> portrait image (base64)
+  fixturePortrait: string | null; // Fixture portrait image (base64)
+  inactiveMinions: string[]; // IDs of signature minions that are inactive/not available for summoning
 
   // Active conditions affecting the hero
   activeConditions: ActiveCondition[];

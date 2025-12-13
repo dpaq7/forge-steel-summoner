@@ -5,6 +5,7 @@ export interface SignatureMinion {
   id: string;
   role: string;
   isSignature: boolean;
+  isActive: boolean; // Whether this minion is currently available for summoning
   imageUrl: string | null;
   cost: number;
   count: number;
@@ -111,7 +112,7 @@ export const SignatureMinionCard = ({
 
   // ============ RENDER ============
   return (
-    <div className={`signature-minion-card ${minion.isSignature ? 'is-signature' : ''} ${className}`}>
+    <div className={`signature-minion-card ${minion.isSignature ? 'is-signature' : ''} ${!minion.isActive ? 'is-inactive' : ''} ${className}`}>
       {/* Card Border Layer */}
       <div className="minion-card-border" />
 
@@ -187,14 +188,27 @@ export const SignatureMinionCard = ({
               disabled={!isEditable}
             />
 
-            <div className="minion-signature-row">
-              <button
-                className={`diamond-checkbox ${minion.isSignature ? 'checked' : ''}`}
-                onClick={() => handleFieldChange('isSignature', !minion.isSignature)}
-                disabled={!isEditable}
-                aria-label={`Signature: ${minion.isSignature ? 'yes' : 'no'}`}
-              />
-              <span className="signature-label">Signature</span>
+            <div className="minion-toggle-row">
+              <div className="minion-toggle-item">
+                <button
+                  className={`diamond-checkbox ${minion.isSignature ? 'checked' : ''}`}
+                  onClick={() => handleFieldChange('isSignature', !minion.isSignature)}
+                  disabled={!isEditable}
+                  aria-label={`Signature: ${minion.isSignature ? 'yes' : 'no'}`}
+                />
+                <span className="toggle-label">Signature</span>
+              </div>
+              <div className="minion-toggle-item">
+                <button
+                  className={`active-toggle ${minion.isActive ? 'active' : ''}`}
+                  onClick={() => handleFieldChange('isActive', !minion.isActive)}
+                  aria-label={`Active: ${minion.isActive ? 'yes' : 'no'}`}
+                  title={minion.isActive ? 'Click to deactivate minion' : 'Click to activate minion'}
+                >
+                  {minion.isActive ? '✓' : '✗'}
+                </button>
+                <span className="toggle-label">{minion.isActive ? 'Active' : 'Inactive'}</span>
+              </div>
             </div>
           </div>
 

@@ -194,14 +194,112 @@
 }
 
 .compact-char {
-  font-size: 0.65rem;
-  font-weight: 600;
-  font-family: monospace;
-  color: var(--text-muted);
-  padding: 0.125rem 0.25rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0.125rem 0.3rem;
   background: var(--bg-darkest);
+  border: 1px solid var(--border-light);
   border-radius: 3px;
+  min-width: 28px;
 }
+
+.compact-char .char-label {
+  font-size: 0.5rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.compact-char .char-value {
+  font-size: 0.7rem;
+  font-weight: 700;
+  font-family: monospace;
+  color: var(--text-primary);
+}
+
+/* Clickable characteristic buttons */
+button.compact-char.clickable {
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+button.compact-char.clickable:hover:not(:disabled) {
+  background: var(--bg-card-hover);
+  border-color: var(--accent-primary);
+  transform: translateY(-1px);
+}
+
+button.compact-char.clickable:disabled {
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+button.compact-char.clickable.rolling {
+  animation: mini-shake 0.1s ease-in-out infinite;
+}
+
+.compact-char .char-rolling {
+  animation: mini-spin 0.3s linear infinite;
+  display: inline-block;
+}
+
+.compact-char .char-result {
+  font-weight: bold;
+  text-shadow: 0 0 6px currentColor;
+}
+
+/* Tier colors for characteristic roll results */
+button.compact-char.has-result.tier-1 {
+  border-color: var(--color-danger);
+  background: rgba(232, 84, 84, 0.15);
+}
+
+button.compact-char.has-result.tier-2 {
+  border-color: var(--color-warning);
+  background: rgba(232, 168, 68, 0.15);
+}
+
+button.compact-char.has-result.tier-3 {
+  border-color: var(--color-success);
+  background: rgba(77, 232, 178, 0.15);
+}
+
+/* ============================================
+   COMPACT DERIVED STATS
+   ============================================ */
+
+.compact-derived {
+  display: flex;
+  gap: 0.35rem;
+}
+
+.compact-derived-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0.125rem 0.3rem;
+  background: var(--bg-darkest);
+  border: 1px solid var(--border-light);
+  border-radius: 3px;
+  min-width: 28px;
+}
+
+.compact-derived-stat .derived-label {
+  font-size: 0.5rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.compact-derived-stat .derived-value {
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
 
 /* ============================================
    MINI CONDITIONS
@@ -315,6 +413,27 @@
   background: rgba(77, 232, 178, 0.15);
 }
 
+/* d3 button styles */
+.mini-roll-btn.d3-btn {
+  width: 26px;
+  background: rgba(168, 125, 232, 0.1);
+  border-color: rgba(168, 125, 232, 0.3);
+}
+
+.mini-roll-btn.d3-btn:hover:not(:disabled) {
+  background: rgba(168, 125, 232, 0.2);
+  border-color: var(--color-essence);
+}
+
+.mini-roll-btn.d3-btn.has-result {
+  border-color: var(--color-essence);
+  background: rgba(168, 125, 232, 0.2);
+}
+
+.mini-result.d3-result {
+  color: var(--color-essence);
+}
+
 /* Modifier button */
 .mini-mod-btn {
   width: 20px;
@@ -394,6 +513,72 @@
 }
 
 /* ============================================
+   COMBAT CONTROLS
+   ============================================ */
+
+.compact-combat-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.mini-combat-btn {
+  width: 28px;
+  height: 24px;
+  border-radius: 4px;
+  background: var(--bg-darkest);
+  border: 1px solid var(--border-dark);
+  font-size: 0.75rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.mini-combat-btn:hover:not(:disabled) {
+  transform: scale(1.05);
+}
+
+.mini-combat-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.mini-combat-btn.draw-steel {
+  background: rgba(239, 83, 80, 0.15);
+  border-color: rgba(239, 83, 80, 0.5);
+}
+
+.mini-combat-btn.draw-steel:hover {
+  background: rgba(239, 83, 80, 0.3);
+  border-color: #ef5350;
+  box-shadow: 0 0 8px rgba(239, 83, 80, 0.4);
+}
+
+.mini-combat-btn.end-combat {
+  background: rgba(77, 232, 178, 0.15);
+  border-color: rgba(77, 232, 178, 0.5);
+}
+
+.mini-combat-btn.end-combat:hover {
+  background: rgba(77, 232, 178, 0.3);
+  border-color: var(--color-success);
+  box-shadow: 0 0 8px rgba(77, 232, 178, 0.4);
+}
+
+.mini-combat-btn.respite {
+  background: rgba(100, 181, 246, 0.15);
+  border-color: rgba(100, 181, 246, 0.5);
+}
+
+.mini-combat-btn.respite:hover:not(:disabled) {
+  background: rgba(100, 181, 246, 0.3);
+  border-color: #64b5f6;
+  box-shadow: 0 0 8px rgba(100, 181, 246, 0.4);
+}
+
+/* ============================================
    EXPAND BUTTON
    ============================================ */
 
@@ -431,6 +616,12 @@
 /* ============================================
    RESPONSIVE COMPACT BAR
    ============================================ */
+
+@media (max-width: 1200px) {
+  .compact-derived {
+    display: none; /* Hide derived stats first on smaller screens */
+  }
+}
 
 @media (max-width: 1100px) {
   .compact-characteristics {

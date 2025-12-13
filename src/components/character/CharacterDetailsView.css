@@ -1,58 +1,152 @@
+/* ============================================
+   CHARACTER DETAILS VIEW - Draw Steel Banner Frame Style
+   ============================================ */
+
+/* === DESIGN TOKENS === */
+:root {
+  --ds-corner-radius: 8px;
+  --ds-header-height: 36px;
+  --ds-chevron-width: 24px;
+  --ds-chevron-depth: 10px;
+  --ds-border-color: #3a3a3a;
+  --ds-border-width: 1px;
+  --ds-section-bg: var(--bg-card, #1a1a1a);
+  --ds-header-bg: var(--bg-darkest, #141414);
+}
+
+/* === GRID LAYOUT === */
 .character-details-view {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 1.5rem;
 }
 
+/* ============================================
+   SECTION FRAME - Base Banner Style
+   ============================================ */
+
 .details-section {
-  background: #1a1a1a;
-  border: 1px solid #2a2a2a;
-  border-radius: 8px;
-  padding: 1.5rem;
+  position: relative;
+  background: var(--ds-section-bg);
+  border: var(--ds-border-width) solid var(--ds-border-color);
+  border-radius: var(--ds-corner-radius);
+  overflow: hidden;
 }
 
+/* === SECTION HEADER WITH CHEVRON === */
 .details-section h2 {
-  margin: 0 0 0.75rem 0;
-  font-size: 1.3rem;
-  color: #4fc3f7;
-  border-bottom: 1px solid #2a2a2a;
-  padding-bottom: 0.5rem;
+  position: relative;
+  margin: 0;
+  padding: 0.6rem 1rem;
+  padding-bottom: calc(0.6rem + var(--ds-chevron-depth));
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  text-align: center;
+  background: var(--ds-header-bg);
+  border-bottom: var(--ds-border-width) solid var(--ds-border-color);
 }
 
+/* Chevron notch below header text */
+.details-section h2::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: calc(var(--ds-chevron-width) / 2) solid transparent;
+  border-right: calc(var(--ds-chevron-width) / 2) solid transparent;
+  border-top: var(--ds-chevron-depth) solid var(--ds-header-bg);
+  z-index: 2;
+}
+
+/* Separator line positioned above chevron */
+.details-section h2::before {
+  content: '';
+  position: absolute;
+  bottom: var(--ds-chevron-depth);
+  left: 0;
+  right: 0;
+  height: var(--ds-border-width);
+  background: var(--ds-border-color);
+  z-index: 1;
+}
+
+/* === SECTION CONTENT AREA === */
+.details-section .section-content {
+  padding: 1rem;
+}
+
+/* Legacy content area (for existing structure) */
+.details-section > *:not(h2) {
+  padding: 0 1rem;
+}
+
+.details-section > *:last-child {
+  padding-bottom: 1rem;
+}
+
+.details-section > h2 + * {
+  padding-top: 1rem;
+}
+
+/* === SECTION H4 SUBHEADERS === */
 .details-section h4 {
   margin: 0 0 0.5rem 0;
-  font-size: 1rem;
-  color: #81c784;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-secondary, #b8b8b0);
 }
 
+/* === DESCRIPTION TEXT === */
 .description {
-  color: #aaa;
+  color: var(--text-muted, #888);
   font-style: italic;
   margin-bottom: 1rem;
   line-height: 1.5;
+  font-size: 0.85rem;
+  padding-left: 1rem;
+  padding-right: 1rem;
 }
 
-/* Ancestry Section */
+/* ============================================
+   ANCESTRY SECTION - Golden Accent
+   ============================================ */
+
+.ancestry-section h2 {
+  color: #f0c674;
+}
+
+.ancestry-section h2::after {
+  border-top-color: var(--ds-header-bg);
+}
+
 .ancestry-stats {
   display: flex;
-  gap: 1.5rem;
+  gap: 0.75rem;
   margin-bottom: 1rem;
   flex-wrap: wrap;
+  padding: 0 1rem;
 }
 
 .ancestry-stats .stat {
-  background: rgba(79, 195, 247, 0.1);
-  padding: 0.5rem 1rem;
+  background: rgba(240, 198, 116, 0.1);
+  padding: 0.4rem 0.8rem;
   border-radius: 4px;
-  color: #4fc3f7;
+  color: #f0c674;
   font-weight: 500;
+  font-size: 0.85rem;
+  border: 1px solid rgba(240, 198, 116, 0.2);
 }
 
 .feature-block {
-  margin-top: 1rem;
-  padding: 1rem;
+  margin: 0 1rem 1rem 1rem;
+  padding: 0.75rem;
   background: rgba(0, 0, 0, 0.3);
-  border-radius: 6px;
+  border-radius: 4px;
 }
 
 .feature-block.signature {
@@ -60,7 +154,12 @@
 }
 
 .feature-block.purchased {
-  border-left: 3px solid #81c784;
+  border-left: 3px solid var(--color-success, #4de8b2);
+}
+
+.feature-block h4 {
+  margin: 0 0 0.5rem 0;
+  color: #f0c674;
 }
 
 .feature {
@@ -73,67 +172,112 @@
 
 .feature p {
   margin: 0.25rem 0 0 0;
-  color: #ccc;
+  color: var(--text-secondary, #b8b8b0);
+  font-size: 0.85rem;
+  line-height: 1.4;
 }
 
 .traits-list {
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
+  gap: 0.5rem;
 }
 
 .trait strong {
-  color: #81c784;
+  color: var(--color-success, #4de8b2);
 }
 
 .trait .cost {
   color: #f0c674;
   margin-left: 0.5rem;
-  font-size: 0.9rem;
+  font-size: 0.8rem;
 }
 
 .trait p {
   margin: 0.25rem 0 0 0;
-  color: #aaa;
-  font-size: 0.9rem;
+  color: var(--text-muted, #888);
+  font-size: 0.85rem;
 }
 
-/* Culture Section */
+/* ============================================
+   CULTURE SECTION - Purple Accent (4-Column Grid)
+   ============================================ */
+
+.culture-section h2 {
+  color: #ba68c8;
+}
+
+.culture-section h4 {
+  color: #ba68c8;
+}
+
 .culture-details {
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1px;
+  background: var(--ds-border-color);
+  margin: 0 1rem 1rem 1rem;
+  padding: 0;
+  border-radius: 4px;
+  overflow: hidden;
+  border: 1px solid var(--ds-border-color);
 }
 
 .culture-aspect {
   padding: 0.75rem;
-  background: rgba(0, 0, 0, 0.3);
-  border-radius: 4px;
+  background: var(--ds-section-bg);
 }
 
 .culture-aspect h4 {
-  margin: 0 0 0.25rem 0;
-  color: #ba68c8;
+  margin: 0 0 0.4rem 0;
+  font-size: 0.8rem;
 }
 
 .culture-aspect p {
   margin: 0;
-  color: #aaa;
-  font-size: 0.9rem;
+  color: var(--text-muted, #888);
+  font-size: 0.8rem;
 }
 
-/* Career Section */
+.culture-aspect .aspect-description {
+  color: var(--text-secondary, #b8b8b0);
+  font-style: italic;
+  line-height: 1.4;
+  margin-bottom: 0.4rem;
+}
+
+.culture-aspect .aspect-skills {
+  color: var(--accent-primary, #4de8b2);
+  font-weight: 500;
+  font-size: 0.75rem;
+}
+
+/* ============================================
+   CAREER SECTION - Orange Accent (2-Column Layout)
+   ============================================ */
+
+.career-section h2 {
+  color: #ffb74d;
+}
+
+.career-section h4 {
+  color: #ffb74d;
+}
+
 .career-details {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.75rem;
+  gap: 0.5rem;
   margin-bottom: 1rem;
+  padding: 0 1rem;
 }
 
 .career-stat {
   background: rgba(0, 0, 0, 0.3);
-  padding: 0.5rem 1rem;
+  padding: 0.4rem 0.8rem;
   border-radius: 4px;
+  font-size: 0.85rem;
+  border: 1px solid var(--ds-border-color);
 }
 
 .career-stat strong {
@@ -141,32 +285,50 @@
 }
 
 .inciting-incident {
-  padding: 1rem;
-  background: rgba(255, 183, 77, 0.1);
-  border-radius: 6px;
+  margin: 0 1rem 1rem 1rem;
+  padding: 0.75rem;
+  background: rgba(255, 183, 77, 0.08);
+  border-radius: 4px;
   border-left: 3px solid #ffb74d;
+  position: relative;
 }
 
 .inciting-incident h4 {
-  color: #ffb74d;
+  margin-bottom: 0.5rem;
 }
 
 .inciting-incident p {
   margin: 0;
-  color: #ccc;
+  color: var(--text-secondary, #b8b8b0);
+  font-style: italic;
+  font-size: 0.9rem;
 }
 
-/* Skills & Languages Section */
+/* ============================================
+   SKILLS & LANGUAGES SECTION - Emerald Accent
+   ============================================ */
+
+.skills-section h2 {
+  color: var(--accent-primary, #4de8b2);
+}
+
+.skills-section h4 {
+  color: var(--text-secondary, #b8b8b0);
+}
+
 .skills-languages-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 1.5rem;
+  gap: 1px;
+  background: var(--ds-border-color);
+  margin: 0 1rem 1rem 1rem;
+  border-radius: 4px;
+  overflow: hidden;
 }
 
 .skills-block, .languages-block {
-  background: rgba(0, 0, 0, 0.3);
-  padding: 1rem;
-  border-radius: 6px;
+  background: var(--ds-section-bg);
+  padding: 0.75rem;
 }
 
 .skills-list, .languages-list {
@@ -175,73 +337,117 @@
   margin: 0;
   display: flex;
   flex-wrap: wrap;
-  gap: 0.5rem;
+  gap: 0.4rem;
 }
 
-.skills-list li, .languages-list li {
-  background: rgba(79, 195, 247, 0.15);
-  padding: 0.4rem 0.8rem;
-  border-radius: 20px;
-  font-size: 0.9rem;
-  color: #4fc3f7;
+.skills-list li {
+  background: rgba(77, 232, 178, 0.1);
+  padding: 0.3rem 0.6rem;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  color: var(--accent-primary, #4de8b2);
+  border: 1px solid rgba(77, 232, 178, 0.2);
 }
 
 .languages-list li {
-  background: rgba(186, 104, 200, 0.15);
+  background: rgba(186, 104, 200, 0.1);
+  padding: 0.3rem 0.6rem;
+  border-radius: 4px;
+  font-size: 0.8rem;
   color: #ba68c8;
+  border: 1px solid rgba(186, 104, 200, 0.2);
 }
 
-/* Kit Section */
+/* ============================================
+   KIT SECTION - Blue Accent
+   ============================================ */
+
+.kit-section h2 {
+  color: #90caf9;
+}
+
+.kit-section h4 {
+  color: #90caf9;
+  font-size: 0.8rem;
+}
+
 .kit-stats {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-  gap: 0.75rem;
-  margin-bottom: 1rem;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1px;
+  background: var(--ds-border-color);
+  margin: 0 1rem 1rem 1rem;
+  border-radius: 4px;
+  overflow: hidden;
 }
 
 .kit-stat {
-  background: rgba(0, 0, 0, 0.3);
-  padding: 0.75rem;
-  border-radius: 4px;
+  background: var(--ds-section-bg);
+  padding: 0.5rem;
   text-align: center;
 }
 
 .kit-stat strong {
   display: block;
-  color: #81c784;
-  margin-bottom: 0.25rem;
-  font-size: 0.85rem;
+  color: #90caf9;
+  margin-bottom: 0.15rem;
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
 .kit-equipment {
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
+  gap: 1px;
+  background: var(--ds-border-color);
+  margin: 0 1rem 1rem 1rem;
+  border-radius: 4px;
+  overflow: hidden;
 }
 
 .equipment-block {
-  padding: 0.75rem;
-  background: rgba(0, 0, 0, 0.3);
-  border-radius: 4px;
+  padding: 0.6rem 0.75rem;
+  background: var(--ds-section-bg);
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
 }
 
 .equipment-block h4 {
-  margin: 0 0 0.25rem 0;
-  color: #90caf9;
-  font-size: 0.9rem;
+  margin: 0;
+  white-space: nowrap;
+  font-size: 0.75rem;
 }
 
 .equipment-block p {
   margin: 0;
-  color: #ccc;
+  color: var(--text-secondary, #b8b8b0);
+  font-size: 0.85rem;
 }
 
-/* Circle Section */
+/* ============================================
+   CIRCLE SECTION - Purple Accent
+   ============================================ */
+
+.circle-section h2 {
+  color: #ce93d8;
+}
+
+.circle-section h4 {
+  color: #ce93d8;
+}
+
 .circle-info {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: 0.4rem;
   margin-bottom: 1rem;
+  padding: 0 1rem;
+}
+
+.circle-stat {
+  font-size: 0.9rem;
 }
 
 .circle-stat strong {
@@ -249,15 +455,15 @@
 }
 
 .formation-info {
-  padding: 1rem;
-  background: rgba(156, 39, 176, 0.1);
-  border-radius: 6px;
-  border-left: 3px solid #9c27b0;
+  margin: 0 1rem 1rem 1rem;
+  padding: 0.75rem;
+  background: rgba(156, 39, 176, 0.08);
+  border-radius: 4px;
+  border: 1px solid rgba(206, 147, 216, 0.2);
 }
 
 .formation-info h4 {
   margin: 0 0 0.5rem 0;
-  color: #ce93d8;
 }
 
 .quick-command-detail strong {
@@ -266,10 +472,153 @@
 
 .quick-command-detail p {
   margin: 0.25rem 0 0 0;
-  color: #aaa;
+  color: var(--text-muted, #888);
+  font-size: 0.85rem;
 }
 
-/* Responsive */
+/* ============================================
+   FORMATION SELECTOR
+   ============================================ */
+
+.formation-selector {
+  margin: 0 1rem 1rem 1rem;
+  padding: 0;
+}
+
+.formation-selector h4 {
+  color: #ce93d8;
+  margin: 0 0 0.75rem 0;
+  font-size: 0.85rem;
+}
+
+.formation-options {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.5rem;
+}
+
+.formation-option {
+  background: var(--bg-darkest, #0a1212);
+  border: 1px solid var(--ds-border-color, #3a3a3a);
+  border-radius: 6px;
+  padding: 0.6rem;
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.formation-option:hover {
+  border-color: rgba(206, 147, 216, 0.5);
+  background: rgba(206, 147, 216, 0.05);
+}
+
+.formation-option.selected {
+  border-color: #ce93d8;
+  background: rgba(206, 147, 216, 0.15);
+  box-shadow: 0 0 10px rgba(206, 147, 216, 0.2);
+}
+
+.formation-option .formation-name {
+  font-weight: 700;
+  font-size: 0.85rem;
+  color: var(--text-primary, #f5f5f0);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.formation-option.selected .formation-name {
+  color: #ce93d8;
+}
+
+.formation-option .formation-desc {
+  font-size: 0.7rem;
+  color: var(--text-secondary, #b8b8b0);
+  line-height: 1.3;
+  font-style: italic;
+}
+
+.formation-option .formation-benefits {
+  list-style: none;
+  padding: 0;
+  margin: 0.25rem 0 0 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.formation-option .formation-benefits li {
+  font-size: 0.65rem;
+  color: var(--accent-primary, #4de8b2);
+  padding-left: 0.75rem;
+  position: relative;
+}
+
+.formation-option .formation-benefits li::before {
+  content: '•';
+  position: absolute;
+  left: 0;
+  color: var(--accent-primary, #4de8b2);
+}
+
+.formation-option.selected .formation-benefits li {
+  color: #ce93d8;
+}
+
+.formation-option.selected .formation-benefits li::before {
+  color: #ce93d8;
+}
+
+@media (max-width: 600px) {
+  .formation-options {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ============================================
+   HOVER EFFECTS
+   ============================================ */
+
+.details-section {
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.ancestry-section:hover {
+  border-color: rgba(240, 198, 116, 0.4);
+  box-shadow: 0 0 15px rgba(240, 198, 116, 0.1);
+}
+
+.culture-section:hover {
+  border-color: rgba(186, 104, 200, 0.4);
+  box-shadow: 0 0 15px rgba(186, 104, 200, 0.1);
+}
+
+.career-section:hover {
+  border-color: rgba(255, 183, 77, 0.4);
+  box-shadow: 0 0 15px rgba(255, 183, 77, 0.1);
+}
+
+.skills-section:hover {
+  border-color: rgba(77, 232, 178, 0.4);
+  box-shadow: 0 0 15px rgba(77, 232, 178, 0.1);
+}
+
+.kit-section:hover {
+  border-color: rgba(144, 202, 249, 0.4);
+  box-shadow: 0 0 15px rgba(144, 202, 249, 0.1);
+}
+
+.circle-section:hover {
+  border-color: rgba(206, 147, 216, 0.4);
+  box-shadow: 0 0 15px rgba(206, 147, 216, 0.1);
+}
+
+/* ============================================
+   RESPONSIVE
+   ============================================ */
+
 @media (max-width: 900px) {
   .character-details-view {
     grid-template-columns: 1fr;
@@ -277,5 +626,64 @@
 
   .skills-languages-grid {
     grid-template-columns: 1fr;
+  }
+
+  .culture-details {
+    grid-template-columns: 1fr;
+  }
+
+  .kit-stats {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 480px) {
+  :root {
+    --ds-chevron-width: 20px;
+    --ds-chevron-depth: 8px;
+  }
+
+  .details-section h2 {
+    font-size: 0.8rem;
+    padding: 0.5rem 0.75rem;
+    padding-bottom: calc(0.5rem + var(--ds-chevron-depth));
+  }
+
+  .ancestry-stats {
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+
+  .career-details {
+    flex-direction: column;
+  }
+}
+
+/* ============================================
+   PRINT STYLES
+   ============================================ */
+
+@media print {
+  .details-section {
+    box-shadow: none !important;
+    border: 1px solid #333;
+  }
+
+  .details-section h2::after {
+    display: none;
+  }
+
+  .details-section h2::before {
+    display: none;
+  }
+
+  .details-section h2 {
+    padding-bottom: 0.6rem;
+    border-bottom: 1px solid #333;
+  }
+
+  .details-section:hover {
+    border-color: #333;
+    box-shadow: none;
   }
 }

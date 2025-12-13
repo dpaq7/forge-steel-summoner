@@ -1,12 +1,30 @@
 import React from 'react';
 import { useSummonerContext } from '../../context/SummonerContext';
 import { languages as allLanguages } from '../../data/reference-data';
+import { formations } from '../../data/formations';
+import { Formation } from '../../types';
 import './CharacterDetailsView.css';
 
 const CharacterDetailsView: React.FC = () => {
-  const { hero } = useSummonerContext();
+  const { hero, updateHero } = useSummonerContext();
 
   if (!hero) return null;
+
+  // Handle formation change
+  const handleFormationChange = (newFormation: Formation) => {
+    if (newFormation === hero.formation) return;
+
+    // Get the quick command associated with this formation
+    const formationData = formations[newFormation];
+    const quickCommand = formationData.quickCommands.find(
+      cmd => cmd.formation === newFormation
+    ) || formationData.quickCommands[0];
+
+    updateHero({
+      formation: newFormation,
+      quickCommand: quickCommand,
+    });
+  };
 
   // Handle both old and new data structures for ancestry
   const ancestryName = hero.ancestry?.name || 'Unknown';
@@ -50,6 +68,41 @@ const CharacterDetailsView: React.FC = () => {
   // Use hero.languages if available, otherwise fall back to old logic for compatibility
   const heroLanguageIds = hero.languages || ['caelian'];
   const uniqueLanguages = heroLanguageIds.map(getLanguageName);
+
+  // Culture aspect descriptions from Draw Steel rules
+  const environmentDescriptions: Record<string, string> = {
+    nomadic: 'A community that travels, never settling in one place for long.',
+    rural: 'A community in farmland, villages, or countryside settlements.',
+    secluded: 'A hidden or isolated community, away from the wider world.',
+    urban: 'A community in a city or large town with bustling activity.',
+    wilderness: 'A community in untamed lands, forests, or harsh terrain.',
+  };
+
+  const organizationDescriptions: Record<string, string> = {
+    bureaucratic: 'A community led by officials, laws, and formal hierarchies.',
+    communal: 'A community where decisions are made collectively by members.',
+  };
+
+  const upbringingDescriptions: Record<string, string> = {
+    academic: 'Raised among scholars, books, and formal education.',
+    creative: 'Raised among artists, musicians, and craftspeople.',
+    labor: 'Raised doing physical work—farming, smithing, or building.',
+    lawless: 'Raised outside the law, learning to survive by any means.',
+    martial: 'Raised among warriors, soldiers, or guards.',
+    noble: 'Raised in privilege with etiquette and social connections.',
+  };
+
+  const getEnvironmentDesc = (name: string): string => {
+    return environmentDescriptions[name.toLowerCase()] || '';
+  };
+
+  const getOrganizationDesc = (name: string): string => {
+    return organizationDescriptions[name.toLowerCase()] || '';
+  };
+
+  const getUpbringingDesc = (name: string): string => {
+    return upbringingDescriptions[name.toLowerCase()] || '';
+  };
 
   return (
     <div className="character-details-view">
@@ -99,20 +152,27 @@ const CharacterDetailsView: React.FC = () => {
           {cultureEnvironment && (
             <div className="culture-aspect">
               <h4>Environment: {cultureEnvironment.name}</h4>
-              <p>Skills: {cultureEnvironment.skills?.join(', ') || 'None'}</p>
+              <p className="aspect-description">{getEnvironmentDesc(cultureEnvironment.name)}</p>
+              {cultureEnvironment.skills && cultureEnvironment.skills.length > 0 && (
+                <p className="aspect-skills">Skills: {cultureEnvironment.skills.join(', ')}</p>
+              )}
             </div>
           )}
 
           {cultureOrganization && (
             <div className="culture-aspect">
               <h4>Organization: {cultureOrganization.name}</h4>
+              <p className="aspect-description">{getOrganizationDesc(cultureOrganization.name)}</p>
             </div>
           )}
 
           {cultureUpbringing && (
             <div className="culture-aspect">
               <h4>Upbringing: {cultureUpbringing.name}</h4>
-              <p>Skills: {cultureUpbringing.skills?.join(', ') || 'None'}</p>
+              <p className="aspect-description">{getUpbringingDesc(cultureUpbringing.name)}</p>
+              {cultureUpbringing.skills && cultureUpbringing.skills.length > 0 && (
+                <p className="aspect-skills">Skills: {cultureUpbringing.skills.join(', ')}</p>
+              )}
             </div>
           )}
         </div>
@@ -237,10 +297,36 @@ const CharacterDetailsView: React.FC = () => {
           </div>
         </div>
 
+        {/* Formation Selector */}
+        <div className="formation-selector">
+          <h4>Formation</h4>
+          <div className="formation-options">
+            {(Object.keys(formations) as Formation[]).map((formationKey) => {
+              const formationData = formations[formationKey];
+              const isSelected = hero.formation === formationKey;
+              return (
+                <button
+                  key={formationKey}
+                  className={`formation-option ${isSelected ? 'selected' : ''}`}
+                  onClick={() => handleFormationChange(formationKey)}
+                >
+                  <span className="formation-name">{formationData.name}</span>
+                  <span className="formation-desc">{formationData.description}</span>
+                  <ul className="formation-benefits">
+                    {formationData.benefits.map((benefit, idx) => (
+                      <li key={idx}>{benefit}</li>
+                    ))}
+                  </ul>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Quick Command for selected formation */}
         <div className="formation-info">
-          <h4>Formation: {hero.formation.charAt(0).toUpperCase() + hero.formation.slice(1)}</h4>
+          <h4>Quick Command: {hero.quickCommand.name}</h4>
           <div className="quick-command-detail">
-            <strong>{hero.quickCommand.name}</strong>
             <p>{hero.quickCommand.description}</p>
           </div>
         </div>

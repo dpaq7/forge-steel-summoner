@@ -10,6 +10,7 @@ import { Squad, MinionTemplate } from '../../types';
 import { calculateMaxMinions } from '../../utils/calculations';
 import { performPowerRoll, PowerRollResult, getTierColor, RollModifier } from '../../utils/dice';
 import SummonMinionCard from '../ui/SummonMinionCard';
+import FixtureCard from '../ui/FixtureCard';
 import './CombatView.css';
 
 const CombatView: React.FC = () => {
@@ -75,6 +76,24 @@ const CombatView: React.FC = () => {
         ...(hero.minionPortraits || {}),
         [minionId]: imageUrl,
       },
+    });
+  };
+
+  // Check if a signature minion is active
+  const isMinionActive = (minionId: string): boolean => {
+    // Default to active if not in inactiveMinions list
+    return !(hero.inactiveMinions || []).includes(minionId);
+  };
+
+  // Toggle minion active state
+  const toggleMinionActive = (minionId: string) => {
+    const currentInactive = hero.inactiveMinions || [];
+    const isCurrentlyInactive = currentInactive.includes(minionId);
+
+    updateHero({
+      inactiveMinions: isCurrentlyInactive
+        ? currentInactive.filter(id => id !== minionId)
+        : [...currentInactive, minionId],
     });
   };
 
@@ -237,6 +256,55 @@ const CombatView: React.FC = () => {
 
   const aliveCount = (squad: Squad) => squad.members.filter(m => m.isAlive).length;
 
+  // Get fixture from portfolio
+  const fixture = hero.portfolio?.fixture;
+
+  // Get fixture portrait
+  const getFixturePortrait = (): string | null => {
+    return hero.fixturePortrait ?? null;
+  };
+
+  // Handle fixture portrait change
+  const handleFixturePortraitChange = (imageUrl: string | null) => {
+    updateHero({
+      fixturePortrait: imageUrl,
+    });
+  };
+
+  // Check if fixture can be summoned
+  const canSummonFixture = (): { canSummon: boolean; reason: string } => {
+    if (!isInCombat) {
+      return { canSummon: false, reason: 'Not in combat' };
+    }
+    if (hero.fixture?.isActive) {
+      return { canSummon: false, reason: 'Fixture already active' };
+    }
+    return { canSummon: true, reason: '' };
+  };
+
+  // Summon the fixture
+  const handleSummonFixture = () => {
+    if (!fixture) return;
+    const check = canSummonFixture();
+    if (!check.canSummon) return;
+
+    const maxStamina = fixture.baseStamina + hero.level;
+    updateHero({
+      fixture: {
+        templateId: fixture.id,
+        currentStamina: maxStamina,
+        isActive: true,
+      },
+    });
+  };
+
+  // Dismiss the fixture
+  const handleDismissFixture = () => {
+    updateHero({
+      fixture: null,
+    });
+  };
+
   return (
     <div className="combat-view-merged">
       {/* Left Panel: Summon Cards (Scrollable) */}
@@ -271,6 +339,7 @@ const CombatView: React.FC = () => {
               <h4 className="section-header">Signature Minions</h4>
               <div className="summon-cards-row">
                 {signatureMinions.map(minion => {
+                  const isActive = isMinionActive(minion.id);
                   const check = canSummon(minion);
                   const { totalMinions, totalCost, multiplier } = getSummonInfo(minion);
                   return (
@@ -278,8 +347,9 @@ const CombatView: React.FC = () => {
                       key={minion.id}
                       minion={minion}
                       isSignature={true}
-                      canSummon={check.canSummon}
-                      reason={check.reason}
+                      isActive={isActive}
+                      canSummon={isActive && check.canSummon}
+                      reason={!isActive ? 'Minion inactive' : check.reason}
                       totalMinions={totalMinions}
                       totalCost={totalCost}
                       multiplier={multiplier}
@@ -287,6 +357,7 @@ const CombatView: React.FC = () => {
                       onSummon={() => handleSummon(minion)}
                       onAdjustMultiplier={(delta) => adjustSummonMultiplier(minion.id, delta)}
                       onImageChange={(url) => handleMinionPortraitChange(minion.id, url)}
+                      onToggleActive={() => toggleMinionActive(minion.id)}
                     />
                   );
                 })}
@@ -379,6 +450,27 @@ const CombatView: React.FC = () => {
                 </div>
               </div>
             )}
+
+            {/* Fixtures */}
+            {fixture && (
+              <div className="summon-section">
+                <h4 className="section-header">Fixtures</h4>
+                <div className="summon-cards-row">
+                  <FixtureCard
+                    fixture={fixture}
+                    heroLevel={hero.level}
+                    isActive={hero.fixture?.isActive || false}
+                    currentStamina={hero.fixture?.currentStamina}
+                    canSummon={canSummonFixture().canSummon}
+                    reason={canSummonFixture().reason}
+                    onSummon={handleSummonFixture}
+                    onDismiss={handleDismissFixture}
+                    imageUrl={getFixturePortrait()}
+                    onImageChange={handleFixturePortraitChange}
+                  />
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -389,7 +481,76 @@ const CombatView: React.FC = () => {
           <h3>Active Squads</h3>
         </div>
 
-        {hero.activeSquads.length === 0 ? (
+        {/* Active Fixture Card */}
+        {fixture && hero.fixture?.isActive && (
+          <div className="active-fixture-card">
+            <div className="active-fixture-header">
+              <div className="fixture-title">
+                <h4>{fixture.name}</h4>
+              </div>
+              <button className="dismiss-btn" onClick={handleDismissFixture} title="Dismiss Fixture">×</button>
+            </div>
+
+            {/* Stamina Bar */}
+            <div className="fixture-hp">
+              <div className="hp-bar">
+                <div
+                  className="hp-fill fixture-fill"
+                  style={{
+                    width: `${((hero.fixture.currentStamina || 0) / (fixture.baseStamina + hero.level)) * 100}%`
+                  }}
+                />
+              </div>
+              <span className="hp-text">{hero.fixture.currentStamina}/{fixture.baseStamina + hero.level}</span>
+            </div>
+
+            {/* Damage Controls */}
+            <div className="damage-controls">
+              <button onClick={() => {
+                const newStamina = Math.max(0, (hero.fixture?.currentStamina || 0) - 1);
+                updateHero({ fixture: { ...hero.fixture!, currentStamina: newStamina } });
+              }}>-1</button>
+              <button onClick={() => {
+                const newStamina = Math.max(0, (hero.fixture?.currentStamina || 0) - 5);
+                updateHero({ fixture: { ...hero.fixture!, currentStamina: newStamina } });
+              }}>-5</button>
+              <button className="heal-btn" onClick={() => {
+                const max = fixture.baseStamina + hero.level;
+                const newStamina = Math.min(max, (hero.fixture?.currentStamina || 0) + 1);
+                updateHero({ fixture: { ...hero.fixture!, currentStamina: newStamina } });
+              }}>+1</button>
+              <button className="heal-btn" onClick={() => {
+                const max = fixture.baseStamina + hero.level;
+                const newStamina = Math.min(max, (hero.fixture?.currentStamina || 0) + 5);
+                updateHero({ fixture: { ...hero.fixture!, currentStamina: newStamina } });
+              }}>+5</button>
+            </div>
+
+            {/* Active Traits */}
+            <div className="fixture-active-traits">
+              {fixture.traits.map((trait, idx) => (
+                <div key={idx} className="fixture-trait">
+                  <span className="trait-name">{trait.name}:</span>
+                  <span className="trait-desc">{trait.description}</span>
+                </div>
+              ))}
+              {hero.level >= 5 && (
+                <div className="fixture-trait unlocked">
+                  <span className="trait-name">{fixture.level5Feature.name}:</span>
+                  <span className="trait-desc">{fixture.level5Feature.description}</span>
+                </div>
+              )}
+              {hero.level >= 9 && (
+                <div className="fixture-trait unlocked">
+                  <span className="trait-name">{fixture.level9Feature.name}:</span>
+                  <span className="trait-desc">{fixture.level9Feature.description}</span>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
+        {hero.activeSquads.length === 0 && !hero.fixture?.isActive ? (
           <div className="no-squads">
             <p>No active squads</p>
             <p className="hint">{isInCombat ? 'Summon minions from the left panel' : 'Start combat to begin'}</p>

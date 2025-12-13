@@ -13,18 +13,19 @@ import MagicItemsView from './components/items/MagicItemsView';
 import InventoryView from './components/inventory/InventoryView';
 import RollHistoryPanel from './components/shared/RollHistoryPanel';
 import CollapsibleHeader from './components/ui/CollapsibleHeader';
+import { ThemeSelector } from './components/theme';
 import './App.css';
 
 type View = 'character' | 'abilities' | 'combat' | 'projects' | 'items' | 'inventory';
 
 function App() {
-  const { hero, setHero } = useSummonerContext();
+  const { hero, setHero, updateHero } = useSummonerContext();
   const { isInCombat, startCombat, endCombat, setOnCombatStartCallback, essenceState } = useCombatContext();
-  const [darkMode, setDarkMode] = useState(true);
   const [activeView, setActiveView] = useState<View>('character');
   const [showCharacterManager, setShowCharacterManager] = useState(false);
   const [showCharacterCreation, setShowCharacterCreation] = useState(false);
   const [showLevelUp, setShowLevelUp] = useState(false);
+  const [showRespiteConfirm, setShowRespiteConfirm] = useState(false);
 
   // Register callback to switch to combat tab when combat starts
   useEffect(() => {
@@ -42,18 +43,34 @@ function App() {
     setShowCharacterCreation(false);
   };
 
+  const handleRespite = () => {
+    if (!hero) return;
+    // Convert victories to XP and reset resources
+    const xpGained = hero.victories;
+    const newXp = (hero.xp || 0) + xpGained;
+
+    updateHero({
+      xp: newXp,
+      victories: 0,
+      stamina: { ...hero.stamina, current: hero.stamina.max },
+      recoveries: { ...hero.recoveries, current: hero.recoveries.max },
+      surges: 0,
+      activeSquads: [], // Dismiss all minions during respite
+    });
+
+    setShowRespiteConfirm(false);
+  };
+
   if (!hero || showCharacterCreation) {
     return (
-      <div className={`app ${darkMode ? 'dark-mode' : ''}`}>
+      <div className="app dark-mode">
         <header className="app-header">
           <h1>Forge Steel Summoner</h1>
           <div className="header-actions">
             <button onClick={() => setShowCharacterManager(true)} className="manage-chars-btn">
               Manage Characters
             </button>
-            <button onClick={() => setDarkMode(!darkMode)}>
-              {darkMode ? 'Light Mode' : 'Dark Mode'}
-            </button>
+            <ThemeSelector />
           </div>
         </header>
         <main className="app-main">
@@ -73,7 +90,7 @@ function App() {
   if (!hero) return null;
 
   return (
-    <div className={`app ${darkMode ? 'dark-mode' : ''}`}>
+    <div className="app dark-mode">
       {/* Minimal Header */}
       <header className="app-header compact">
         <h1>Forge Steel Summoner</h1>
@@ -81,9 +98,7 @@ function App() {
           <button onClick={() => setShowCharacterManager(true)} className="manage-chars-btn">
             Characters
           </button>
-          <button onClick={() => setDarkMode(!darkMode)} className="mode-toggle">
-            {darkMode ? '☀️' : '🌙'}
-          </button>
+          <ThemeSelector />
         </div>
       </header>
 
@@ -106,6 +121,12 @@ function App() {
           victories: hero.victories,
           maxVictories: 12,
           characteristics: hero.characteristics,
+          speed: hero.speed,
+          stability: hero.stability,
+          isInCombat,
+          onStartCombat: startCombat,
+          onEndCombat: endCombat,
+          onRespite: () => setShowRespiteConfirm(true),
         }}
       >
         <CharacterStatsPanel onLevelUp={() => setShowLevelUp(true)} />
@@ -176,6 +197,38 @@ function App() {
 
       {showLevelUp && (
         <LevelUp onClose={() => setShowLevelUp(false)} />
+      )}
+
+      {/* Respite Confirmation Modal */}
+      {showRespiteConfirm && (
+        <div className="modal-overlay" onClick={() => setShowRespiteConfirm(false)}>
+          <div className="respite-modal" onClick={e => e.stopPropagation()}>
+            <h3>Take a Respite?</h3>
+            <p className="respite-description">
+              During a respite, you rest and recover. This will:
+            </p>
+            <ul className="respite-effects">
+              <li>Convert <strong>{hero.victories} victories</strong> to <strong>{hero.victories} XP</strong></li>
+              <li>Restore stamina to maximum ({hero.stamina.max})</li>
+              <li>Restore all recoveries ({hero.recoveries.max})</li>
+              <li>Reset surges to 0</li>
+              <li>Dismiss all active minions</li>
+            </ul>
+            {hero.victories > 0 && (
+              <p className="xp-preview">
+                New XP total: {(hero.xp || 0) + hero.victories}
+              </p>
+            )}
+            <div className="respite-actions">
+              <button className="confirm-btn" onClick={handleRespite}>
+                Take Respite
+              </button>
+              <button className="cancel-btn" onClick={() => setShowRespiteConfirm(false)}>
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
       )}
 
       {/* Roll History Panel - Available globally */}

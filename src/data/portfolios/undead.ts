@@ -522,25 +522,27 @@ const barrowGates: FixtureTemplate = {
     {
       name: 'The Bell Tolls',
       description:
-        'When you summon the Barrow Gates or at the start of each of your turns, each enemy within 5 squares of the gates is frightened of the gates until the start of your next turn.',
+        'Enemies within 3 squares are frightened of the gates (for targets with Intuition less than the average potency of your Reason score).',
     },
     {
-      name: 'Undead Dominion',
+      name: 'Undead Bulwark',
       description:
-        'Your undead minions within 5 squares of the Barrow Gates have damage immunity 2.',
+        'Your undead minions gain Damage Immunity 2 while adjacent to the Barrow Gates.',
     },
   ],
   level5Feature: {
     id: 'barrow_gates_level5',
-    name: 'Deathly Aura',
+    name: 'Memento Mori',
     description:
-      'The radius of The Bell Tolls and Undead Dominion increases to 10 squares. Additionally, frightened enemies take 2 corruption damage.',
+      'The first time an undead minion dies while you have line of effect to the Barrow Gates, you or an ally within 10 squares gains a surge.',
+    levelRequired: 5,
   },
   level9Feature: {
     id: 'barrow_gates_level9',
-    name: 'Gateway to the Beyond',
+    name: 'Open the Gates',
     description:
-      'The Barrow Gates become size 3. As a free maneuver, you can teleport one of your undead minions from anywhere to a square adjacent to the Barrow Gates.',
+      'The Barrow Gates increase to Size 3. Your Rise! ability costs 1 less essence when used within 5 squares of the gates, and risen minions appear adjacent to the gates.',
+    levelRequired: 9,
   },
 };
 

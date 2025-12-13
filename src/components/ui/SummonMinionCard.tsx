@@ -5,6 +5,7 @@ import './SummonMinionCard.css';
 interface SummonMinionCardProps {
   minion: MinionTemplate;
   isSignature: boolean;
+  isActive?: boolean;
   canSummon: boolean;
   reason: string;
   totalMinions: number;
@@ -14,6 +15,7 @@ interface SummonMinionCardProps {
   onSummon: () => void;
   onAdjustMultiplier: (delta: number) => void;
   onImageChange?: (imageUrl: string | null) => void;
+  onToggleActive?: () => void;
 }
 
 const ACCEPTED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
@@ -22,6 +24,7 @@ const MAX_IMAGE_SIZE = 2 * 1024 * 1024;
 export const SummonMinionCard = ({
   minion,
   isSignature,
+  isActive = true,
   canSummon,
   reason,
   totalMinions,
@@ -31,6 +34,7 @@ export const SummonMinionCard = ({
   onSummon,
   onAdjustMultiplier,
   onImageChange,
+  onToggleActive,
 }: SummonMinionCardProps) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [imageHover, setImageHover] = useState(false);
@@ -93,7 +97,7 @@ export const SummonMinionCard = ({
   };
 
   return (
-    <div className={`summon-minion-card ${isSignature ? 'is-signature' : ''} ${!canSummon ? 'disabled' : ''}`}>
+    <div className={`summon-minion-card ${isSignature ? 'is-signature' : ''} ${!isActive ? 'is-inactive' : ''} ${!canSummon ? 'disabled' : ''}`}>
       <div className="summon-card-border" />
 
       <div className="summon-card-content">
@@ -160,6 +164,18 @@ export const SummonMinionCard = ({
             <div className="summon-role-row">
               <span className={`summon-role role-${minion.role.toLowerCase()}`}>{minion.role}</span>
               {isSignature && <span className="signature-badge">Signature</span>}
+              {isSignature && onToggleActive && (
+                <button
+                  className={`active-toggle ${isActive ? 'active' : ''}`}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onToggleActive();
+                  }}
+                  title={isActive ? 'Click to deactivate minion' : 'Click to activate minion'}
+                >
+                  {isActive ? '✓' : '✗'}
+                </button>
+              )}
             </div>
           </div>
 

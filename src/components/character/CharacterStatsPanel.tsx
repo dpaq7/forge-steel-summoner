@@ -358,6 +358,12 @@ const CharacterStatsPanel: React.FC<CharacterStatsPanelProps> = ({ onLevelUp, on
             label="Stability"
             size="sm"
           />
+          <StatBox
+            value={5 + chars.reason}
+            label="Sum. Range"
+            size="sm"
+            title="Summoner's Range: Maximum distance to summon minions and use conjuring abilities (5 + Reason)"
+          />
           {totalBonuses.damage > 0 && (
             <StatBox
               value={`+${totalBonuses.damage}`}

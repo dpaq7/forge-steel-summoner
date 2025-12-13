@@ -407,6 +407,8 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ onComplete }) => 
       notes: '',
       portraitUrl: null,
       minionPortraits: {},
+      fixturePortrait: null,
+      inactiveMinions: [],
       activeConditions: [],
       progressionChoices: {},
       activeProjects: [],

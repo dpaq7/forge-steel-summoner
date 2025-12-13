@@ -19,6 +19,12 @@ interface CompactStatBarData {
     intuition: number;
     presence: number;
   };
+  speed: number;
+  stability: number;
+  isInCombat?: boolean;
+  onStartCombat?: () => void;
+  onEndCombat?: () => void;
+  onRespite?: () => void;
 }
 
 interface CollapsibleHeaderProps {

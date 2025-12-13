@@ -1,4 +1,4 @@
-/* Projects View Styles */
+/* Projects View Styles - Using Theme Variables */
 
 .projects-view {
   padding: 1rem;
@@ -15,15 +15,15 @@
 
 .projects-header h2 {
   margin: 0;
-  color: #4fc3f7;
+  color: var(--accent-bright);
 }
 
 .new-project-btn {
   padding: 0.5rem 1rem;
-  background: linear-gradient(135deg, #4fc3f7, #29b6f6);
+  background: var(--accent-bright);
   border: none;
   border-radius: 4px;
-  color: #000;
+  color: var(--bg-darkest);
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s;
@@ -31,13 +31,14 @@
 
 .new-project-btn:hover {
   transform: translateY(-1px);
-  box-shadow: 0 2px 8px rgba(79, 195, 247, 0.4);
+  box-shadow: var(--shadow-glow);
+  background: var(--accent-glow);
 }
 
 /* Mechanics Reference */
 .mechanics-reference {
-  background: #1a1a2a;
-  border: 1px solid #2a2a3a;
+  background: var(--bg-medium);
+  border: 1px solid var(--border-solid);
   border-radius: 8px;
   padding: 1rem;
   margin-bottom: 1.5rem;
@@ -45,7 +46,7 @@
 
 .mechanics-reference h3 {
   margin: 0 0 0.75rem 0;
-  color: #888;
+  color: var(--text-muted);
   font-size: 0.9rem;
   text-transform: uppercase;
 }
@@ -63,12 +64,12 @@
 }
 
 .mechanic-label {
-  color: #666;
+  color: var(--text-muted);
   font-size: 0.75rem;
 }
 
 .mechanic-value {
-  color: #ccc;
+  color: var(--text-secondary);
   font-size: 0.85rem;
   font-weight: 500;
 }
@@ -80,18 +81,18 @@
 
 .projects-section h3 {
   margin: 0 0 1rem 0;
-  color: #aaa;
+  color: var(--text-secondary);
   font-size: 1rem;
-  border-bottom: 1px solid #2a2a3a;
+  border-bottom: 1px solid var(--border-solid);
   padding-bottom: 0.5rem;
 }
 
 .no-projects {
-  color: #666;
+  color: var(--text-muted);
   font-style: italic;
   padding: 1rem;
   text-align: center;
-  background: #12121a;
+  background: var(--bg-darkest);
   border-radius: 8px;
 }
 
@@ -103,19 +104,19 @@
 }
 
 .project-card {
-  background: #12121a;
-  border: 1px solid #2a2a3a;
+  background: var(--bg-darkest);
+  border: 1px solid var(--border-solid);
   border-radius: 8px;
   overflow: hidden;
   transition: all 0.2s;
 }
 
 .project-card:hover {
-  border-color: #3a3a4a;
+  border-color: var(--accent-dim);
 }
 
 .project-card.expanded {
-  border-color: #4fc3f7;
+  border-color: var(--accent-bright);
 }
 
 .project-card.completed {
@@ -146,23 +147,23 @@
 }
 
 .project-type.research {
-  background: rgba(156, 39, 176, 0.2);
-  color: #ce93d8;
+  background: var(--essence-dim);
+  color: var(--essence);
 }
 
 .project-type.crafting {
-  background: rgba(255, 152, 0, 0.2);
-  color: #ffb74d;
+  background: var(--warning-dim);
+  color: var(--warning);
 }
 
 .project-type.other {
-  background: rgba(76, 175, 80, 0.2);
-  color: #81c784;
+  background: var(--success-dim);
+  color: var(--success);
 }
 
 .project-info h4 {
   margin: 0;
-  color: #e8e8e8;
+  color: var(--text-primary);
   font-size: 1rem;
 }
 
@@ -173,38 +174,38 @@
   gap: 1rem;
 }
 
-.progress-bar {
+.project-card .progress-bar {
   flex: 1;
   height: 8px;
-  background: #2a2a3a;
+  background: var(--border-solid);
   border-radius: 4px;
   overflow: hidden;
 }
 
-.progress-fill {
+.project-card .progress-fill {
   height: 100%;
-  background: linear-gradient(90deg, #4fc3f7, #81d4fa);
+  background: linear-gradient(90deg, var(--accent-dim), var(--accent-bright));
   transition: width 0.3s ease;
 }
 
 .progress-text {
-  color: #888;
+  color: var(--text-muted);
   font-size: 0.85rem;
   min-width: 100px;
   text-align: right;
 }
 
 .expand-icon {
-  color: #666;
+  color: var(--text-muted);
   font-size: 0.8rem;
 }
 
 .completed-badge {
   padding: 0.25rem 0.75rem;
-  background: rgba(76, 175, 80, 0.2);
-  border: 1px solid #4caf50;
+  background: var(--success-dim);
+  border: 1px solid var(--success);
   border-radius: 4px;
-  color: #81c784;
+  color: var(--success);
   font-size: 0.8rem;
   font-weight: 600;
 }
@@ -212,8 +213,8 @@
 /* Project Details */
 .project-details {
   padding: 1rem;
-  border-top: 1px solid #2a2a3a;
-  background: #0a0a15;
+  border-top: 1px solid var(--border-solid);
+  background: var(--bg-darkest);
 }
 
 .roll-controls {
@@ -230,7 +231,7 @@
 }
 
 .modifier-label {
-  color: #888;
+  color: var(--text-muted);
   font-size: 0.85rem;
 }
 
@@ -238,29 +239,29 @@
   width: 32px;
   height: 32px;
   border-radius: 4px;
-  border: 1px solid #3a3a4a;
-  background: #1a1a2a;
-  color: #888;
+  border: 1px solid var(--border-solid);
+  background: var(--bg-medium);
+  color: var(--text-muted);
   cursor: pointer;
   transition: all 0.15s;
 }
 
 .modifier-control button:hover {
-  background: #2a2a3a;
-  border-color: #4fc3f7;
-  color: #4fc3f7;
+  background: var(--bg-light);
+  border-color: var(--accent-bright);
+  color: var(--accent-bright);
 }
 
 .modifier-value {
   min-width: 40px;
   text-align: center;
-  color: #e8e8e8;
+  color: var(--text-primary);
   font-weight: 600;
 }
 
 .roll-btn {
   padding: 0.5rem 1rem;
-  background: linear-gradient(135deg, #9c27b0, #7b1fa2);
+  background: var(--essence);
   border: none;
   border-radius: 4px;
   color: #fff;
@@ -271,7 +272,7 @@
 
 .roll-btn:hover {
   transform: translateY(-1px);
-  box-shadow: 0 2px 8px rgba(156, 39, 176, 0.4);
+  box-shadow: 0 2px 8px var(--essence-dim);
 }
 
 /* Roll History */
@@ -281,7 +282,7 @@
 
 .roll-history h5 {
   margin: 0 0 0.5rem 0;
-  color: #888;
+  color: var(--text-muted);
   font-size: 0.8rem;
   text-transform: uppercase;
 }
@@ -297,24 +298,24 @@
   align-items: center;
   gap: 0.75rem;
   padding: 0.5rem;
-  background: #1a1a2a;
+  background: var(--bg-medium);
   border-radius: 4px;
   font-size: 0.85rem;
 }
 
 .roll-entry.breakthrough {
-  border-left: 3px solid #f0c674;
+  border-left: 3px solid var(--warning);
 }
 
 .roll-result {
-  color: #ccc;
+  color: var(--text-secondary);
 }
 
 .breakthrough-badge {
   padding: 0.2rem 0.5rem;
-  background: rgba(240, 198, 116, 0.2);
+  background: var(--warning-dim);
   border-radius: 4px;
-  color: #f0c674;
+  color: var(--warning);
   font-size: 0.75rem;
   font-weight: 600;
 }
@@ -326,7 +327,7 @@
 
 .project-notes h5 {
   margin: 0 0 0.5rem 0;
-  color: #888;
+  color: var(--text-muted);
   font-size: 0.8rem;
   text-transform: uppercase;
 }
@@ -335,10 +336,10 @@
   width: 100%;
   min-height: 80px;
   padding: 0.5rem;
-  background: #1a1a2a;
-  border: 1px solid #3a3a4a;
+  background: var(--bg-medium);
+  border: 1px solid var(--border-solid);
   border-radius: 4px;
-  color: #e8e8e8;
+  color: var(--text-primary);
   font-size: 0.85rem;
   resize: vertical;
   font-family: inherit;
@@ -346,7 +347,7 @@
 
 .project-notes textarea:focus {
   outline: none;
-  border-color: #4fc3f7;
+  border-color: var(--accent-bright);
 }
 
 /* Project Actions */
@@ -358,16 +359,16 @@
 .delete-btn {
   padding: 0.375rem 0.75rem;
   background: transparent;
-  border: 1px solid #f44336;
+  border: 1px solid var(--danger);
   border-radius: 4px;
-  color: #ef5350;
+  color: var(--danger);
   font-size: 0.8rem;
   cursor: pointer;
   transition: all 0.15s;
 }
 
 .delete-btn:hover {
-  background: rgba(244, 67, 54, 0.1);
+  background: var(--danger-dim);
 }
 
 .delete-btn.small {
@@ -382,7 +383,7 @@
 }
 
 /* New Project Modal */
-.modal-overlay {
+.projects-view .modal-overlay {
   position: fixed;
   inset: 0;
   background: rgba(0, 0, 0, 0.8);
@@ -393,8 +394,8 @@
 }
 
 .new-project-modal {
-  background: #1a1a2a;
-  border: 1px solid #3a3a4a;
+  background: var(--bg-medium);
+  border: 1px solid var(--border-solid);
   border-radius: 8px;
   padding: 1.5rem;
   width: 90%;
@@ -405,7 +406,7 @@
 
 .new-project-modal h3 {
   margin: 0 0 1rem 0;
-  color: #4fc3f7;
+  color: var(--accent-bright);
   font-size: 1.25rem;
 }
 
@@ -418,7 +419,7 @@
 
 .template-section h4 {
   margin: 0 0 0.5rem 0;
-  color: #888;
+  color: var(--text-muted);
   font-size: 0.85rem;
   text-transform: uppercase;
 }
@@ -431,37 +432,37 @@
 
 .template-option {
   padding: 0.5rem;
-  background: #12121a;
-  border: 1px solid #2a2a3a;
+  background: var(--bg-darkest);
+  border: 1px solid var(--border-solid);
   border-radius: 4px;
   cursor: pointer;
   transition: all 0.15s;
 }
 
 .template-option:hover {
-  border-color: #4fc3f7;
+  border-color: var(--accent-bright);
 }
 
 .template-option.selected {
-  border-color: #4fc3f7;
-  background: rgba(79, 195, 247, 0.1);
+  border-color: var(--accent-bright);
+  background: var(--accent-dim);
 }
 
 .template-name {
-  color: #e8e8e8;
+  color: var(--text-primary);
   font-size: 0.85rem;
   font-weight: 500;
 }
 
 .template-goal {
-  color: #666;
+  color: var(--text-muted);
   font-size: 0.75rem;
 }
 
 /* Project Config */
 .project-config {
-  background: #12121a;
-  border: 1px solid #2a2a3a;
+  background: var(--bg-darkest);
+  border: 1px solid var(--border-solid);
   border-radius: 8px;
   padding: 1rem;
   margin-bottom: 1rem;
@@ -473,7 +474,7 @@
 
 .config-field label {
   display: block;
-  color: #888;
+  color: var(--text-muted);
   font-size: 0.8rem;
   margin-bottom: 0.25rem;
 }
@@ -481,16 +482,16 @@
 .config-field input {
   width: 100%;
   padding: 0.5rem;
-  background: #1a1a2a;
-  border: 1px solid #3a3a4a;
+  background: var(--bg-medium);
+  border: 1px solid var(--border-solid);
   border-radius: 4px;
-  color: #e8e8e8;
+  color: var(--text-primary);
   font-size: 0.9rem;
 }
 
 .config-field input:focus {
   outline: none;
-  border-color: #4fc3f7;
+  border-color: var(--accent-bright);
 }
 
 .template-details {
@@ -499,11 +500,11 @@
 
 .template-details p {
   margin: 0.5rem 0;
-  color: #aaa;
+  color: var(--text-secondary);
 }
 
 .template-details strong {
-  color: #888;
+  color: var(--text-muted);
 }
 
 /* Modal Actions */
@@ -513,38 +514,38 @@
   justify-content: flex-end;
 }
 
-.confirm-btn {
+.projects-view .confirm-btn {
   padding: 0.5rem 1.5rem;
-  background: #4fc3f7;
+  background: var(--accent-bright);
   border: none;
   border-radius: 4px;
-  color: #000;
+  color: var(--bg-darkest);
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s;
 }
 
-.confirm-btn:hover:not(:disabled) {
-  background: #81d4fa;
+.projects-view .confirm-btn:hover:not(:disabled) {
+  background: var(--accent-glow);
 }
 
-.confirm-btn:disabled {
+.projects-view .confirm-btn:disabled {
   opacity: 0.5;
   cursor: not-allowed;
 }
 
-.cancel-btn {
+.projects-view .cancel-btn {
   padding: 0.5rem 1.5rem;
   background: transparent;
-  border: 1px solid #3a3a4a;
+  border: 1px solid var(--border-solid);
   border-radius: 4px;
-  color: #888;
+  color: var(--text-muted);
   cursor: pointer;
 }
 
-.cancel-btn:hover {
-  border-color: #666;
-  color: #aaa;
+.projects-view .cancel-btn:hover {
+  border-color: var(--text-muted);
+  color: var(--text-secondary);
 }
 
 /* Responsive */

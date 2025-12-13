@@ -1,8 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useSummonerContext } from '../../context/SummonerContext';
 import { getProgressionForLevel, getCircleUpgrades } from '../../data/progression';
+import { summonerAbilitiesByLevel } from '../../data/abilities/summoner-abilities';
 import { LevelFeature, ProgressionChoices, WardType } from '../../types/progression';
 import { Characteristic } from '../../types/common';
+import { Ability } from '../../types';
 import './LevelUp.css';
 
 interface LevelUpProps {
@@ -16,6 +18,16 @@ const LevelUp: React.FC<LevelUpProps> = ({ onClose }) => {
   if (!hero) return null;
 
   const nextLevel = hero.level + 1;
+
+  // Calculate stamina changes
+  const currentStamina = hero.stamina.max;
+  const baseStamina = 15;
+  const kitStamina = hero.kit?.stamina || 0;
+  const levelBonus = nextLevel >= 2 ? nextLevel * 6 : 0;
+  const newMaxStamina = baseStamina + kitStamina + levelBonus;
+
+  // Get new abilities for this level
+  const newAbilities = summonerAbilitiesByLevel[nextLevel] || [];
 
   if (nextLevel > 10) {
     return (
@@ -31,36 +43,27 @@ const LevelUp: React.FC<LevelUpProps> = ({ onClose }) => {
 
   const progression = getProgressionForLevel(nextLevel);
 
-  if (!progression) {
-    return (
-      <div className="level-up-overlay" onClick={onClose}>
-        <div className="level-up-modal" onClick={(e) => e.stopPropagation()}>
-          <h2>Level Up to {nextLevel}</h2>
-          <p>No special features at this level. Click confirm to level up.</p>
-          <div className="level-up-actions">
-            <button onClick={onClose} className="cancel-btn">Cancel</button>
-            <button onClick={() => handleLevelUp()} className="confirm-btn">Confirm Level Up</button>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
   // Filter circle-specific upgrades for current circle
-  const filteredFeatures = progression.features.map(feature => {
-    if (feature.category === 'circle-upgrade') {
-      const circleChoices = getCircleUpgrades(hero.circle);
-      return {
-        ...feature,
-        choices: circleChoices.map(u => ({
-          id: u.id,
-          name: u.name,
-          description: u.description,
-        })),
-      };
-    }
-    return feature;
-  });
+  const filteredFeatures = useMemo(() => {
+    if (!progression) return [];
+    return progression.features.map(feature => {
+      if (feature.category === 'circle-upgrade') {
+        const circleChoices = getCircleUpgrades(hero.circle);
+        return {
+          ...feature,
+          choices: circleChoices.map(u => ({
+            id: u.id,
+            name: u.name,
+            description: u.description,
+          })),
+        };
+      }
+      return feature;
+    });
+  }, [progression, hero.circle]);
+
+  const automaticFeatures = filteredFeatures.filter(f => f.type === 'automatic');
+  const choiceFeatures = filteredFeatures.filter(f => f.type === 'choice');
 
   const handleChoiceChange = (featureId: string, choiceId: string) => {
     setChoices(prev => ({
@@ -70,12 +73,7 @@ const LevelUp: React.FC<LevelUpProps> = ({ onClose }) => {
   };
 
   const hasAllRequiredChoices = () => {
-    return filteredFeatures.every(feature => {
-      if (feature.type === 'choice') {
-        return choices[feature.id] !== undefined;
-      }
-      return true;
-    });
+    return choiceFeatures.every(feature => choices[feature.id] !== undefined);
   };
 
   const handleLevelUp = () => {
@@ -124,7 +122,7 @@ const LevelUp: React.FC<LevelUpProps> = ({ onClose }) => {
       progressionChoices: newProgressionChoices,
     };
 
-    if (progression.statChanges) {
+    if (progression?.statChanges) {
       const sc = progression.statChanges;
 
       // Update characteristics
@@ -157,12 +155,7 @@ const LevelUp: React.FC<LevelUpProps> = ({ onClose }) => {
       }
     }
 
-    // Recalculate stamina based on new level
-    const baseStamina = 15;
-    const kitStamina = hero.kit?.stamina || 0;
-    const levelBonus = nextLevel >= 2 ? nextLevel * 6 : 0;
-    const newMaxStamina = baseStamina + kitStamina + levelBonus;
-
+    // Update stamina
     updates.stamina = {
       current: newMaxStamina, // Full heal on level up
       max: newMaxStamina,
@@ -173,77 +166,174 @@ const LevelUp: React.FC<LevelUpProps> = ({ onClose }) => {
     onClose();
   };
 
+  // Calculate characteristic preview
+  const getCharPreview = () => {
+    if (!progression?.statChanges) return null;
+    const sc = progression.statChanges;
+    const changes: string[] = [];
+
+    if (sc.reason !== undefined && sc.reason !== hero.characteristics.reason) {
+      changes.push(`Reason: ${hero.characteristics.reason} → ${sc.reason}`);
+    }
+    if (sc.allStats !== undefined) {
+      changes.push(`All Stats: +${sc.allStats}`);
+    }
+
+    return changes.length > 0 ? changes : null;
+  };
+
+  const charPreview = getCharPreview();
+
   return (
     <div className="level-up-overlay" onClick={onClose}>
-      <div className="level-up-modal" onClick={(e) => e.stopPropagation()}>
+      <div className="level-up-modal enhanced" onClick={(e) => e.stopPropagation()}>
+        {/* Header */}
         <div className="level-up-header">
-          <h2>Level Up to {nextLevel}</h2>
+          <div className="level-badge-container">
+            <span className="level-badge old">Lv {hero.level}</span>
+            <span className="level-arrow">→</span>
+            <span className="level-badge new">Lv {nextLevel}</span>
+          </div>
           <button className="close-modal" onClick={onClose}>×</button>
         </div>
 
         <div className="level-up-content">
-          <h3>New Features</h3>
-
-          {filteredFeatures.map((feature) => (
-            <div key={feature.id} className="feature-section">
-              <h4>{feature.name}</h4>
-              <p className="feature-description">{feature.description}</p>
-
-              {feature.type === 'choice' && feature.choices && (
-                <div className="feature-choices">
-                  {feature.choices.map((choice) => (
-                    <label
-                      key={choice.id}
-                      className={`choice-option ${choices[feature.id] === choice.id ? 'selected' : ''}`}
-                    >
-                      <input
-                        type="radio"
-                        name={feature.id}
-                        value={choice.id}
-                        checked={choices[feature.id] === choice.id}
-                        onChange={() => handleChoiceChange(feature.id, choice.id)}
-                      />
-                      <div className="choice-content">
-                        <strong>{choice.name}</strong>
-                        <span>{choice.description}</span>
-                      </div>
-                    </label>
-                  ))}
+          {/* Stats Summary */}
+          <div className="stats-summary">
+            <h3>Stats Changes</h3>
+            <div className="stats-grid">
+              <div className="stat-change">
+                <span className="stat-label">Stamina</span>
+                <span className="stat-values">
+                  <span className="old-value">{currentStamina}</span>
+                  <span className="arrow">→</span>
+                  <span className="new-value highlight">{newMaxStamina}</span>
+                  <span className="delta">(+{newMaxStamina - currentStamina})</span>
+                </span>
+              </div>
+              {charPreview && charPreview.map((change, i) => (
+                <div key={i} className="stat-change">
+                  <span className="stat-values characteristic">{change}</span>
+                </div>
+              ))}
+              {progression?.statChanges?.minionCap && (
+                <div className="stat-change">
+                  <span className="stat-label">Minion Cap</span>
+                  <span className="stat-values">
+                    <span className="new-value">+{progression.statChanges.minionCap}</span>
+                  </span>
+                </div>
+              )}
+              {progression?.statChanges?.essencePerTurn && (
+                <div className="stat-change">
+                  <span className="stat-label">Essence/Turn</span>
+                  <span className="stat-values">
+                    <span className="new-value">{progression.statChanges.essencePerTurn}</span>
+                  </span>
                 </div>
               )}
             </div>
-          ))}
+          </div>
 
-          {progression.statChanges && (
-            <div className="stat-changes-section">
-              <h4>Automatic Changes</h4>
-              <ul>
-                {progression.statChanges.reason && (
-                  <li>Reason increases to {progression.statChanges.reason}</li>
-                )}
-                {progression.statChanges.minionCap && (
-                  <li>Minion cap increases by +{progression.statChanges.minionCap}</li>
-                )}
-                {progression.statChanges.allStats && (
-                  <li>All characteristics increase by +{progression.statChanges.allStats}</li>
-                )}
-                {progression.statChanges.essencePerTurn && (
-                  <li>Essence per turn increases to {progression.statChanges.essencePerTurn}</li>
-                )}
-                {progression.statChanges.freeSummonCount && (
-                  <li>Free summon count increases by +{progression.statChanges.freeSummonCount}</li>
-                )}
-              </ul>
+          {/* New Abilities */}
+          {newAbilities.length > 0 && (
+            <div className="new-abilities-section">
+              <h3>New Abilities</h3>
+              <div className="abilities-list">
+                {newAbilities.map((ability: Ability) => (
+                  <div key={ability.id} className="ability-preview-card">
+                    <div className="ability-header">
+                      <span className="ability-name">{ability.name}</span>
+                      <span className="ability-type">{ability.actionType}</span>
+                    </div>
+                    {ability.keywords && ability.keywords.length > 0 && (
+                      <div className="ability-keywords">
+                        {ability.keywords.join(' • ')}
+                      </div>
+                    )}
+                    <div className="ability-meta">
+                      {ability.essenceCost && (
+                        <span className="ability-cost">{ability.essenceCost} Essence</span>
+                      )}
+                      <span className="ability-distance">{ability.distance}</span>
+                      <span className="ability-target">{ability.target}</span>
+                    </div>
+                    {ability.effect && (
+                      <p className="ability-effect">{ability.effect.substring(0, 150)}{ability.effect.length > 150 ? '...' : ''}</p>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Automatic Features */}
+          {automaticFeatures.length > 0 && (
+            <div className="automatic-features-section">
+              <h3>Automatic Upgrades</h3>
+              <div className="automatic-list">
+                {automaticFeatures.map((feature) => (
+                  <div key={feature.id} className="automatic-feature">
+                    <span className="feature-icon">✦</span>
+                    <div className="feature-info">
+                      <strong>{feature.name}</strong>
+                      <p>{feature.description}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Choice Features */}
+          {choiceFeatures.length > 0 && (
+            <div className="choice-features-section">
+              <h3>Make Your Choices</h3>
+              {choiceFeatures.map((feature) => (
+                <div key={feature.id} className="choice-feature">
+                  <h4>{feature.name}</h4>
+                  <p className="feature-description">{feature.description}</p>
+
+                  <div className="feature-choices">
+                    {feature.choices?.map((choice) => (
+                      <label
+                        key={choice.id}
+                        className={`choice-option ${choices[feature.id] === choice.id ? 'selected' : ''}`}
+                      >
+                        <input
+                          type="radio"
+                          name={feature.id}
+                          value={choice.id}
+                          checked={choices[feature.id] === choice.id}
+                          onChange={() => handleChoiceChange(feature.id, choice.id)}
+                        />
+                        <div className="choice-content">
+                          <strong>{choice.name}</strong>
+                          <span>{choice.description}</span>
+                        </div>
+                      </label>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {/* No progression data */}
+          {!progression && (
+            <div className="no-features">
+              <p>No special features at this level. Your stats will still increase!</p>
             </div>
           )}
         </div>
 
+        {/* Actions */}
         <div className="level-up-actions">
           <button onClick={onClose} className="cancel-btn">Cancel</button>
           <button
             onClick={handleLevelUp}
             className="confirm-btn"
-            disabled={!hasAllRequiredChoices()}
+            disabled={choiceFeatures.length > 0 && !hasAllRequiredChoices()}
           >
             Confirm Level Up
           </button>
