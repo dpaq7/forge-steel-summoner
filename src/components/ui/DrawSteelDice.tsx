@@ -1,6 +1,11 @@
 import { useState, useCallback, useEffect } from 'react';
 import { useRollHistory } from '../../context/RollHistoryContext';
-import { RollModifier } from '../../utils/dice';
+import {
+  EdgeBaneState,
+  resolveEdgeBane,
+  getEdgeBaneDisplay,
+  performPowerRoll,
+} from '../../utils/dice';
 import './DrawSteelDice.css';
 import '../shared/RollHistoryPanel.css';
 
@@ -8,12 +13,14 @@ import '../shared/RollHistoryPanel.css';
 interface PowerRollResult {
   type: 'power';
   dice: [number, number];
-  total: number;
-  modifiedTotal: number;
-  tier: 1 | 2 | 3;
+  naturalTotal: number;       // 2d10 sum
+  edgeBaneBonus: number;      // +2/-2 for edge/bane
+  total: number;              // naturalTotal + edgeBaneBonus + characteristic
+  baseTier: 1 | 2 | 3;        // Tier before double edge/bane
+  tier: 1 | 2 | 3;            // Final tier
+  tierAdjustment: number;     // +1/-1 for double edge/bane
   isCritical: boolean;
-  hasEdge: boolean;
-  hasBane: boolean;
+  edgeBaneState: EdgeBaneState;
   timestamp: number;
   characteristicName?: string;
   characteristicValue?: number;
@@ -31,16 +38,16 @@ interface CharacteristicRoll {
 }
 
 interface DrawSteelDiceProps {
-  rollModifier: RollModifier;
-  onCycleModifier: () => void;
+  edgeBaneState: EdgeBaneState;
+  onEdgeBaneChange: (state: EdgeBaneState) => void;
   className?: string;
   pendingCharacteristic?: CharacteristicRoll | null;
   onCharacteristicRollComplete?: () => void;
 }
 
 export const DrawSteelDice = ({
-  rollModifier,
-  onCycleModifier,
+  edgeBaneState,
+  onEdgeBaneChange,
   className = '',
   pendingCharacteristic,
   onCharacteristicRollComplete,
@@ -52,65 +59,43 @@ export const DrawSteelDice = ({
   const [isRollingPower, setIsRollingPower] = useState(false);
   const [isRollingD3, setIsRollingD3] = useState(false);
   const [showResults, setShowResults] = useState(false);
-  const [activeCharacteristic, setActiveCharacteristic] = useState<CharacteristicRoll | null>(null);
 
   // Roll functions
-  const rollD10 = (): number => Math.floor(Math.random() * 10) + 1;
   const rollD3 = (): number => Math.ceil(Math.random() * 3);
 
-  const getTier = (total: number): 1 | 2 | 3 => {
-    if (total >= 17) return 3;
-    if (total >= 12) return 2;
-    return 1;
-  };
+  // Edge/Bane adjustment functions
+  const addEdge = () => onEdgeBaneChange({ ...edgeBaneState, edges: edgeBaneState.edges + 1 });
+  const removeEdge = () => onEdgeBaneChange({ ...edgeBaneState, edges: Math.max(0, edgeBaneState.edges - 1) });
+  const addBane = () => onEdgeBaneChange({ ...edgeBaneState, banes: edgeBaneState.banes + 1 });
+  const removeBane = () => onEdgeBaneChange({ ...edgeBaneState, banes: Math.max(0, edgeBaneState.banes - 1) });
+  const resetEdgeBane = () => onEdgeBaneChange({ edges: 0, banes: 0 });
+
+  // Get resolved effect
+  const resolved = resolveEdgeBane(edgeBaneState);
 
   // Power Roll (2d10) - optionally with characteristic modifier
   const handlePowerRoll = useCallback((characteristic?: CharacteristicRoll | null) => {
     setIsRollingPower(true);
     setShowResults(true);
 
-    // Store the characteristic for display
-    if (characteristic) {
-      setActiveCharacteristic(characteristic);
-    }
-
     setTimeout(() => {
-      let die1 = rollD10();
-      let die2 = rollD10();
-
-      // Edge: roll extra die, take highest two
-      if (rollModifier === 'edge') {
-        const die3 = rollD10();
-        const sorted = [die1, die2, die3].sort((a, b) => b - a);
-        die1 = sorted[0];
-        die2 = sorted[1];
-      }
-
-      // Bane: roll extra die, take lowest two
-      if (rollModifier === 'bane') {
-        const die3 = rollD10();
-        const sorted = [die1, die2, die3].sort((a, b) => a - b);
-        die1 = sorted[0];
-        die2 = sorted[1];
-      }
-
-      const total = die1 + die2;
       const charMod = characteristic?.value ?? 0;
-      const modifiedTotal = total + charMod;
+      const rollResult = performPowerRoll(charMod, edgeBaneState);
+
       // Crit only on natural 19 or 20 on 2d10
-      const isCritical = total >= 19;
-      // Tier is based on modified total
-      const tier = getTier(modifiedTotal);
+      const isCritical = rollResult.naturalRoll >= 19;
 
       const result: PowerRollResult = {
         type: 'power',
-        dice: [die1, die2],
-        total,
-        modifiedTotal,
-        tier,
+        dice: rollResult.dice,
+        naturalTotal: rollResult.naturalRoll,
+        edgeBaneBonus: rollResult.edgeBaneBonus,
+        total: rollResult.total,
+        baseTier: rollResult.baseTier,
+        tier: rollResult.tier,
+        tierAdjustment: rollResult.tierAdjustment,
         isCritical,
-        hasEdge: rollModifier === 'edge',
-        hasBane: rollModifier === 'bane',
+        edgeBaneState: rollResult.edgeBaneState,
         timestamp: Date.now(),
         characteristicName: characteristic?.name,
         characteristicValue: characteristic?.value,
@@ -122,13 +107,13 @@ export const DrawSteelDice = ({
       // Add to roll history
       const rollLabel = characteristic ? `${characteristic.name} Test` : 'Power Roll';
       addRoll({
-        naturalRoll: total,
-        dice: [die1, die2],
+        naturalRoll: rollResult.naturalRoll,
+        dice: rollResult.dice,
         modifier: charMod,
-        total: modifiedTotal,
-        tier,
-        hadEdge: rollModifier === 'edge',
-        hadBane: rollModifier === 'bane',
+        total: rollResult.total,
+        tier: rollResult.tier,
+        hadEdge: rollResult.hadEdge,
+        hadBane: rollResult.hadBane,
         timestamp: Date.now(),
       }, rollLabel, 'hero');
 
@@ -137,7 +122,7 @@ export const DrawSteelDice = ({
         onCharacteristicRollComplete?.();
       }
     }, 500);
-  }, [rollModifier, addRoll, onCharacteristicRollComplete]);
+  }, [edgeBaneState, addRoll, onCharacteristicRollComplete]);
 
   // Trigger roll when pendingCharacteristic is set
   useEffect(() => {
@@ -169,7 +154,17 @@ export const DrawSteelDice = ({
     setPowerResult(null);
     setD3Result(null);
     setShowResults(false);
-    setActiveCharacteristic(null);
+  };
+
+  // Get CSS class for resolved effect
+  const getResolvedClass = () => {
+    switch (resolved.type) {
+      case 'edge': return 'edge';
+      case 'doubleEdge': return 'double-edge';
+      case 'bane': return 'bane';
+      case 'doubleBane': return 'double-bane';
+      default: return '';
+    }
   };
 
   return (
@@ -187,7 +182,7 @@ export const DrawSteelDice = ({
           {isRollingPower ? (
             <span className="rolling-indicator">&#8635;</span>
           ) : powerResult ? (
-            <span className="die-result">{powerResult.total}</span>
+            <span className="die-result">{powerResult.naturalTotal}</span>
           ) : (
             <span className="die-icon">2d10</span>
           )}
@@ -214,14 +209,51 @@ export const DrawSteelDice = ({
         </div>
       </button>
 
-      {/* Roll Modifier Button */}
-      <button
-        className={`roll-mod-btn ${rollModifier}`}
-        onClick={onCycleModifier}
-        title="Toggle Edge/Bane for Power Rolls"
-      >
-        {rollModifier === 'edge' ? 'Edge' : rollModifier === 'bane' ? 'Bane' : 'Normal'}
-      </button>
+      {/* Edge/Bane Controls */}
+      <div className="edge-bane-controls">
+        <div className="edge-controls">
+          <button
+            className="eb-btn edge-btn"
+            onClick={removeEdge}
+            disabled={edgeBaneState.edges === 0}
+            title="Remove Edge"
+          >-</button>
+          <span className="eb-count edge-count">{edgeBaneState.edges}</span>
+          <button
+            className="eb-btn edge-btn"
+            onClick={addEdge}
+            title="Add Edge"
+          >+</button>
+          <span className="eb-label">Edge</span>
+        </div>
+        <div className="bane-controls">
+          <button
+            className="eb-btn bane-btn"
+            onClick={removeBane}
+            disabled={edgeBaneState.banes === 0}
+            title="Remove Bane"
+          >-</button>
+          <span className="eb-count bane-count">{edgeBaneState.banes}</span>
+          <button
+            className="eb-btn bane-btn"
+            onClick={addBane}
+            title="Add Bane"
+          >+</button>
+          <span className="eb-label">Bane</span>
+        </div>
+        {(edgeBaneState.edges > 0 || edgeBaneState.banes > 0) && (
+          <button
+            className="eb-reset"
+            onClick={resetEdgeBane}
+            title="Reset Edge/Bane"
+          >Reset</button>
+        )}
+      </div>
+
+      {/* Resolved Effect Display */}
+      <div className={`resolved-effect ${getResolvedClass()}`}>
+        {getEdgeBaneDisplay(resolved)}
+      </div>
 
       {/* Roll History Toggle */}
       <button
@@ -249,25 +281,38 @@ export const DrawSteelDice = ({
                 <span className="die-val">[{powerResult.dice[0]}]</span>
                 <span className="op">+</span>
                 <span className="die-val">[{powerResult.dice[1]}]</span>
-                {powerResult.characteristicValue !== undefined && (
+                {powerResult.edgeBaneBonus !== 0 && (
+                  <>
+                    <span className="op">{powerResult.edgeBaneBonus > 0 ? '+' : ''}</span>
+                    <span className={`eb-mod ${powerResult.edgeBaneBonus > 0 ? 'edge' : 'bane'}`}>
+                      {powerResult.edgeBaneBonus}
+                    </span>
+                  </>
+                )}
+                {powerResult.characteristicValue !== undefined && powerResult.characteristicValue !== 0 && (
                   <>
                     <span className="op">{powerResult.characteristicValue >= 0 ? '+' : ''}</span>
                     <span className="char-mod">{powerResult.characteristicValue}</span>
                   </>
                 )}
                 <span className="op">=</span>
-                <span className="result-total">{powerResult.modifiedTotal}</span>
+                <span className="result-total">{powerResult.total}</span>
               </div>
               <div className="result-tier">
-                Tier {powerResult.tier}
+                {powerResult.tierAdjustment !== 0 ? (
+                  <>
+                    <span className="base-tier">Tier {powerResult.baseTier}</span>
+                    <span className="tier-arrow">{powerResult.tierAdjustment > 0 ? '→' : '→'}</span>
+                    <span className="final-tier">Tier {powerResult.tier}</span>
+                    <span className={`tier-adjust ${powerResult.tierAdjustment > 0 ? 'up' : 'down'}`}>
+                      ({powerResult.tierAdjustment > 0 ? '2× Edge' : '2× Bane'})
+                    </span>
+                  </>
+                ) : (
+                  <>Tier {powerResult.tier}</>
+                )}
                 {powerResult.isCritical && <span className="crit-badge">CRIT!</span>}
               </div>
-              {(powerResult.hasEdge || powerResult.hasBane) && (
-                <div className="result-mod">
-                  {powerResult.hasEdge && '(with Edge)'}
-                  {powerResult.hasBane && '(with Bane)'}
-                </div>
-              )}
             </div>
           )}
 

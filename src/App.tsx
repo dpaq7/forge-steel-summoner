@@ -20,7 +20,7 @@ type View = 'character' | 'abilities' | 'combat' | 'projects' | 'items' | 'inven
 
 function App() {
   const { hero, setHero, updateHero } = useSummonerContext();
-  const { isInCombat, startCombat, endCombat, setOnCombatStartCallback, essenceState } = useCombatContext();
+  const { isInCombat, startCombat, endCombat, setOnCombatStartCallback, essenceState, gainEssence, spendEssence } = useCombatContext();
   const [activeView, setActiveView] = useState<View>('character');
   const [showCharacterManager, setShowCharacterManager] = useState(false);
   const [showCharacterCreation, setShowCharacterCreation] = useState(false);
@@ -117,6 +117,7 @@ function App() {
             current: hero.recoveries.current,
             max: hero.recoveries.max,
           },
+          recoveryValue: hero.recoveries.value,
           surges: hero.surges,
           victories: hero.victories,
           maxVictories: 12,
@@ -127,6 +128,26 @@ function App() {
           onStartCombat: startCombat,
           onEndCombat: endCombat,
           onRespite: () => setShowRespiteConfirm(true),
+          onEssenceChange: (newEssence: number) => {
+            const diff = newEssence - essenceState.currentEssence;
+            if (diff > 0) {
+              gainEssence(diff);
+            } else if (diff < 0) {
+              spendEssence(Math.abs(diff));
+            }
+          },
+          onCatchBreath: (healAmount: number) => {
+            if (hero.recoveries.current > 0) {
+              const newStamina = Math.min(hero.stamina.current + healAmount, hero.stamina.max);
+              updateHero({
+                stamina: { ...hero.stamina, current: newStamina },
+                recoveries: { ...hero.recoveries, current: hero.recoveries.current - 1 },
+              });
+            }
+          },
+          onVictoriesChange: (newVictories: number) => {
+            updateHero({ victories: newVictories });
+          },
         }}
       >
         <CharacterStatsPanel onLevelUp={() => setShowLevelUp(true)} />

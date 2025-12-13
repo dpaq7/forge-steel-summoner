@@ -211,22 +211,191 @@
 }
 
 /* ============================================
-   ROLL MODIFIER BUTTON
+   EDGE/BANE CONTROLS
    ============================================ */
 
-.draw-steel-dice .roll-mod-btn {
-  padding: 0.35rem 0.6rem;
-  font-size: 0.65rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  border-radius: 4px;
+.edge-bane-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.35rem 0.5rem;
+  background: var(--bg-darkest);
+  border: 1px solid var(--border-dark);
+  border-radius: 6px;
+}
+
+.edge-controls,
+.bane-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.eb-btn {
+  width: 20px;
+  height: 20px;
+  border-radius: 3px;
   border: 1px solid var(--border-dark);
   background: var(--bg-card);
   color: var(--text-secondary);
+  font-weight: bold;
+  font-size: 0.8rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
+  padding: 0;
+}
+
+.eb-btn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.eb-btn.edge-btn:hover:not(:disabled) {
+  border-color: #5a9a4a;
+  background: rgba(90, 154, 74, 0.2);
+  color: #7aca6a;
+}
+
+.eb-btn.bane-btn:hover:not(:disabled) {
+  border-color: #9a4a5a;
+  background: rgba(154, 74, 90, 0.2);
+  color: #ca6a7a;
+}
+
+.eb-count {
+  font-size: 0.85rem;
+  font-weight: 700;
+  min-width: 16px;
+  text-align: center;
+}
+
+.eb-count.edge-count {
+  color: #7aca6a;
+}
+
+.eb-count.bane-count {
+  color: #ca6a7a;
+}
+
+.eb-label {
+  font-size: 0.6rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: var(--text-muted);
+  margin-left: 0.15rem;
+}
+
+.eb-reset {
+  padding: 0.2rem 0.4rem;
+  font-size: 0.55rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  border-radius: 3px;
+  border: 1px solid var(--border-dark);
+  background: var(--bg-card);
+  color: var(--text-muted);
   cursor: pointer;
   transition: all 0.15s ease;
-  min-width: 52px;
+}
+
+.eb-reset:hover {
+  border-color: var(--accent-primary);
+  color: var(--accent-primary);
+}
+
+/* ============================================
+   RESOLVED EFFECT DISPLAY
+   ============================================ */
+
+.resolved-effect {
+  padding: 0.3rem 0.5rem;
+  font-size: 0.65rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  border-radius: 4px;
+  border: 1px solid var(--border-dark);
+  background: var(--bg-card);
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+.resolved-effect.edge {
+  border-color: #5a9a4a;
+  color: #7aca6a;
+  background: rgba(90, 154, 74, 0.15);
+}
+
+.resolved-effect.double-edge {
+  border-color: #4aca4a;
+  color: #8afa8a;
+  background: rgba(90, 200, 90, 0.2);
+  box-shadow: 0 0 8px rgba(90, 200, 90, 0.3);
+}
+
+.resolved-effect.bane {
+  border-color: #9a4a5a;
+  color: #ca6a7a;
+  background: rgba(154, 74, 90, 0.15);
+}
+
+.resolved-effect.double-bane {
+  border-color: #ca4a5a;
+  color: #fa6a7a;
+  background: rgba(200, 74, 90, 0.2);
+  box-shadow: 0 0 8px rgba(200, 74, 90, 0.3);
+}
+
+/* ============================================
+   RESULT POPUP EDGE/BANE MODIFIERS
+   ============================================ */
+
+.eb-mod {
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+.eb-mod.edge {
+  color: #7aca6a;
+}
+
+.eb-mod.bane {
+  color: #ca6a7a;
+}
+
+.base-tier {
+  color: var(--text-muted);
+  text-decoration: line-through;
+}
+
+.tier-arrow {
+  color: var(--text-muted);
+  margin: 0 0.15rem;
+}
+
+.final-tier {
+  color: var(--text-primary);
+}
+
+.tier-adjust {
+  font-size: 0.55rem;
+  padding: 0.1rem 0.3rem;
+  border-radius: 3px;
+  margin-left: 0.25rem;
+}
+
+.tier-adjust.up {
+  background: rgba(90, 154, 74, 0.2);
+  color: #7aca6a;
+}
+
+.tier-adjust.down {
+  background: rgba(154, 74, 90, 0.2);
+  color: #ca6a7a;
 }
 
 /* ============================================
@@ -280,22 +449,6 @@
   align-items: center;
   justify-content: center;
   padding: 0 3px;
-}
-
-.draw-steel-dice .roll-mod-btn:hover {
-  background: var(--bg-card-hover);
-}
-
-.draw-steel-dice .roll-mod-btn.edge {
-  border-color: #5a9a4a;
-  color: #7aca6a;
-  background: rgba(90, 154, 74, 0.15);
-}
-
-.draw-steel-dice .roll-mod-btn.bane {
-  border-color: #9a4a5a;
-  color: #ca6a7a;
-  background: rgba(154, 74, 90, 0.15);
 }
 
 /* ============================================

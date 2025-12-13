@@ -235,58 +235,25 @@ const InventoryView: React.FC = () => {
       <div className="inventory-main-layout">
         {/* Left Panel - Bonuses, Consumables, Custom Items */}
         <div className="inventory-left-panel">
-          {/* Active Bonuses Summary */}
-          <div className="left-panel-section bonuses-section">
+          {/* Active Effects Summary */}
+          <div className="left-panel-section effects-section">
             <div className="section-header">
-              <h3>Active Bonuses</h3>
+              <h3>Active Effects</h3>
             </div>
-            {hasAnyBonuses ? (
-              <div className="bonuses-list">
-                {totalBonuses.stamina > 0 && (
-                  <div className="bonus-item">
-                    <span className="bonus-icon">❤️</span>
-                    <span className="bonus-label">Stamina</span>
-                    <span className="bonus-value">+{totalBonuses.stamina}</span>
+            {equippedItems.length > 0 ? (
+              <div className="effects-list">
+                {equippedItems.map((item) => (
+                  <div key={item.itemId} className="effect-item">
+                    <div className="effect-item-header">
+                      <span className="effect-item-name">{item.name}</span>
+                      <span className="effect-item-slot">{item.slot}</span>
+                    </div>
+                    <div className="effect-item-text">{item.effect}</div>
                   </div>
-                )}
-                {totalBonuses.stability > 0 && (
-                  <div className="bonus-item">
-                    <span className="bonus-icon">🛡️</span>
-                    <span className="bonus-label">Stability</span>
-                    <span className="bonus-value">+{totalBonuses.stability}</span>
-                  </div>
-                )}
-                {totalBonuses.speed > 0 && (
-                  <div className="bonus-item">
-                    <span className="bonus-icon">⚡</span>
-                    <span className="bonus-label">Speed</span>
-                    <span className="bonus-value">+{totalBonuses.speed}</span>
-                  </div>
-                )}
-                {totalBonuses.damage > 0 && (
-                  <div className="bonus-item damage">
-                    <span className="bonus-icon">⚔️</span>
-                    <span className="bonus-label">Damage</span>
-                    <span className="bonus-value">+{totalBonuses.damage}</span>
-                  </div>
-                )}
-                {totalBonuses.savingThrow > 0 && (
-                  <div className="bonus-item">
-                    <span className="bonus-icon">🎲</span>
-                    <span className="bonus-label">Saving Throws</span>
-                    <span className="bonus-value">+{totalBonuses.savingThrow}</span>
-                  </div>
-                )}
-                {totalBonuses.rangeDistance > 0 && (
-                  <div className="bonus-item">
-                    <span className="bonus-icon">🎯</span>
-                    <span className="bonus-label">Range</span>
-                    <span className="bonus-value">+{totalBonuses.rangeDistance}</span>
-                  </div>
-                )}
+                ))}
               </div>
             ) : (
-              <div className="empty-section-hint">No bonuses active</div>
+              <div className="empty-section-hint">No equipment equipped</div>
             )}
           </div>
 

@@ -4,7 +4,7 @@ import { useCombatContext } from '../../context/CombatContext';
 import { useConditions, SaveResult, BleedingDamageResult } from '../../hooks/useConditions';
 import { useEquipment } from '../../hooks/useEquipment';
 import { ALL_CONDITIONS, ConditionDefinition } from '../../data/conditions';
-import { RollModifier } from '../../utils/dice';
+import { EdgeBaneState } from '../../utils/dice';
 import { Characteristic, ConditionId } from '../../types';
 import PentagonStatBox from '../ui/PentagonStatBox';
 import StatBox from '../shared/StatBox';
@@ -49,7 +49,7 @@ const CharacterStatsPanel: React.FC<CharacterStatsPanelProps> = ({ onLevelUp, on
   const [showNotes, setShowNotes] = useState(false);
   const [editingNotes, setEditingNotes] = useState(false);
   const [notesValue, setNotesValue] = useState('');
-  const [rollModifier, setRollModifier] = useState<RollModifier>('normal');
+  const [edgeBaneState, setEdgeBaneState] = useState<EdgeBaneState>({ edges: 0, banes: 0 });
   const [pendingCharacteristic, setPendingCharacteristic] = useState<{ name: string; value: number } | null>(null);
   const [showRespiteConfirm, setShowRespiteConfirm] = useState(false);
   const [showConditionDropdown, setShowConditionDropdown] = useState(false);
@@ -159,12 +159,6 @@ const CharacterStatsPanel: React.FC<CharacterStatsPanelProps> = ({ onLevelUp, on
   const rollCharacteristic = (char: Characteristic) => {
     const value = chars[char];
     setPendingCharacteristic({ name: charLabels[char], value });
-  };
-
-  const cycleRollModifier = () => {
-    const mods: RollModifier[] = ['normal', 'edge', 'bane'];
-    const currentIdx = mods.indexOf(rollModifier);
-    setRollModifier(mods[(currentIdx + 1) % mods.length]);
   };
 
   const handleConditionClick = (conditionId: ConditionId, def: ConditionDefinition) => {
@@ -341,8 +335,8 @@ const CharacterStatsPanel: React.FC<CharacterStatsPanelProps> = ({ onLevelUp, on
       {/* Row 2.5: Derived Stats, Roll Controls & Conditions */}
       <div className="panel-row derived-row">
         <DrawSteelDice
-          rollModifier={rollModifier}
-          onCycleModifier={cycleRollModifier}
+          edgeBaneState={edgeBaneState}
+          onEdgeBaneChange={setEdgeBaneState}
           pendingCharacteristic={pendingCharacteristic}
           onCharacteristicRollComplete={() => setPendingCharacteristic(null)}
         />

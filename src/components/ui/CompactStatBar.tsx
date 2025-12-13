@@ -1,7 +1,7 @@
 import { useState, useCallback } from 'react';
 import { useRollHistory } from '../../context/RollHistoryContext';
 import { useConditions } from '../../hooks/useConditions';
-import { RollModifier } from '../../utils/dice';
+import { EdgeBaneState, resolveEdgeBane, performPowerRoll } from '../../utils/dice';
 import './CompactStatBar.css';
 
 interface CompactStatBarProps {
@@ -11,6 +11,7 @@ interface CompactStatBarProps {
   stamina: { current: number; max: number };
   essence: number;
   recoveries: { current: number; max: number };
+  recoveryValue: number;
   surges: number;
   victories: number;
   maxVictories: number;
@@ -28,6 +29,9 @@ interface CompactStatBarProps {
   onEndCombat?: () => void;
   onRespite?: () => void;
   onExpand: () => void;
+  onEssenceChange?: (newEssence: number) => void;
+  onCatchBreath?: (healAmount: number) => void;
+  onVictoriesChange?: (newVictories: number) => void;
 }
 
 // Tier calculation
@@ -53,6 +57,7 @@ export const CompactStatBar = ({
   stamina,
   essence,
   recoveries,
+  recoveryValue,
   surges,
   victories,
   maxVictories,
@@ -64,10 +69,13 @@ export const CompactStatBar = ({
   onEndCombat,
   onRespite,
   onExpand,
+  onEssenceChange,
+  onCatchBreath,
+  onVictoriesChange,
 }: CompactStatBarProps) => {
   const { addRoll, history, isHistoryOpen, toggleHistory } = useRollHistory();
-  const { getActiveConditions, getConditionDef } = useConditions();
-  const [rollModifier, setRollModifier] = useState<RollModifier>('normal');
+  const { getActiveConditions, getConditionDef, hasCondition } = useConditions();
+  const [edgeBaneState, setEdgeBaneState] = useState<EdgeBaneState>({ edges: 0, banes: 0 });
   const [lastRoll, setLastRoll] = useState<{ total: number; tier: 1 | 2 | 3 } | null>(null);
   const [isRolling, setIsRolling] = useState(false);
   const [lastD3Roll, setLastD3Roll] = useState<number | null>(null);
@@ -82,16 +90,45 @@ export const CompactStatBar = ({
   // Get active conditions
   const activeConditions = getActiveConditions();
 
-  // Roll D10
-  const rollD10 = (): number => Math.floor(Math.random() * 10) + 1;
+  // Get resolved edge/bane effect
+  const resolved = resolveEdgeBane(edgeBaneState);
 
-  // Cycle roll modifier
-  const cycleRollModifier = () => {
-    setRollModifier(prev => {
-      if (prev === 'normal') return 'edge';
-      if (prev === 'edge') return 'bane';
-      return 'normal';
+  // Cycle through: Normal -> Edge -> 2x Edge -> Bane -> 2x Bane -> Normal
+  const cycleEdgeBane = () => {
+    setEdgeBaneState(prev => {
+      // N -> E
+      if (prev.edges === 0 && prev.banes === 0) return { edges: 1, banes: 0 };
+      // E -> 2E
+      if (prev.edges === 1 && prev.banes === 0) return { edges: 2, banes: 0 };
+      // 2E -> B
+      if (prev.edges === 2 && prev.banes === 0) return { edges: 0, banes: 1 };
+      // B -> 2B
+      if (prev.edges === 0 && prev.banes === 1) return { edges: 0, banes: 2 };
+      // 2B -> N (or any other state)
+      return { edges: 0, banes: 0 };
     });
+  };
+
+  // Get display text for edge/bane button
+  const getEdgeBaneDisplay = (): string => {
+    switch (resolved.type) {
+      case 'edge': return 'E';
+      case 'doubleEdge': return '2E';
+      case 'bane': return 'B';
+      case 'doubleBane': return '2B';
+      default: return 'N';
+    }
+  };
+
+  // Get CSS class for edge/bane button
+  const getEdgeBaneClass = (): string => {
+    switch (resolved.type) {
+      case 'edge': return 'edge';
+      case 'doubleEdge': return 'double-edge';
+      case 'bane': return 'bane';
+      case 'doubleBane': return 'double-bane';
+      default: return 'normal';
+    }
   };
 
   // Handle power roll
@@ -99,47 +136,27 @@ export const CompactStatBar = ({
     setIsRolling(true);
 
     setTimeout(() => {
-      let die1 = rollD10();
-      let die2 = rollD10();
+      const rollResult = performPowerRoll(0, edgeBaneState);
 
-      // Edge: roll extra die, take highest two
-      if (rollModifier === 'edge') {
-        const die3 = rollD10();
-        const sorted = [die1, die2, die3].sort((a, b) => b - a);
-        die1 = sorted[0];
-        die2 = sorted[1];
-      }
-
-      // Bane: roll extra die, take lowest two
-      if (rollModifier === 'bane') {
-        const die3 = rollD10();
-        const sorted = [die1, die2, die3].sort((a, b) => a - b);
-        die1 = sorted[0];
-        die2 = sorted[1];
-      }
-
-      const total = die1 + die2;
-      const tier = getTier(total);
-
-      setLastRoll({ total, tier });
+      setLastRoll({ total: rollResult.total, tier: rollResult.tier });
       setIsRolling(false);
 
       // Add to roll history
       addRoll({
-        naturalRoll: total,
-        dice: [die1, die2],
+        naturalRoll: rollResult.naturalRoll,
+        dice: rollResult.dice,
         modifier: 0,
-        total,
-        tier,
-        hadEdge: rollModifier === 'edge',
-        hadBane: rollModifier === 'bane',
+        total: rollResult.total,
+        tier: rollResult.tier,
+        hadEdge: rollResult.hadEdge,
+        hadBane: rollResult.hadBane,
         timestamp: Date.now(),
       }, 'Power Roll', 'hero');
 
       // Clear result after 3 seconds
       setTimeout(() => setLastRoll(null), 3000);
     }, 300);
-  }, [rollModifier, addRoll]);
+  }, [edgeBaneState, addRoll]);
 
   // Handle d3 roll
   const handleD3Roll = useCallback(() => {
@@ -172,48 +189,101 @@ export const CompactStatBar = ({
     setRollingChar(charName);
 
     setTimeout(() => {
-      let die1 = rollD10();
-      let die2 = rollD10();
+      const rollResult = performPowerRoll(charValue, edgeBaneState);
 
-      // Edge: roll extra die, take highest two
-      if (rollModifier === 'edge') {
-        const die3 = rollD10();
-        const sorted = [die1, die2, die3].sort((a, b) => b - a);
-        die1 = sorted[0];
-        die2 = sorted[1];
-      }
-
-      // Bane: roll extra die, take lowest two
-      if (rollModifier === 'bane') {
-        const die3 = rollD10();
-        const sorted = [die1, die2, die3].sort((a, b) => a - b);
-        die1 = sorted[0];
-        die2 = sorted[1];
-      }
-
-      const naturalRoll = die1 + die2;
-      const total = naturalRoll + charValue;
-      const tier = getTier(total);
-
-      setLastCharRoll({ char: charName, total, tier });
+      setLastCharRoll({ char: charName, total: rollResult.total, tier: rollResult.tier });
       setRollingChar(null);
 
       // Add to roll history
       addRoll({
-        naturalRoll,
-        dice: [die1, die2],
+        naturalRoll: rollResult.naturalRoll,
+        dice: rollResult.dice,
         modifier: charValue,
-        total,
-        tier,
-        hadEdge: rollModifier === 'edge',
-        hadBane: rollModifier === 'bane',
+        total: rollResult.total,
+        tier: rollResult.tier,
+        hadEdge: rollResult.hadEdge,
+        hadBane: rollResult.hadBane,
         timestamp: Date.now(),
       }, `${charName} Test`, 'hero');
 
       // Clear result after 3 seconds
       setTimeout(() => setLastCharRoll(null), 3000);
     }, 300);
-  }, [rollModifier, addRoll]);
+  }, [edgeBaneState, addRoll]);
+
+  // Check if catch breath is available
+  const isDying = stamina.current <= 0;
+  const isBleeding = hasCondition('bleeding');
+  const hasRecoveries = recoveries.current > 0;
+  const canCatchBreath = !isDying && !isBleeding && hasRecoveries;
+
+  // Get catch breath unavailable reason
+  const getCatchBreathReason = (): string | null => {
+    if (isDying) return 'Catch Breath not available - Dying!';
+    if (isBleeding) return 'Catch Breath not available - Bleeding!';
+    if (!hasRecoveries) return 'Catch Breath not available - No recoveries!';
+    return null;
+  };
+
+  // Handle catch breath
+  const handleCatchBreath = useCallback(() => {
+    const reason = getCatchBreathReason();
+    if (reason) {
+      // Log the failure to history
+      addRoll({
+        naturalRoll: 0,
+        dice: [0, 0],
+        modifier: 0,
+        total: 0,
+        tier: 1,
+        hadEdge: false,
+        hadBane: false,
+        timestamp: Date.now(),
+      }, reason, 'hero');
+      return;
+    }
+
+    // Use catch breath - heal for recovery value
+    if (onCatchBreath) {
+      onCatchBreath(recoveryValue);
+      addRoll({
+        naturalRoll: recoveryValue,
+        dice: [recoveryValue, 0],
+        modifier: 0,
+        total: recoveryValue,
+        tier: 3,
+        hadEdge: false,
+        hadBane: false,
+        timestamp: Date.now(),
+      }, `Catch Breath (+${recoveryValue} HP)`, 'hero');
+    }
+  }, [isDying, isBleeding, hasRecoveries, recoveryValue, onCatchBreath, addRoll]);
+
+  // Handle essence change
+  const handleEssenceUp = useCallback(() => {
+    if (onEssenceChange) {
+      onEssenceChange(essence + 1);
+    }
+  }, [essence, onEssenceChange]);
+
+  const handleEssenceDown = useCallback(() => {
+    if (onEssenceChange && essence > 0) {
+      onEssenceChange(essence - 1);
+    }
+  }, [essence, onEssenceChange]);
+
+  // Handle victories change
+  const handleVictoriesUp = useCallback(() => {
+    if (onVictoriesChange && victories < maxVictories) {
+      onVictoriesChange(victories + 1);
+    }
+  }, [victories, maxVictories, onVictoriesChange]);
+
+  const handleVictoriesDown = useCallback(() => {
+    if (onVictoriesChange && victories > 0) {
+      onVictoriesChange(victories - 1);
+    }
+  }, [victories, onVictoriesChange]);
 
   // Calculate Summoner's Range
   const summonersRange = 5 + characteristics.reason;
@@ -238,8 +308,7 @@ export const CompactStatBar = ({
 
       {/* Level */}
       <span className="compact-stat level">
-        <span className="stat-label">Lv</span>
-        <span className="stat-value">{level}</span>
+        <span className="stat-label">Lv{level}</span>
       </span>
 
       <span className="compact-divider">|</span>
@@ -254,21 +323,49 @@ export const CompactStatBar = ({
 
       <span className="compact-divider">|</span>
 
-      {/* Essence */}
-      <span className="compact-stat essence" title="Essence">
-        <span className="stat-icon">&#10022;</span>
-        <span className="stat-value">{essence}</span>
-      </span>
+      {/* Essence with +/- controls */}
+      <div className="compact-stat-group">
+        <span className="compact-stat essence" title="Essence">
+          <span className="stat-icon">&#10022;</span>
+          <span className="stat-value">{essence}</span>
+        </span>
+        <div className="mini-arrows">
+          <button
+            className="mini-arrow-btn"
+            onClick={handleEssenceUp}
+            title="Add Essence"
+          >
+            ▲
+          </button>
+          <button
+            className="mini-arrow-btn"
+            onClick={handleEssenceDown}
+            disabled={essence <= 0}
+            title="Remove Essence"
+          >
+            ▼
+          </button>
+        </div>
+      </div>
 
       <span className="compact-divider">|</span>
 
-      {/* Recoveries */}
-      <span className="compact-stat recoveries" title="Recoveries">
-        <span className="stat-icon">&#10227;</span>
-        <span className="stat-value">{recoveries.current}</span>
-        <span className="stat-separator">/</span>
-        <span className="stat-max">{recoveries.max}</span>
-      </span>
+      {/* Recoveries with Catch Breath */}
+      <div className="compact-stat-group">
+        <span className="compact-stat recoveries" title="Recoveries">
+          <span className="stat-icon">&#10227;</span>
+          <span className="stat-value">{recoveries.current}</span>
+          <span className="stat-separator">/</span>
+          <span className="stat-max">{recoveries.max}</span>
+        </span>
+        <button
+          className={`mini-action-btn cb-btn ${canCatchBreath ? '' : 'disabled'}`}
+          onClick={handleCatchBreath}
+          title={getCatchBreathReason() || `Catch Breath (heal ${recoveryValue})`}
+        >
+          CB
+        </button>
+      </div>
 
       <span className="compact-divider">|</span>
 
@@ -280,14 +377,32 @@ export const CompactStatBar = ({
 
       <span className="compact-divider">|</span>
 
-      {/* Mini Victories Tracker */}
-      <div className="compact-victories" title={`Victories: ${victories}/${maxVictories}`}>
-        {Array.from({ length: Math.min(maxVictories, 12) }, (_, i) => (
-          <span
-            key={i}
-            className={`mini-victory ${i < victories ? 'filled' : ''}`}
-          />
-        ))}
+      {/* Mini Victories Tracker with arrows */}
+      <div className="compact-stat-group victories-group">
+        <button
+          className="mini-arrow-btn horizontal"
+          onClick={handleVictoriesDown}
+          disabled={victories <= 0}
+          title="Remove Victory"
+        >
+          ◀
+        </button>
+        <div className="compact-victories" title={`Victories: ${victories}/${maxVictories}`}>
+          {Array.from({ length: Math.min(maxVictories, 12) }, (_, i) => (
+            <span
+              key={i}
+              className={`mini-victory ${i < victories ? 'filled' : ''}`}
+            />
+          ))}
+        </div>
+        <button
+          className="mini-arrow-btn horizontal"
+          onClick={handleVictoriesUp}
+          disabled={victories >= maxVictories}
+          title="Add Victory"
+        >
+          ▶
+        </button>
       </div>
 
       <span className="compact-divider">|</span>
@@ -457,11 +572,11 @@ export const CompactStatBar = ({
 
         {/* Roll Modifier Toggle */}
         <button
-          className={`mini-mod-btn ${rollModifier}`}
-          onClick={cycleRollModifier}
-          title="Toggle Edge/Bane"
+          className={`mini-mod-btn ${getEdgeBaneClass()}`}
+          onClick={cycleEdgeBane}
+          title="Toggle Edge/Bane (N → E → 2E → B → 2B)"
         >
-          {rollModifier === 'edge' ? 'E' : rollModifier === 'bane' ? 'B' : 'N'}
+          {getEdgeBaneDisplay()}
         </button>
 
         {/* History Toggle */}

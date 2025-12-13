@@ -43,6 +43,7 @@
   flex-direction: column;
   gap: 0.75rem;
   height: 100%;
+  overflow: hidden;
 }
 
 .inventory-right-panel {
@@ -57,6 +58,7 @@
   border: 1px solid var(--border-dark, #2a3a3a);
   border-radius: 8px;
   padding: 0.75rem;
+  overflow: hidden;
 }
 
 .section-header {
@@ -82,55 +84,81 @@
   padding: 0.5rem;
 }
 
-/* Active Bonuses in Left Panel */
-.bonuses-section {
-  flex-shrink: 0;
-}
-
-.bonuses-list {
+/* Active Effects in Left Panel */
+.effects-section {
+  flex: 0 1 auto;
+  max-height: 200px;
+  min-height: 60px;
   display: flex;
   flex-direction: column;
-  gap: 0.35rem;
+  overflow: hidden;
+  /* Remove bottom padding so content uses full space */
+  padding-bottom: 0;
 }
 
-.bonus-item {
+.effects-section .section-header {
+  flex-shrink: 0;
+  position: sticky;
+  top: 0;
+  background: var(--bg-card, #142020);
+  z-index: 1;
+  padding-bottom: 0.5rem;
+  margin-bottom: 0;
+}
+
+.effects-list {
   display: flex;
-  align-items: center;
+  flex-direction: column;
   gap: 0.5rem;
-  padding: 0.35rem 0.5rem;
-  background: rgba(77, 232, 178, 0.08);
-  border-radius: 4px;
+  overflow-y: auto;
+  flex: 1;
+  min-height: 0;
+  padding-bottom: 0.5rem;
+}
+
+.effect-item {
+  padding: 0.5rem;
+  background: rgba(77, 232, 178, 0.06);
+  border: 1px solid rgba(77, 232, 178, 0.15);
+  border-radius: 6px;
   font-size: 0.8rem;
 }
 
-.bonus-item .bonus-icon {
-  font-size: 0.9rem;
+.effect-item-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.35rem;
 }
 
-.bonus-item .bonus-label {
-  flex: 1;
-  color: var(--text-secondary, #888);
-}
-
-.bonus-item .bonus-value {
-  color: var(--color-success, #4de8b2);
+.effect-item-name {
   font-weight: 600;
+  color: var(--accent-primary, #4de8b2);
 }
 
-.bonus-item.damage {
-  background: rgba(232, 84, 84, 0.08);
+.effect-item-slot {
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  color: var(--text-muted, #888);
+  background: rgba(0, 0, 0, 0.2);
+  padding: 0.1rem 0.35rem;
+  border-radius: 3px;
+  letter-spacing: 0.05em;
 }
 
-.bonus-item.damage .bonus-value {
-  color: var(--color-danger, #e85454);
+.effect-item-text {
+  color: var(--text-secondary, #b8b8b0);
+  line-height: 1.4;
+  font-size: 0.75rem;
 }
 
 /* Consumables Panel */
 .consumables-panel {
   flex: 1;
-  min-height: 100px;
+  min-height: 80px;
   display: flex;
   flex-direction: column;
+  overflow: hidden;
 }
 
 .consumables-section.consumables-section--compact {
@@ -140,6 +168,11 @@
   border-top: none;
   margin-top: 0;
   padding-top: 0;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
 }
 
 .consumables-section--compact .consumables-header {
@@ -149,6 +182,9 @@
 .consumables-grid--compact {
   grid-template-columns: repeat(auto-fill, minmax(50px, 1fr));
   gap: 0.35rem;
+  flex: 1;
+  overflow-y: auto;
+  min-height: 0;
 }
 
 .consumable-slot--compact {
@@ -187,6 +223,7 @@
   font-size: 0.75rem;
   cursor: pointer;
   transition: all 0.2s ease;
+  flex-shrink: 0;
 }
 
 .add-consumable-btn-compact:hover {

@@ -2,7 +2,9 @@ import React, { useState } from 'react';
 import {
   performPowerRoll,
   PowerRollResult,
-  RollModifier,
+  EdgeBaneState,
+  resolveEdgeBane,
+  getEdgeBaneDisplay,
   getTierColor,
 } from '../../utils/dice';
 import { Characteristic } from '../../types';
@@ -24,47 +26,36 @@ const DiceRoller: React.FC<DiceRollerProps> = ({
   compact = false,
 }) => {
   const [result, setResult] = useState<PowerRollResult | null>(null);
-  const [rollModifier, setRollModifier] = useState<RollModifier>('normal');
+  const [edgeBaneState, setEdgeBaneState] = useState<EdgeBaneState>({ edges: 0, banes: 0 });
   const [isRolling, setIsRolling] = useState(false);
 
   const handleRoll = () => {
     setIsRolling(true);
 
-    // Add a small delay for animation effect
     setTimeout(() => {
-      const rollResult = performPowerRoll(characteristicValue, rollModifier);
+      const rollResult = performPowerRoll(characteristicValue, edgeBaneState);
       setResult(rollResult);
       setIsRolling(false);
       onRoll?.(rollResult);
     }, 300);
   };
 
-  const cycleModifier = () => {
-    const modifiers: RollModifier[] = ['normal', 'edge', 'bane', 'doubleEdge', 'doubleBane'];
-    const currentIndex = modifiers.indexOf(rollModifier);
-    const nextIndex = (currentIndex + 1) % modifiers.length;
-    setRollModifier(modifiers[nextIndex]);
-  };
+  const resolved = resolveEdgeBane(edgeBaneState);
 
-  const getModifierDisplay = () => {
-    switch (rollModifier) {
-      case 'normal':
-        return 'Normal';
-      case 'edge':
-        return 'Edge';
-      case 'bane':
-        return 'Bane';
-      case 'doubleEdge':
-        return '2x Edge';
-      case 'doubleBane':
-        return '2x Bane';
+  const addEdge = () => setEdgeBaneState(s => ({ ...s, edges: s.edges + 1 }));
+  const removeEdge = () => setEdgeBaneState(s => ({ ...s, edges: Math.max(0, s.edges - 1) }));
+  const addBane = () => setEdgeBaneState(s => ({ ...s, banes: s.banes + 1 }));
+  const removeBane = () => setEdgeBaneState(s => ({ ...s, banes: Math.max(0, s.banes - 1) }));
+  const reset = () => setEdgeBaneState({ edges: 0, banes: 0 });
+
+  const getResolvedClass = () => {
+    switch (resolved.type) {
+      case 'edge': return 'edge';
+      case 'doubleEdge': return 'double-edge';
+      case 'bane': return 'bane';
+      case 'doubleBane': return 'double-bane';
+      default: return '';
     }
-  };
-
-  const getModifierClass = () => {
-    if (rollModifier === 'edge' || rollModifier === 'doubleEdge') return 'edge';
-    if (rollModifier === 'bane' || rollModifier === 'doubleBane') return 'bane';
-    return '';
   };
 
   if (compact) {
@@ -94,13 +85,27 @@ const DiceRoller: React.FC<DiceRollerProps> = ({
       {label && <div className="roller-label">{label}</div>}
 
       <div className="roller-controls">
-        <button
-          className={`modifier-toggle ${getModifierClass()}`}
-          onClick={cycleModifier}
-          title="Click to cycle through roll modifiers"
-        >
-          {getModifierDisplay()}
-        </button>
+        <div className="edge-bane-compact">
+          <div className="eb-row">
+            <button className="eb-btn edge" onClick={removeEdge} disabled={edgeBaneState.edges === 0}>-</button>
+            <span className="eb-val edge">{edgeBaneState.edges}</span>
+            <button className="eb-btn edge" onClick={addEdge}>+</button>
+            <span className="eb-lbl">Edge</span>
+          </div>
+          <div className="eb-row">
+            <button className="eb-btn bane" onClick={removeBane} disabled={edgeBaneState.banes === 0}>-</button>
+            <span className="eb-val bane">{edgeBaneState.banes}</span>
+            <button className="eb-btn bane" onClick={addBane}>+</button>
+            <span className="eb-lbl">Bane</span>
+          </div>
+          {(edgeBaneState.edges > 0 || edgeBaneState.banes > 0) && (
+            <button className="eb-reset" onClick={reset}>Reset</button>
+          )}
+        </div>
+
+        <div className={`resolved-display ${getResolvedClass()}`}>
+          {getEdgeBaneDisplay(resolved)}
+        </div>
 
         <button
           className={`roll-btn ${isRolling ? 'rolling' : ''}`}
@@ -128,9 +133,9 @@ const DiceRoller: React.FC<DiceRollerProps> = ({
             <span className="natural-roll" title="2d10 result">
               [{result.dice[0]}+{result.dice[1]}]
             </span>
-            {result.secondRoll !== undefined && result.secondDice && (
-              <span className="discarded-roll" title="Discarded roll">
-                ([{result.secondDice[0]}+{result.secondDice[1]}])
+            {result.edgeBaneBonus !== 0 && (
+              <span className={`eb-bonus ${result.edgeBaneBonus > 0 ? 'edge' : 'bane'}`}>
+                {result.edgeBaneBonus > 0 ? '+' : ''}{result.edgeBaneBonus}
               </span>
             )}
             {result.modifier !== 0 && (
@@ -141,7 +146,18 @@ const DiceRoller: React.FC<DiceRollerProps> = ({
             )}
           </div>
           <div className="result-tier">
-            Tier {result.tier}
+            {result.tierAdjustment !== 0 ? (
+              <>
+                <span className="base-tier">T{result.baseTier}</span>
+                <span className="tier-arrow">→</span>
+                <span className="final-tier">T{result.tier}</span>
+                <span className={`tier-adj ${result.tierAdjustment > 0 ? 'up' : 'down'}`}>
+                  ({result.tierAdjustment > 0 ? '2×Edge' : '2×Bane'})
+                </span>
+              </>
+            ) : (
+              <>Tier {result.tier}</>
+            )}
           </div>
         </div>
       )}

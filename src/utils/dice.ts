@@ -45,24 +45,6 @@ export const getPowerRollTier = (roll: number): 1 | 2 | 3 => {
 };
 
 /**
- * Roll with advantage (edge in Draw Steel terms) - roll twice, take higher
- */
-export const rollWithEdge = (): number => {
-  const roll1 = rollPowerRoll();
-  const roll2 = rollPowerRoll();
-  return Math.max(roll1.total, roll2.total);
-};
-
-/**
- * Roll with disadvantage (bane in Draw Steel terms) - roll twice, take lower
- */
-export const rollWithBane = (): number => {
-  const roll1 = rollPowerRoll();
-  const roll2 = rollPowerRoll();
-  return Math.min(roll1.total, roll2.total);
-};
-
-/**
  * Parse dice notation like "2d6" or "1d20"
  */
 export const parseDiceNotation = (notation: string): { count: number; sides: number } | null => {
@@ -96,105 +78,187 @@ export const formatRollResult = (roll: number, modifier: number = 0): string => 
 };
 
 /**
+ * Edge/Bane state for a roll
+ * Draw Steel Rules:
+ * - Single Edge: +2 bonus to the roll
+ * - Single Bane: -2 penalty to the roll
+ * - Double Edge (2+ edges, 0 banes): No bonus, tier +1 (max tier 3)
+ * - Double Bane (2+ banes, 0 edges): No penalty, tier -1 (min tier 1)
+ * - Edges and banes cancel each other out
+ */
+export interface EdgeBaneState {
+  edges: number;
+  banes: number;
+}
+
+/**
+ * Resolved edge/bane effect after cancellation
+ */
+export type ResolvedEdgeBane =
+  | { type: 'normal' }
+  | { type: 'edge'; bonus: number }      // +2 bonus
+  | { type: 'bane'; penalty: number }    // -2 penalty
+  | { type: 'doubleEdge' }               // Tier +1
+  | { type: 'doubleBane' };              // Tier -1
+
+/**
+ * Resolve edges and banes after cancellation
+ * Rules:
+ * - 1 edge + 1 bane = normal
+ * - Double edge + double bane = normal
+ * - Double edge + 1 bane = single edge (+2)
+ * - Double bane + 1 edge = single bane (-2)
+ */
+export const resolveEdgeBane = (state: EdgeBaneState): ResolvedEdgeBane => {
+  const netEdges = state.edges - state.banes;
+
+  if (netEdges === 0) {
+    return { type: 'normal' };
+  } else if (netEdges === 1) {
+    return { type: 'edge', bonus: 2 };
+  } else if (netEdges >= 2) {
+    return { type: 'doubleEdge' };
+  } else if (netEdges === -1) {
+    return { type: 'bane', penalty: 2 };
+  } else {
+    // netEdges <= -2
+    return { type: 'doubleBane' };
+  }
+};
+
+/**
+ * Get display text for resolved edge/bane
+ */
+export const getEdgeBaneDisplay = (resolved: ResolvedEdgeBane): string => {
+  switch (resolved.type) {
+    case 'normal': return 'Normal';
+    case 'edge': return 'Edge (+2)';
+    case 'bane': return 'Bane (-2)';
+    case 'doubleEdge': return '2× Edge (Tier +1)';
+    case 'doubleBane': return '2× Bane (Tier -1)';
+  }
+};
+
+/**
  * Detailed roll result for UI display
  */
 export interface PowerRollResult {
   naturalRoll: number;
-  dice: [number, number]; // The two d10s that made up the natural roll
-  secondRoll?: number; // For edge/bane - the discarded 2d10 total
-  secondDice?: [number, number]; // For edge/bane - the discarded dice
-  modifier: number;
-  total: number;
-  tier: 1 | 2 | 3;
+  dice: [number, number];
+  modifier: number;           // Characteristic modifier
+  edgeBaneBonus: number;      // +2 for edge, -2 for bane, 0 for normal/double
+  total: number;              // naturalRoll + modifier + edgeBaneBonus
+  baseTier: 1 | 2 | 3;        // Tier before double edge/bane adjustment
+  tier: 1 | 2 | 3;            // Final tier after adjustments
+  tierAdjustment: number;     // +1 for double edge, -1 for double bane, 0 otherwise
+  edgeBaneState: EdgeBaneState;
+  resolvedEdgeBane: ResolvedEdgeBane;
+  timestamp: number;
+  // Legacy compatibility fields
   hadEdge: boolean;
   hadBane: boolean;
-  timestamp: number;
 }
 
 /**
- * Roll type for edges and banes
+ * Legacy roll modifier type (for backward compatibility)
  */
 export type RollModifier = 'normal' | 'edge' | 'bane' | 'doubleEdge' | 'doubleBane';
 
 /**
- * Perform a full power roll with characteristic modifier (2d10 system)
+ * Convert legacy RollModifier to EdgeBaneState
+ */
+export const rollModifierToEdgeBane = (modifier: RollModifier): EdgeBaneState => {
+  switch (modifier) {
+    case 'normal': return { edges: 0, banes: 0 };
+    case 'edge': return { edges: 1, banes: 0 };
+    case 'bane': return { edges: 0, banes: 1 };
+    case 'doubleEdge': return { edges: 2, banes: 0 };
+    case 'doubleBane': return { edges: 0, banes: 2 };
+  }
+};
+
+/**
+ * Convert EdgeBaneState to display RollModifier (for UI cycling)
+ */
+export const edgeBaneToRollModifier = (state: EdgeBaneState): RollModifier => {
+  const resolved = resolveEdgeBane(state);
+  switch (resolved.type) {
+    case 'normal': return 'normal';
+    case 'edge': return 'edge';
+    case 'bane': return 'bane';
+    case 'doubleEdge': return 'doubleEdge';
+    case 'doubleBane': return 'doubleBane';
+  }
+};
+
+/**
+ * Perform a full power roll with Draw Steel edge/bane mechanics
+ *
+ * Rules:
+ * - Roll 2d10 + characteristic modifier
+ * - Single Edge: Add +2 to the roll
+ * - Single Bane: Subtract 2 from the roll
+ * - Double Edge: Don't modify roll, but increase tier by 1 (max tier 3)
+ * - Double Bane: Don't modify roll, but decrease tier by 1 (min tier 1)
  */
 export const performPowerRoll = (
   characteristicValue: number,
-  rollModifier: RollModifier = 'normal'
+  rollModifierOrState: RollModifier | EdgeBaneState = 'normal'
 ): PowerRollResult => {
-  let naturalRoll: number;
-  let dice: [number, number];
-  let secondRoll: number | undefined;
-  let secondDice: [number, number] | undefined;
+  // Convert legacy modifier to edge/bane state
+  const edgeBaneState: EdgeBaneState = typeof rollModifierOrState === 'string'
+    ? rollModifierToEdgeBane(rollModifierOrState)
+    : rollModifierOrState;
 
-  if (rollModifier === 'normal') {
-    const roll = rollPowerRoll();
-    naturalRoll = roll.total;
-    dice = roll.dice;
-  } else if (rollModifier === 'edge') {
-    const roll1 = rollPowerRoll();
-    const roll2 = rollPowerRoll();
-    if (roll1.total >= roll2.total) {
-      naturalRoll = roll1.total;
-      dice = roll1.dice;
-      secondRoll = roll2.total;
-      secondDice = roll2.dice;
-    } else {
-      naturalRoll = roll2.total;
-      dice = roll2.dice;
-      secondRoll = roll1.total;
-      secondDice = roll1.dice;
-    }
-  } else if (rollModifier === 'bane') {
-    const roll1 = rollPowerRoll();
-    const roll2 = rollPowerRoll();
-    if (roll1.total <= roll2.total) {
-      naturalRoll = roll1.total;
-      dice = roll1.dice;
-      secondRoll = roll2.total;
-      secondDice = roll2.dice;
-    } else {
-      naturalRoll = roll2.total;
-      dice = roll2.dice;
-      secondRoll = roll1.total;
-      secondDice = roll1.dice;
-    }
-  } else if (rollModifier === 'doubleEdge') {
-    const roll1 = rollPowerRoll();
-    const roll2 = rollPowerRoll();
-    const roll3 = rollPowerRoll();
-    const rolls = [roll1, roll2, roll3].sort((a, b) => b.total - a.total);
-    naturalRoll = rolls[0].total;
-    dice = rolls[0].dice;
-    secondRoll = rolls[1].total;
-    secondDice = rolls[1].dice;
-  } else {
-    // doubleBane
-    const roll1 = rollPowerRoll();
-    const roll2 = rollPowerRoll();
-    const roll3 = rollPowerRoll();
-    const rolls = [roll1, roll2, roll3].sort((a, b) => a.total - b.total);
-    naturalRoll = rolls[0].total;
-    dice = rolls[0].dice;
-    secondRoll = rolls[1].total;
-    secondDice = rolls[1].dice;
+  // Resolve edge/bane after cancellation
+  const resolved = resolveEdgeBane(edgeBaneState);
+
+  // Roll 2d10
+  const roll = rollPowerRoll();
+  const naturalRoll = roll.total;
+  const dice = roll.dice;
+
+  // Calculate edge/bane bonus (only for single edge/bane)
+  let edgeBaneBonus = 0;
+  if (resolved.type === 'edge') {
+    edgeBaneBonus = resolved.bonus; // +2
+  } else if (resolved.type === 'bane') {
+    edgeBaneBonus = -resolved.penalty; // -2
   }
 
-  const total = naturalRoll + characteristicValue;
-  const tier = getPowerRollTier(total);
+  // Calculate total
+  const total = naturalRoll + characteristicValue + edgeBaneBonus;
+
+  // Determine base tier
+  const baseTier = getPowerRollTier(total);
+
+  // Apply tier adjustment for double edge/bane
+  let tierAdjustment = 0;
+  let finalTier: 1 | 2 | 3 = baseTier;
+
+  if (resolved.type === 'doubleEdge') {
+    tierAdjustment = 1;
+    finalTier = Math.min(3, baseTier + 1) as 1 | 2 | 3;
+  } else if (resolved.type === 'doubleBane') {
+    tierAdjustment = -1;
+    finalTier = Math.max(1, baseTier - 1) as 1 | 2 | 3;
+  }
 
   return {
     naturalRoll,
     dice,
-    secondRoll,
-    secondDice,
     modifier: characteristicValue,
+    edgeBaneBonus,
     total,
-    tier,
-    hadEdge: rollModifier === 'edge' || rollModifier === 'doubleEdge',
-    hadBane: rollModifier === 'bane' || rollModifier === 'doubleBane',
+    baseTier,
+    tier: finalTier,
+    tierAdjustment,
+    edgeBaneState,
+    resolvedEdgeBane: resolved,
     timestamp: Date.now(),
+    // Legacy compatibility
+    hadEdge: resolved.type === 'edge' || resolved.type === 'doubleEdge',
+    hadBane: resolved.type === 'bane' || resolved.type === 'doubleBane',
   };
 };
 

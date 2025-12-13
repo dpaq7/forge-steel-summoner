@@ -9,6 +9,7 @@ interface CompactStatBarData {
   stamina: { current: number; max: number };
   essence: number;
   recoveries: { current: number; max: number };
+  recoveryValue: number;
   surges: number;
   victories: number;
   maxVictories: number;
@@ -25,6 +26,9 @@ interface CompactStatBarData {
   onStartCombat?: () => void;
   onEndCombat?: () => void;
   onRespite?: () => void;
+  onEssenceChange?: (newEssence: number) => void;
+  onCatchBreath?: (healAmount: number) => void;
+  onVictoriesChange?: (newVictories: number) => void;
 }
 
 interface CollapsibleHeaderProps {

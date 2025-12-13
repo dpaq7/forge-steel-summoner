@@ -4,7 +4,7 @@
   position: fixed;
   top: 140px;
   left: 16px;
-  width: 320px;
+  width: 360px;
   max-height: 400px;
   background: var(--bg-primary, #1a1a1a);
   border: 1px solid var(--border-color, #444);
@@ -116,9 +116,6 @@
   flex: 1;
   font-size: 0.8125rem;
   font-weight: 600;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
 }
 
 .entry-time {
