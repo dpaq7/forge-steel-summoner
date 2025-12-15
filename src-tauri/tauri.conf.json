@@ -2,7 +2,7 @@
   "$schema": "../node_modules/@tauri-apps/cli/config.schema.json",
   "productName": "Mettle",
   "version": "0.3.4",
-  "identifier": "com.mettle.app",
+  "identifier": "com.mettle.drawsteel",
   "build": {
     "frontendDist": "../dist",
     "devUrl": "http://localhost:5173",
