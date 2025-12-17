@@ -3,7 +3,7 @@
 > A comprehensive character manager for [Draw Steel](https://mcdm.gg/DrawSteel) TTRPG by MCDM Productions.
 
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
-[![Version](https://img.shields.io/badge/version-0.4.0-green.svg)]()
+[![Version](https://img.shields.io/badge/version-0.4.1-green.svg)]()
 
 ## Features
 
@@ -165,6 +165,7 @@ npm run tauri build -- --target universal-apple-darwin
 
 ## Version History
 
+- **v0.4.1** - iCloud sync fix for Tauri build artifacts
 - **v0.4.0** - Complete shadcn/ui migration with fantasy theming, accessible components
 - **v0.3.5** - Class progression system, stamina/dying fixes, UI improvements
 - **v0.3.4** - Class ability widgets, legal attribution modal, theme fixes
