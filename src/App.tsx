@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect } from 'react';
 import { useHeroContext } from './context/HeroContext';
 import { useCombatContext } from './context/CombatContext';
 import { useTheme } from './context/ThemeContext';
@@ -22,6 +22,16 @@ import { RoutinesView } from './components/classDetails/TroubadourDetails';
 import { FerocityTrackerView } from './components/classDetails/FuryDetails';
 import { getTabsForClass, ViewType } from './data/class-tabs';
 import { HeroClass } from './types/hero';
+import {
+  AlertDialog,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogAction,
+  AlertDialogCancel,
+} from '@/components/ui/shadcn';
 import './App.css';
 
 type View = ViewType;
@@ -270,36 +280,38 @@ function App() {
       )}
 
       {/* Respite Confirmation Modal */}
-      {showRespiteConfirm && (
-        <div className="modal-overlay" onClick={() => setShowRespiteConfirm(false)}>
-          <div className="respite-modal" onClick={e => e.stopPropagation()}>
-            <h3>Take a Respite?</h3>
-            <p className="respite-description">
-              During a respite, you rest and recover. This will:
-            </p>
-            <ul className="respite-effects">
-              <li>Convert <strong>{hero.victories} victories</strong> to <strong>{hero.victories} XP</strong></li>
-              <li>Restore stamina to maximum ({hero.stamina.max})</li>
-              <li>Restore all recoveries ({hero.recoveries.max})</li>
-              <li>Reset surges to 0</li>
-              <li>Dismiss all active minions</li>
-            </ul>
-            {hero.victories > 0 && (
-              <p className="xp-preview">
-                New XP total: {(hero.xp || 0) + hero.victories}
-              </p>
-            )}
-            <div className="respite-actions">
-              <button className="confirm-btn" onClick={handleRespite}>
-                Take Respite
-              </button>
-              <button className="cancel-btn" onClick={() => setShowRespiteConfirm(false)}>
-                Cancel
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      <AlertDialog open={showRespiteConfirm} onOpenChange={setShowRespiteConfirm}>
+        <AlertDialogContent variant="fantasy">
+          <AlertDialogHeader>
+            <AlertDialogTitle>Take a Respite?</AlertDialogTitle>
+            <AlertDialogDescription asChild>
+              <div className="text-left">
+                <p className="mb-3">
+                  During a respite, you rest and recover. This will:
+                </p>
+                <ul className="list-disc list-inside space-y-1 text-[var(--text-secondary)] mb-3">
+                  <li>Convert <strong className="text-[var(--accent-bright)]">{hero.victories} victories</strong> to <strong className="text-[var(--xp)]">{hero.victories} XP</strong></li>
+                  <li>Restore stamina to maximum ({hero.stamina.max})</li>
+                  <li>Restore all recoveries ({hero.recoveries.max})</li>
+                  <li>Reset surges to 0</li>
+                  {isSummoner && <li>Dismiss all active minions</li>}
+                </ul>
+                {hero.victories > 0 && (
+                  <p className="text-[var(--xp)] font-medium">
+                    New XP total: {(hero.xp || 0) + hero.victories}
+                  </p>
+                )}
+              </div>
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={handleRespite}>
+              Take Respite
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
 
       {/* Roll History Panel - Available globally */}
       <RollHistoryPanel />

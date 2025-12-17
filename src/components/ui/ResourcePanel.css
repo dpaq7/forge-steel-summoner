@@ -113,4 +113,9 @@
   margin-bottom: -15px;
 }
 
+/* Stamina box in inline-resources mode */
+.resource-panel.inline-resources .stamina-box {
+  margin-top: 0.25rem;
+}
+
 /* Section headers visible in inline-resources */

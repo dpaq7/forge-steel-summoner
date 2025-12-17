@@ -13,6 +13,7 @@ interface ResourcePanelProps {
     temporary: number;
     winded: boolean;
     dying: boolean;
+    dead?: boolean;
     dyingThreshold: number;
   };
   recoveries: {
@@ -70,11 +71,13 @@ const ResourcePanel: React.FC<ResourcePanelProps> = ({
           temporary={stamina.temporary}
           winded={stamina.winded}
           dying={stamina.dying}
+          dead={stamina.dead}
           dyingThreshold={stamina.dyingThreshold}
           onCurrentChange={(v) => onStaminaChange({ current: v })}
           onTemporaryChange={(v) => onStaminaChange({ temporary: v })}
           onWindedChange={(v) => onStaminaChange({ winded: v })}
           onDyingChange={(v) => onStaminaChange({ dying: v })}
+          onDeadChange={(v) => onStaminaChange({ dead: v })}
           onDyingTriggered={onDyingTriggered}
         />
       </div>

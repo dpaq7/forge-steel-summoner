@@ -7,24 +7,26 @@ interface StaminaTrackerProps {
   temporary: number;
   winded: boolean;
   dying: boolean;
-  dyingThreshold: number; // Kept for API compatibility but ignored - dying is at 0 HP
+  dead?: boolean;
+  dyingThreshold: number;
   onCurrentChange: (value: number) => void;
   onMaxChange?: (value: number) => void;
   onTemporaryChange: (value: number) => void;
   onWindedChange: (value: boolean) => void;
   onDyingChange: (value: boolean) => void;
-  onDyingTriggered?: () => void; // Called when hero becomes dying (for bleeding)
+  onDeadChange?: (value: boolean) => void;
+  onDyingTriggered?: () => void;
   className?: string;
 }
 
 /**
- * Stamina Tracker component matching Draw Steel character sheet.
- * Shows current stamina with adjustment arrows, temporary/max boxes,
- * and Winded/Dying/Dead indicators below.
+ * Stamina Tracker - Unified Box Layout (2-Row)
+ * Top Row: [Current + ▲▼] | [Temp / Max stacked]
+ * Bottom Row: ◇ Winded | ◇ Dying | ◇ Dead
  *
  * Draw Steel rules:
  * - Winded: current <= max/2
- * - Dying: current <= 0 (causes bleeding condition)
+ * - Dying: current <= 0
  * - Dead: current <= -max/2
  */
 const StaminaTracker: React.FC<StaminaTrackerProps> = ({
@@ -33,12 +35,14 @@ const StaminaTracker: React.FC<StaminaTrackerProps> = ({
   temporary,
   winded,
   dying,
-  dyingThreshold: _dyingThreshold, // Ignored - dying is at 0 HP per Draw Steel rules
+  dead = false,
+  dyingThreshold: _dyingThreshold,
   onCurrentChange,
   onMaxChange,
   onTemporaryChange,
   onWindedChange,
   onDyingChange,
+  onDeadChange,
   onDyingTriggered,
   className = '',
 }) => {
@@ -46,11 +50,8 @@ const StaminaTracker: React.FC<StaminaTrackerProps> = ({
   const windedThreshold = Math.floor(max / 2);
   const deathThreshold = -Math.floor(max / 2);
 
-  // Auto-calculate winded status: current <= max/2
   const isAutoWinded = current <= windedThreshold;
-  // Dying: current <= 0
   const isAutoDying = current <= 0;
-  // Dead: current <= -max/2
   const isAutoDead = current <= deathThreshold;
 
   // Track previous dying state to detect when hero becomes dying
@@ -61,7 +62,6 @@ const StaminaTracker: React.FC<StaminaTrackerProps> = ({
     const wasDying = prevDyingRef.current;
     const nowDying = isAutoDying || dying;
 
-    // Only trigger when transitioning to dying state
     if (!wasDying && nowDying && onDyingTriggered) {
       onDyingTriggered();
     }
@@ -72,32 +72,22 @@ const StaminaTracker: React.FC<StaminaTrackerProps> = ({
   const handleCurrentChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const value = parseInt(e.target.value, 10);
     if (!isNaN(value)) {
-      // Allow negative values up to -winded threshold (death occurs at negative winded value)
-      const minValue = -Math.floor(max / 2);
+      const minValue = deathThreshold;
       onCurrentChange(Math.max(minValue, Math.min(max + temporary, value)));
     }
-  }, [max, temporary, onCurrentChange]);
+  }, [max, temporary, deathThreshold, onCurrentChange]);
 
   const handleIncrement = useCallback(() => {
-    const maxValue = max + temporary;
-    if (current < maxValue) {
+    if (current < max + temporary) {
       onCurrentChange(current + 1);
     }
   }, [current, max, temporary, onCurrentChange]);
 
   const handleDecrement = useCallback(() => {
-    const minValue = -Math.floor(max / 2);
-    if (current > minValue) {
+    if (current > deathThreshold) {
       onCurrentChange(current - 1);
     }
-  }, [current, max, onCurrentChange]);
-
-  const handleMaxChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = parseInt(e.target.value, 10);
-    if (!isNaN(value) && value >= 1) {
-      onMaxChange?.(value);
-    }
-  }, [onMaxChange]);
+  }, [current, deathThreshold, onCurrentChange]);
 
   const handleTemporaryChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const value = parseInt(e.target.value, 10);
@@ -108,75 +98,80 @@ const StaminaTracker: React.FC<StaminaTrackerProps> = ({
     }
   }, [onTemporaryChange]);
 
+  const handleMaxChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = parseInt(e.target.value, 10);
+    if (!isNaN(value) && value >= 1) {
+      onMaxChange?.(value);
+    }
+  }, [onMaxChange]);
+
   return (
-    <div className={`stamina-tracker ${className}`}>
-      {/* Main Stamina Box */}
-      <div className="stamina-main-box">
-        <div className="stamina-current-section">
+    <div className={`stamina-box ${className}`}>
+      {/* Top Row: Current + Adjusters | Temp/Max Stack */}
+      <div className="stamina-top-row">
+        {/* Current Stamina Cell */}
+        <div className="stamina-cell current-cell">
           <input
             type="number"
             className="stamina-input current"
             value={current}
             onChange={handleCurrentChange}
+            aria-label="Current stamina"
           />
+          <div className="adjust-buttons">
+            <button
+              className="adjust-btn up"
+              onClick={handleIncrement}
+              disabled={current >= max + temporary}
+              aria-label="Increase stamina"
+              type="button"
+            >▲</button>
+            <button
+              className="adjust-btn down"
+              onClick={handleDecrement}
+              disabled={current <= deathThreshold}
+              aria-label="Decrease stamina"
+              type="button"
+            >▼</button>
+          </div>
         </div>
 
-        <div className="stamina-adjust-section">
-          <button
-            className="stamina-adjust-btn up"
-            onClick={handleIncrement}
-            disabled={current >= max + temporary}
-            aria-label="Increase stamina"
-            type="button"
-          >
-            ▲
-          </button>
-          <button
-            className="stamina-adjust-btn down"
-            onClick={handleDecrement}
-            disabled={current <= -Math.floor(max / 2)}
-            aria-label="Decrease stamina"
-            type="button"
-          >
-            ▼
-          </button>
-        </div>
-      </div>
-
-      {/* Temporary and Max - compact row */}
-      <div className="stamina-secondary-row">
-        <div className="stamina-box-compact">
-          <span className="box-label">Temp</span>
-          <input
-            type="number"
-            className="stamina-input compact"
-            value={temporary}
-            onChange={handleTemporaryChange}
-            min={0}
-          />
-        </div>
-
-        <div className="stamina-box-compact">
-          <span className="box-label">Max</span>
-          {onMaxChange ? (
+        {/* Temp/Max Stacked Cell */}
+        <div className="stamina-cell temp-max-cell">
+          <div className="stat-row">
+            <span className="cell-label">Temp</span>
             <input
               type="number"
               className="stamina-input compact"
-              value={max}
-              onChange={handleMaxChange}
-              min={1}
+              value={temporary}
+              onChange={handleTemporaryChange}
+              min={0}
+              aria-label="Temporary stamina"
             />
-          ) : (
-            <div className="stamina-value-compact">{max}</div>
-          )}
+          </div>
+          <div className="stat-row">
+            <span className="cell-label">Max</span>
+            {onMaxChange ? (
+              <input
+                type="number"
+                className="stamina-input compact"
+                value={max}
+                onChange={handleMaxChange}
+                min={1}
+                aria-label="Maximum stamina"
+              />
+            ) : (
+              <span className="stamina-value">{max}</span>
+            )}
+          </div>
         </div>
       </div>
 
-      {/* Status Indicators - below boxes */}
+      {/* Bottom Row: Status Diamonds (Horizontal with Labels) */}
       <div className="stamina-status-row">
         <div className="status-indicator">
           <button
-            className={`status-diamond ${winded || isAutoWinded ? 'active' : ''}`}
+            className={`status-diamond winded ${winded || isAutoWinded ? 'active' : ''}`}
             onClick={() => onWindedChange(!winded)}
             aria-label={`Winded: ${winded || isAutoWinded ? 'active' : 'inactive'}`}
             title={`Winded at ${windedThreshold} HP or less`}
@@ -190,28 +185,24 @@ const StaminaTracker: React.FC<StaminaTrackerProps> = ({
             className={`status-diamond dying ${dying || isAutoDying ? 'active' : ''}`}
             onClick={() => onDyingChange(!dying)}
             aria-label={`Dying: ${dying || isAutoDying ? 'active' : 'inactive'}`}
-            title="Dying at 0 HP or less (causes Bleeding)"
+            title="Dying at 0 HP or less"
             type="button"
           />
           <span className="status-label">Dying</span>
         </div>
 
         <div className="status-indicator">
-          <div
-            className={`status-diamond dead ${isAutoDead ? 'active' : ''}`}
-            aria-label={`Dead: ${isAutoDead ? 'active' : 'inactive'}`}
+          <button
+            className={`status-diamond dead ${dead || isAutoDead ? 'active' : ''}`}
+            onClick={() => onDeadChange?.(!dead)}
+            disabled={!onDeadChange}
+            aria-label={`Dead: ${dead || isAutoDead ? 'active' : 'inactive'}`}
             title={`Dead at ${deathThreshold} HP or less`}
+            type="button"
           />
           <span className="status-label">Dead</span>
         </div>
       </div>
-
-      {/* Death warning message */}
-      {isAutoDead && (
-        <div className="death-warning">
-          💀 CHARACTER IS DEAD
-        </div>
-      )}
     </div>
   );
 };

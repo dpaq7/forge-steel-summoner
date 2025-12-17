@@ -1,31 +1,65 @@
-/* Surges Tracker - Vertical Hexagon Style */
+/* ============================================
+   SURGES TRACKER - Horizontal & Vertical Layouts
+   ============================================ */
 
 .surges-tracker {
   display: flex;
-  flex-direction: column;
   align-items: center;
   gap: 0.5rem;
 }
 
+/* === LABEL === */
+.surges-label {
+  font-size: 0.65rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+/* === SURGES GRID === */
 .surges-grid {
   display: flex;
-  flex-direction: column;
   gap: 0.25rem;
 }
 
-/* === INDIVIDUAL SURGE HEXAGON === */
-.surge-hexagon-wrapper {
+/* === COUNT DISPLAY === */
+.surges-count {
+  font-size: 0.6rem;
+  color: var(--text-dim);
+  white-space: nowrap;
+}
+
+/* ============================================
+   INDIVIDUAL SURGE HEXAGON
+   ============================================ */
+
+.surge-hex {
   position: relative;
-  width: 44px;
-  height: 50px;
+  width: 28px;
+  height: 32px;
   cursor: pointer;
   background: none;
   border: none;
   padding: 0;
+  transition: transform 0.15s ease;
 }
 
-/* Outer shape (border) - vertical hexagon pointed top/bottom */
-.surge-hexagon-border {
+.surge-hex:hover:not(:disabled) {
+  transform: scale(1.1);
+}
+
+.surge-hex:focus {
+  outline: none;
+}
+
+.surge-hex:focus-visible .surge-hex-border {
+  box-shadow: 0 0 0 2px var(--accent-glow);
+}
+
+/* Outer border - pointed-top hexagon */
+.surge-hex-border {
   position: absolute;
   inset: 0;
   background: var(--border-solid);
@@ -40,8 +74,8 @@
   transition: all 0.2s ease;
 }
 
-/* Inner shape (background) */
-.surge-hexagon-inner {
+/* Inner fill */
+.surge-hex-inner {
   position: absolute;
   inset: 2px;
   background: var(--bg-darkest);
@@ -59,72 +93,155 @@
   transition: all 0.2s ease;
 }
 
-.surge-number {
-  font-size: 1rem;
+.surge-num {
+  font-size: 0.75rem;
   font-weight: bold;
   color: var(--text-muted);
   transition: all 0.2s ease;
 }
 
-/* === AVAILABLE STATE === */
-.surge-hexagon-wrapper.available .surge-hexagon-border {
+/* ============================================
+   AVAILABLE STATE (Not Yet Used)
+   ============================================ */
+
+.surge-hex.available .surge-hex-border {
   background: var(--accent-dim);
 }
 
-.surge-hexagon-wrapper.available .surge-hexagon-inner {
+.surge-hex.available .surge-hex-inner {
   background: var(--bg-medium);
 }
 
-.surge-hexagon-wrapper.available .surge-number {
+.surge-hex.available .surge-num {
   color: var(--accent-bright);
-  text-shadow: 0 0 8px var(--accent-glow);
+  text-shadow: 0 0 6px var(--accent-glow);
 }
 
-/* === USED STATE === */
-.surge-hexagon-wrapper.used .surge-hexagon-inner {
+.surge-hex.available:hover .surge-hex-border {
+  background: var(--accent-glow);
+  box-shadow: 0 0 8px rgba(0, 230, 195, 0.4);
+}
+
+/* ============================================
+   USED STATE
+   ============================================ */
+
+.surge-hex.used .surge-hex-inner {
   background: var(--bg-dark);
 }
 
-.surge-hexagon-wrapper.used .surge-number {
-  color: var(--text-muted);
+.surge-hex.used .surge-num {
+  color: var(--text-dim);
   opacity: 0.5;
 }
 
-/* === HOVER EFFECTS === */
-.surge-hexagon-wrapper:hover .surge-hexagon-border {
-  background: var(--accent-glow);
-  box-shadow: 0 0 10px rgba(0, 230, 195, 0.3);
-}
-
-.surge-hexagon-wrapper.used:hover .surge-hexagon-border {
+.surge-hex.used:hover .surge-hex-border {
   background: var(--accent-dim);
 }
 
-/* === FOCUS STATE === */
-.surge-hexagon-wrapper:focus {
-  outline: none;
+/* ============================================
+   HORIZONTAL VARIANT (Default for derived-row)
+   ============================================ */
+
+.surges-tracker.horizontal {
+  flex-direction: row;
+  align-items: center;
+  padding: 0.25rem 0.5rem;
+  background: var(--bg-darkest);
+  border: 1px solid var(--border-solid);
+  border-radius: 4px;
 }
 
-.surge-hexagon-wrapper:focus-visible .surge-hexagon-border {
-  background: var(--accent-glow);
-  box-shadow: 0 0 15px rgba(0, 230, 195, 0.5);
+.surges-tracker.horizontal .surges-grid {
+  flex-direction: row;
 }
 
-/* === COUNT DISPLAY === */
-.surges-count {
-  display: none; /* Hidden for compact vertical layout */
+.surges-tracker.horizontal .surge-hex {
+  width: 26px;
+  height: 30px;
+}
+
+.surges-tracker.horizontal .surge-num {
   font-size: 0.7rem;
-  color: var(--text-muted);
 }
 
-/* === RESPONSIVE === */
-@media (max-width: 400px) {
-  .surge-hexagon-wrapper {
-    width: 36px;
-    height: 42px;
+/* ============================================
+   VERTICAL VARIANT (Legacy / Alternative)
+   ============================================ */
+
+.surges-tracker.vertical {
+  flex-direction: column;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.surges-tracker.vertical .surges-label {
+  order: -1;
+}
+
+.surges-tracker.vertical .surges-grid {
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.surges-tracker.vertical .surge-hex {
+  width: 36px;
+  height: 42px;
+}
+
+.surges-tracker.vertical .surge-num {
+  font-size: 0.85rem;
+}
+
+.surges-tracker.vertical .surges-count {
+  display: none;
+}
+
+/* ============================================
+   COMPACT VARIANT (Even smaller for tight spaces)
+   ============================================ */
+
+.surges-tracker.compact {
+  gap: 0.35rem;
+  padding: 0.2rem 0.4rem;
+}
+
+.surges-tracker.compact .surges-label {
+  font-size: 0.55rem;
+}
+
+.surges-tracker.compact .surge-hex {
+  width: 22px;
+  height: 26px;
+}
+
+.surges-tracker.compact .surge-num {
+  font-size: 0.6rem;
+}
+
+.surges-tracker.compact .surges-count {
+  font-size: 0.5rem;
+}
+
+/* ============================================
+   RESPONSIVE
+   ============================================ */
+
+@media (max-width: 480px) {
+  .surges-tracker.horizontal {
+    padding: 0.2rem 0.35rem;
   }
 
-  .surge-number {
-    font-size: 0.85rem;
+  .surges-tracker.horizontal .surge-hex {
+    width: 22px;
+    height: 26px;
+  }
+
+  .surges-tracker.horizontal .surge-num {
+    font-size: 0.6rem;
+  }
+
+  .surges-tracker.horizontal .surges-label {
+    font-size: 0.55rem;
   }
 }

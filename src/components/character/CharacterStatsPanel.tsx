@@ -392,12 +392,6 @@ const CharacterStatsPanel: React.FC<CharacterStatsPanelProps> = ({ onLevelUp, on
           className="inline-resources"
         />
 
-        <SurgesTracker
-          current={hero.surges}
-          max={3}
-          onCurrentChange={(current) => updateHero({ surges: current })}
-        />
-
         <ProgressionTracker
           victories={hero.victories}
           maxVictories={12}
@@ -452,6 +446,12 @@ const CharacterStatsPanel: React.FC<CharacterStatsPanelProps> = ({ onLevelUp, on
             />
           )}
         </div>
+
+        <SurgesTracker
+          current={hero.surges}
+          max={3}
+          onCurrentChange={(current) => updateHero({ surges: current })}
+        />
 
         {/* Conditions */}
         <div className="conditions-inline">

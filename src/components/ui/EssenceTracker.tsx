@@ -55,10 +55,6 @@ const EssenceTracker: React.FC<EssenceTrackerProps> = ({
         </div>
       </div>
 
-      <div className="essence-info">
-        <p>1 Surge = Damage ____</p>
-        <p>2 Surges = Potency + 1</p>
-      </div>
     </div>
   );
 };

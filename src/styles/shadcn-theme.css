@@ -1,0 +1,130 @@
+/* ============================================
+   SHADCN/UI THEME INTEGRATION
+   Maps Mettle CSS variables to shadcn expectations
+   ============================================ */
+
+:root {
+  /* === CORE COLORS === */
+  --background: var(--bg-darkest);
+  --foreground: var(--text-primary);
+
+  --card: var(--bg-card);
+  --card-foreground: var(--text-primary);
+
+  --popover: var(--bg-dark);
+  --popover-foreground: var(--text-primary);
+
+  --primary: var(--accent-primary);
+  --primary-foreground: var(--bg-darkest);
+
+  --secondary: var(--bg-medium);
+  --secondary-foreground: var(--text-primary);
+
+  --muted: var(--bg-dark);
+  --muted-foreground: var(--text-muted);
+
+  --accent: var(--accent-dim);
+  --accent-foreground: var(--accent-bright);
+
+  --destructive: var(--color-danger);
+  --destructive-foreground: white;
+
+  --success: var(--color-success);
+  --success-foreground: var(--bg-darkest);
+
+  --warning: var(--color-warning);
+  --warning-foreground: var(--bg-darkest);
+
+  --border: var(--border-solid);
+  --input: var(--bg-dark);
+  --ring: var(--accent-glow);
+
+  /* === RADIUS === */
+  --radius: 4px;
+
+  /* === FANTASY CLIP-PATHS === */
+  --clip-chamfer-sm: polygon(
+    4px 0%, calc(100% - 4px) 0%, 100% 4px,
+    100% calc(100% - 4px), calc(100% - 4px) 100%,
+    4px 100%, 0% calc(100% - 4px), 0% 4px
+  );
+
+  --clip-chamfer-md: polygon(
+    8px 0%, calc(100% - 8px) 0%, 100% 8px,
+    100% calc(100% - 8px), calc(100% - 8px) 100%,
+    8px 100%, 0% calc(100% - 8px), 0% 8px
+  );
+
+  --clip-chamfer-lg: polygon(
+    12px 0%, calc(100% - 12px) 0%, 100% 12px,
+    100% calc(100% - 12px), calc(100% - 12px) 100%,
+    12px 100%, 0% calc(100% - 12px), 0% 12px
+  );
+
+  --clip-diamond: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+
+  --clip-hexagon: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%);
+
+  --clip-hexagon-vertical: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+
+  --clip-pentagon: polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%);
+
+  --clip-arrow-right: polygon(0% 0%, 85% 0%, 100% 50%, 85% 100%, 0% 100%);
+
+  --clip-shield: polygon(0% 0%, 100% 0%, 100% 70%, 50% 100%, 0% 70%);
+}
+
+/* === ANIMATION KEYFRAMES === */
+@keyframes combat-pulse {
+  0%, 100% {
+    box-shadow: 0 0 15px var(--color-danger-dim, rgba(232, 84, 84, 0.3));
+  }
+  50% {
+    box-shadow: 0 0 25px var(--color-danger, #e85454);
+  }
+}
+
+@keyframes success-pulse {
+  0%, 100% {
+    box-shadow: 0 0 12px var(--color-success-dim, rgba(77, 232, 178, 0.3));
+  }
+  50% {
+    box-shadow: 0 0 20px var(--color-success, #4de8b2);
+  }
+}
+
+@keyframes glow-pulse {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 0.6; }
+}
+
+/* === RADIX ANIMATION CLASSES === */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes fadeOut {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+@keyframes scaleIn {
+  from { opacity: 0; transform: translate(-50%, -48%) scale(0.96); }
+  to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+}
+
+@keyframes scaleOut {
+  from { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+  to { opacity: 0; transform: translate(-50%, -48%) scale(0.96); }
+}
+
+@keyframes slideInFromTop {
+  from { transform: translateY(-4px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes slideInFromBottom {
+  from { transform: translateY(4px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}

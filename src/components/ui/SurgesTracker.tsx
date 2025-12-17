@@ -5,17 +5,21 @@ interface SurgesTrackerProps {
   current: number;
   max: number;
   onCurrentChange: (value: number) => void;
+  variant?: 'vertical' | 'horizontal';
+  showLabel?: boolean;
   className?: string;
 }
 
 /**
- * Surges Tracker with vertical hexagon indicators.
- * Click hexagons to mark surges as used/available.
+ * Surges Tracker with hexagon indicators.
+ * Supports vertical or horizontal (default) layout.
  */
 const SurgesTracker: React.FC<SurgesTrackerProps> = ({
   current,
   max,
   onCurrentChange,
+  variant = 'horizontal',
+  showLabel = true,
   className = '',
 }) => {
   const handleSurgeClick = useCallback((index: number) => {
@@ -44,28 +48,28 @@ const SurgesTracker: React.FC<SurgesTrackerProps> = ({
   }, [handleSurgeClick]);
 
   return (
-    <div className={`surges-tracker ${className}`}>
+    <div className={`surges-tracker ${variant} ${className}`}>
+      {showLabel && <span className="surges-label">Surges</span>}
+
       <div className="surges-grid">
         {Array.from({ length: max }, (_, i) => (
           <button
             key={i}
-            className={`surge-hexagon-wrapper ${i < current ? 'used' : 'available'}`}
+            className={`surge-hex ${i < current ? 'used' : 'available'}`}
             onClick={() => handleSurgeClick(i)}
             onKeyDown={(e) => handleKeyDown(e, i)}
             aria-label={`Surge ${i + 1}: ${i < current ? 'used' : 'available'}`}
             type="button"
           >
-            <div className="surge-hexagon-border" />
-            <div className="surge-hexagon-inner">
-              <span className="surge-number">{i + 1}</span>
+            <div className="surge-hex-border" />
+            <div className="surge-hex-inner">
+              <span className="surge-num">{i + 1}</span>
             </div>
           </button>
         ))}
       </div>
 
-      <div className="surges-count">
-        {current} / {max} used
-      </div>
+      <span className="surges-count">{current}/{max}</span>
     </div>
   );
 };

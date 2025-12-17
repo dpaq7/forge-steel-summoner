@@ -1,10 +1,14 @@
 /* ============================================
-   FORGE STEEL SUMMONER - Global Styles
+   METTLE - Global Styles
    Imports theme and provides base styling
    ============================================ */
 
+/* Import order: theme first, then Tailwind, then components */
 @import './styles/theme.css';
+@import './styles/shadcn-theme.css';
+@import './styles/dialog-fantasy.css';
 @import './styles/ui-components.css';
+@import "tailwindcss";
 
 /* === GLOBAL RESETS === */
 * {
