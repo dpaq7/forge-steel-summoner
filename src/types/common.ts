@@ -26,12 +26,21 @@ export type ConditionId =
   | 'taunted'
   | 'weakened';
 
+/**
+ * How a condition ends
+ * - 'eot': Automatically ends at end of turn
+ * - 'roll': Must roll 6+ on d10 at end of turn (save ends)
+ * - 'manual': No automatic end, must be removed manually
+ */
+export type ConditionEndType = 'eot' | 'roll' | 'manual';
+
 export interface ActiveCondition {
   conditionId: ConditionId;
   sourceId?: string; // ID of creature/effect that caused it (for frightened, taunted, grabbed)
   sourceName?: string; // Name for display
   duration?: number; // turns remaining, undefined means save ends
   appliedAt: number; // timestamp when applied
+  endType: ConditionEndType; // How this condition ends
 }
 
 // Legacy interface for backward compatibility

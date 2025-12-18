@@ -1,0 +1,41 @@
+/* Tactician-specific styles */
+
+.class-view-tactician .focus-tracker {
+  background: linear-gradient(135deg, rgba(34, 139, 34, 0.05), rgba(34, 139, 34, 0.02));
+}
+
+.class-view-tactician .doctrine-badge {
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+  padding: 0.375rem 0.5rem;
+  background: var(--bg-darkest);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--class-tactician);
+}
+
+.class-view-tactician .doctrine-name {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--class-tactician);
+}
+
+.class-view-tactician .doctrine-desc {
+  font-size: 0.6rem;
+  color: var(--text-muted);
+}
+
+.class-view-tactician .marked-targets-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+}
+
+.class-view-tactician .marked-target {
+  padding: 0.25rem 0.5rem;
+  background: rgba(34, 139, 34, 0.15);
+  border: 1px solid var(--class-tactician);
+  border-radius: var(--radius-sm);
+  font-size: 0.65rem;
+  color: var(--class-tactician);
+}

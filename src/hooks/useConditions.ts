@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
 import { useSummonerContext } from '../context/HeroContext';
 import { ActiveCondition, ConditionId } from '../types/common';
-import { CONDITIONS, performSavingThrow, calculateBleedingDamage, ConditionDefinition } from '../data/conditions';
+import { CONDITIONS, performSavingThrow, calculateBleedingDamage, ConditionDefinition, getDefaultEndType } from '../data/conditions';
 
 export interface SaveResult {
   conditionId: ConditionId;
@@ -45,6 +45,7 @@ export const useConditions = () => {
           sourceName,
           duration,
           appliedAt: Date.now(),
+          endType: getDefaultEndType(conditionId),
         };
         updateHero({
           activeConditions: [...(hero.activeConditions || []), newCondition],

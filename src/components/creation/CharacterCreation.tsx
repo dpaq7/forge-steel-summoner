@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useSummonerContext } from '../../context/HeroContext';
-import { useTheme } from '../../context/ThemeContext';
 import { SummonerHero, SummonerCircle, Formation, Ancestry, Culture, Career, Kit, MinionTemplate, QuickCommand } from '../../types';
 import { HeroClass, Hero, SummonerHeroV2, TalentHero, CensorHero, ConduitHero, ElementalistHero, FuryHero, NullHero, ShadowHero, TacticianHero, TroubadourHero } from '../../types/hero';
 import { ancestries, cultures, careers, kits, getSelectableLanguages, languages as allLanguages } from '../../data/reference-data';
@@ -97,12 +96,6 @@ interface SkillSelection {
 
 const CharacterCreation: React.FC<CharacterCreationProps> = ({ onComplete }) => {
   const { createNewHero } = useSummonerContext();
-  const { applyCreatorTheme } = useTheme();
-
-  // Apply MCDM theme when character creation opens
-  useEffect(() => {
-    applyCreatorTheme();
-  }, [applyCreatorTheme]);
 
   const [step, setStep] = useState<Step>('name');
   const [name, setName] = useState('');

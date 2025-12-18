@@ -1,6 +1,8 @@
 // Draw Steel Conditions Data
 // Based on SRD condition rules
 
+import type { ConditionEndType } from '@/types/common';
+
 export type ConditionId =
   | 'bleeding'
   | 'dazed'
@@ -137,4 +139,23 @@ export const performSavingThrow = (): { roll: number; success: boolean } => {
 export const calculateBleedingDamage = (level: number): { roll: number; total: number } => {
   const roll = Math.floor(Math.random() * 6) + 1;
   return { roll, total: roll + level };
+};
+
+/**
+ * Get the default end type for a condition based on its nature
+ * - Conditions that typically save-end default to 'roll'
+ * - Conditions that need specific actions to end default to 'manual'
+ */
+export const getDefaultEndType = (conditionId: ConditionId): ConditionEndType => {
+  const condition = CONDITIONS[conditionId];
+
+  if (!condition) return 'manual';
+
+  // Conditions that save-end (roll 6+ on d10) should default to 'roll'
+  if (condition.saveEnds) {
+    return 'roll';
+  }
+
+  // Conditions that require specific actions (grabbed, prone) default to 'manual'
+  return 'manual';
 };

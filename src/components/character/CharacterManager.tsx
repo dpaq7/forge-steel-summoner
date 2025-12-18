@@ -5,8 +5,9 @@ import { classDefinitions } from '../../data/classes/class-definitions';
 import {
   getAllCharacters,
   deleteCharacter,
-  exportCharacterToJSON,
+  downloadCharacterJSON,
   importCharacterFromJSON,
+  saveCharacter,
   StoredCharacter,
 } from '../../utils/storage';
 import {
@@ -53,9 +54,10 @@ const getHeroDisplayInfo = (hero: Hero): { class: string; subinfo: string } => {
 interface CharacterManagerProps {
   onClose: () => void;
   onCreateNew: () => void;
+  onCharacterLoaded?: () => void;
 }
 
-const CharacterManager: React.FC<CharacterManagerProps> = ({ onClose, onCreateNew }) => {
+const CharacterManager: React.FC<CharacterManagerProps> = ({ onClose, onCreateNew, onCharacterLoaded }) => {
   const { hero, loadHero, setHero } = useSummonerContext();
   const [characters, setCharacters] = useState<StoredCharacter[]>(getAllCharacters());
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
@@ -72,7 +74,12 @@ const CharacterManager: React.FC<CharacterManagerProps> = ({ onClose, onCreateNe
 
   const handleLoadCharacter = (id: string) => {
     loadHero(id);
-    onClose();
+    // Use onCharacterLoaded if provided (exits creation mode), otherwise just close
+    if (onCharacterLoaded) {
+      onCharacterLoaded();
+    } else {
+      onClose();
+    }
   };
 
   const handleDeleteCharacter = (id: string) => {
@@ -87,16 +94,7 @@ const CharacterManager: React.FC<CharacterManagerProps> = ({ onClose, onCreateNe
   };
 
   const handleExportCharacter = (character: StoredCharacter) => {
-    const json = exportCharacterToJSON(character.data);
-    const blob = new Blob([json], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `${character.name.replace(/\s+/g, '_')}_level_${character.level}.json`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
+    downloadCharacterJSON(character.data);
   };
 
   const handleImportClick = () => {
@@ -110,14 +108,30 @@ const CharacterManager: React.FC<CharacterManagerProps> = ({ onClose, onCreateNe
     const reader = new FileReader();
     reader.onload = (e) => {
       const json = e.target?.result as string;
-      const imported = importCharacterFromJSON(json);
+      const result = importCharacterFromJSON(json);
 
-      if (imported) {
-        loadHero(imported.id);
+      if (result.valid && result.hero) {
+        // Save the imported hero
+        saveCharacter(result.hero);
+        loadHero(result.hero.id);
         refreshCharacters();
-        onClose();
+
+        // Show warnings if any
+        if (result.warnings.length > 0) {
+          console.log('Import warnings:', result.warnings);
+        }
+
+        // Use onCharacterLoaded if provided (exits creation mode), otherwise just close
+        if (onCharacterLoaded) {
+          onCharacterLoaded();
+        } else {
+          onClose();
+        }
       } else {
-        alert('Failed to import character. Invalid file format.');
+        const errorMsg = result.errors.length > 0
+          ? `Import failed:\n${result.errors.join('\n')}`
+          : 'Failed to import character. Invalid file format.';
+        alert(errorMsg);
       }
     };
     reader.readAsText(file);

@@ -1,0 +1,276 @@
+/* ============================================
+   AVATAR UPLOAD COMPONENT
+   ============================================ */
+
+.avatar-upload {
+  position: relative;
+  display: inline-flex;
+}
+
+/* Size Variants - 25% larger */
+.avatar-upload-sm {
+  --avatar-size: 35px;
+  --initial-size: 0.9375rem;
+  --indicator-size: 12px;
+  --indicator-icon-size: 8px;
+}
+
+.avatar-upload-md {
+  --avatar-size: 45px;
+  --initial-size: 1.25rem;
+  --indicator-size: 18px;
+  --indicator-icon-size: 10px;
+}
+
+.avatar-upload-lg {
+  --avatar-size: 60px;
+  --initial-size: 1.5625rem;
+  --indicator-size: 22px;
+  --indicator-icon-size: 12px;
+}
+
+/* Hidden File Input */
+.avatar-file-input {
+  position: absolute;
+  width: 0;
+  height: 0;
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Main Button */
+.avatar-button {
+  position: relative;
+  width: var(--avatar-size);
+  height: var(--avatar-size);
+  padding: 0;
+  background: transparent;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  overflow: hidden;
+}
+
+.avatar-button:focus-visible {
+  outline: 2px solid var(--accent-primary);
+  outline-offset: 2px;
+}
+
+/* Avatar Image (when portrait exists) */
+.avatar-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+  border: 2px solid var(--accent-dim);
+  transition: border-color 0.15s ease;
+}
+
+.avatar-upload.has-portrait:hover .avatar-image {
+  border-color: var(--accent-primary);
+}
+
+/* Fallback Avatar (no portrait) */
+.avatar-fallback {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-medium);
+  border: 2px dashed var(--border-dark);
+  border-radius: 50%;
+  transition: all 0.15s ease;
+}
+
+.avatar-upload.no-portrait:hover .avatar-fallback {
+  border-color: var(--accent-primary);
+  border-style: solid;
+  background: var(--bg-dark);
+}
+
+.avatar-initial {
+  font-family: var(--font-display);
+  font-size: var(--initial-size);
+  font-weight: 600;
+  color: var(--accent-primary);
+  line-height: 1;
+  transition: opacity 0.15s ease;
+}
+
+.avatar-upload.no-portrait:hover .avatar-initial {
+  opacity: 0.3;
+}
+
+/* Add Indicator (camera + plus icon) */
+.avatar-add-indicator {
+  position: absolute;
+  bottom: -2px;
+  right: -2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--indicator-size);
+  height: var(--indicator-size);
+  background: var(--accent-primary);
+  border: 1.5px solid var(--bg-darkest);
+  border-radius: 50%;
+  transition: transform 0.15s ease;
+}
+
+.avatar-upload.no-portrait:hover .avatar-add-indicator {
+  transform: scale(1.15);
+}
+
+.indicator-icon {
+  width: var(--indicator-icon-size);
+  height: var(--indicator-icon-size);
+  color: var(--bg-darkest);
+}
+
+.indicator-plus {
+  position: absolute;
+  bottom: -1px;
+  right: -1px;
+  width: calc(var(--indicator-icon-size) * 0.6);
+  height: calc(var(--indicator-icon-size) * 0.6);
+  color: var(--bg-darkest);
+  stroke-width: 3;
+}
+
+/* Hover Overlay */
+.avatar-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.7);
+  border-radius: 50%;
+}
+
+.overlay-prompt,
+.overlay-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.125rem;
+}
+
+.overlay-icon {
+  width: 12px;
+  height: 12px;
+  color: white;
+}
+
+.overlay-prompt span,
+.overlay-action span {
+  font-size: 0.5rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: white;
+}
+
+.overlay-action.change {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.0625rem;
+}
+
+/* Remove Button */
+.avatar-remove-btn {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  padding: 0;
+  background: var(--danger);
+  border: 2px solid var(--bg-darkest);
+  border-radius: 50%;
+  color: white;
+  cursor: pointer;
+  z-index: 10;
+}
+
+.avatar-remove-btn:hover {
+  background: #ff4444;
+}
+
+.avatar-remove-btn:focus-visible {
+  outline: 2px solid var(--danger);
+  outline-offset: 2px;
+}
+
+/* Error Message */
+.avatar-error {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 0.25rem 0.5rem;
+  background: var(--danger);
+  border-radius: var(--radius-sm);
+  font-size: 0.6rem;
+  font-weight: 600;
+  color: white;
+  white-space: nowrap;
+  z-index: 100;
+}
+
+.avatar-error::before {
+  content: '';
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 4px solid transparent;
+  border-bottom-color: var(--danger);
+}
+
+/* ============================================
+   PREVIEW DIALOG
+   ============================================ */
+
+.avatar-preview-dialog {
+  max-width: 360px;
+}
+
+.preview-container {
+  display: flex;
+  justify-content: center;
+  padding: 1rem;
+  background: var(--bg-darkest);
+  border-radius: var(--radius-md);
+  margin: 0.5rem 0;
+}
+
+.preview-image {
+  max-width: 200px;
+  max-height: 200px;
+  border-radius: var(--radius-md);
+  border: 2px solid var(--accent-dim);
+  object-fit: contain;
+}
+
+/* ============================================
+   RESPONSIVE
+   ============================================ */
+
+@media (max-width: 480px) {
+  .avatar-upload-md {
+    --avatar-size: 40px;
+    --initial-size: 1.09375rem;
+  }
+
+  .overlay-prompt span,
+  .overlay-action span {
+    display: none;
+  }
+}

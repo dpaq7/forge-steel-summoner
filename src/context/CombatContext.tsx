@@ -14,6 +14,7 @@ interface CombatContextType {
   essenceState: EssenceEconomy;
   turnState: TurnState;
   isInCombat: boolean;
+  combatTurnNumber: number; // Generic turn counter for all classes
   startCombat: () => void;
   endCombat: () => void;
   startNewTurn: () => void;
@@ -24,6 +25,7 @@ interface CombatContextType {
   setOnCombatStartCallback: (callback: (() => void) | null) => void;
   hasSacrificedThisTurn: boolean;
   sacrificeMinion: () => boolean; // Sacrifice a signature minion for 1 essence (1/turn)
+  onEndTurn: () => void; // Generic end-of-turn callback for turn tracker
 }
 
 const CombatContext = createContext<CombatContextType | undefined>(undefined);
@@ -47,6 +49,7 @@ export const CombatProvider: React.FC<CombatProviderProps> = ({ children }) => {
   const hero = genericHero && isSummonerHero(genericHero) ? genericHero : null;
 
   const [isInCombat, setIsInCombat] = useState(false);
+  const [combatTurnNumber, setCombatTurnNumber] = useState(1);
   const [onCombatStartCallback, setOnCombatStartCallbackState] = useState<(() => void) | null>(null);
 
   const setOnCombatStartCallback = useCallback((callback: (() => void) | null) => {
@@ -179,6 +182,7 @@ export const CombatProvider: React.FC<CombatProviderProps> = ({ children }) => {
   const startCombat = () => {
     // Set combat state for ALL classes
     setIsInCombat(true);
+    setCombatTurnNumber(1);
     setHasSacrificedThisTurn(false);
     setTurnState({
       currentPhase: 'collectResources',
@@ -363,10 +367,16 @@ export const CombatProvider: React.FC<CombatProviderProps> = ({ children }) => {
     return true;
   };
 
+  // Generic end-of-turn handler for all classes (used by TurnTracker)
+  const onEndTurn = useCallback(() => {
+    setCombatTurnNumber((prev) => prev + 1);
+  }, []);
+
   const value: CombatContextType = {
     essenceState,
     turnState,
     isInCombat,
+    combatTurnNumber,
     startCombat,
     endCombat,
     startNewTurn,
@@ -377,6 +387,7 @@ export const CombatProvider: React.FC<CombatProviderProps> = ({ children }) => {
     setOnCombatStartCallback,
     hasSacrificedThisTurn,
     sacrificeMinion,
+    onEndTurn,
   };
 
   return <CombatContext.Provider value={value}>{children}</CombatContext.Provider>;

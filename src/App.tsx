@@ -1,7 +1,8 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useHeroContext } from './context/HeroContext';
 import { useCombatContext } from './context/CombatContext';
-import { useTheme } from './context/ThemeContext';
+import type { DiceRoll, DiceType, TurnPhaseId, CharacteristicId } from './components/ui/StatsDashboard/types';
+import { CHARACTERISTICS } from './components/ui/StatsDashboard/types';
 import CharacterCreation from './components/creation/CharacterCreation';
 import CharacterManager from './components/character/CharacterManager';
 import CharacterDetailsView from './components/character/CharacterDetailsView';
@@ -13,6 +14,16 @@ import MagicItemsView from './components/items/MagicItemsView';
 import InventoryView from './components/inventory/InventoryView';
 import RollHistoryPanel from './components/shared/RollHistoryPanel';
 import LegalModal from './components/shared/LegalModal';
+import { ImportCharacterDialog } from './components/shared/ImportCharacterDialog';
+import { DeleteCharacterDialog } from './components/shared/DeleteCharacterDialog';
+import {
+  downloadCharacterJSON,
+  duplicateCharacter,
+  saveCharacter,
+  deleteCharacter,
+  getAllCharacters,
+} from './utils/storage';
+import type { Hero } from './types';
 import { StatsDashboard } from './components/ui/StatsDashboard';
 import { StrainView } from './components/classDetails/TalentDetails/StrainView';
 import { NullFieldView } from './components/classDetails/NullDetails/NullFieldView';
@@ -21,6 +32,8 @@ import { FerocityTrackerView } from './components/classDetails/FuryDetails';
 import { getTabsForClass, ViewType } from './data/class-tabs';
 import { getResourceConfig } from './data/class-resources';
 import { HeroClass } from './types/hero';
+import type { ConditionId, ConditionEndType } from './types/common';
+import { getDefaultEndType } from './data/conditions';
 import {
   AlertDialog,
   AlertDialogContent,
@@ -43,25 +56,20 @@ type View = ViewType;
 function App() {
   const { hero, setHero, updateHero } = useHeroContext();
   const { isInCombat, startCombat, endCombat, setOnCombatStartCallback } = useCombatContext();
-  const { applyThemeForHero, applyCreatorTheme } = useTheme();
   const [activeView, setActiveView] = useState<View>('character');
   const [showCharacterManager, setShowCharacterManager] = useState(false);
   const [showCharacterCreation, setShowCharacterCreation] = useState(false);
   const [showLevelUp, setShowLevelUp] = useState(false);
   const [showRespiteConfirm, setShowRespiteConfirm] = useState(false);
   const [showLegalModal, setShowLegalModal] = useState(false);
+  const [showImportDialog, setShowImportDialog] = useState(false);
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [characterToDelete, setCharacterToDelete] = useState<Hero | null>(null);
+  const [rollHistory, setRollHistory] = useState<DiceRoll[]>([]);
 
-  // Apply theme when hero changes
-  useEffect(() => {
-    if (hero && !showCharacterCreation) {
-      const heroClass: HeroClass = hero?.heroClass ?? 'summoner';
-      applyThemeForHero(hero.id, heroClass);
-    } else if (!showCharacterCreation) {
-      // No hero and not in creation - apply MCDM theme
-      applyCreatorTheme();
-    }
-    // Character creation handles its own theme
-  }, [hero, showCharacterCreation, applyThemeForHero, applyCreatorTheme]);
+  // Turn tracking state
+  const [turnNumber, setTurnNumber] = useState(1);
+  const [completedPhases, setCompletedPhases] = useState<Set<TurnPhaseId>>(new Set());
 
   // Register callback to switch to minions tab when combat starts (Summoner only)
   useEffect(() => {
@@ -81,6 +89,77 @@ function App() {
     setShowCharacterCreation(true);
   };
 
+  // Handler for when a character is loaded from the manager dialog
+  // This exits both the dialog AND the character creation view
+  const handleCharacterLoaded = () => {
+    setShowCharacterManager(false);
+    setShowCharacterCreation(false);
+  };
+
+  // ════════════════════════════════════════════════════════════════
+  // CHARACTER MANAGEMENT HANDLERS
+  // ════════════════════════════════════════════════════════════════
+
+  // Export current character to JSON file
+  const handleExportCharacter = useCallback(() => {
+    if (hero) {
+      downloadCharacterJSON(hero);
+    }
+  }, [hero]);
+
+  // Import character - opens the import dialog
+  const handleImportCharacter = useCallback(() => {
+    setShowImportDialog(true);
+  }, []);
+
+  // Handle imported character - save and switch to it
+  const handleImportComplete = useCallback((importedHero: Hero) => {
+    setHero(importedHero);
+    setShowCharacterCreation(false);
+    setShowCharacterManager(false);
+  }, [setHero]);
+
+  // Duplicate current character
+  const handleDuplicateCharacter = useCallback(() => {
+    if (hero) {
+      const duplicate = duplicateCharacter(hero);
+      saveCharacter(duplicate);
+      setHero(duplicate);
+    }
+  }, [hero, setHero]);
+
+  // Delete character - opens confirmation dialog
+  const handleDeleteCharacterClick = useCallback(() => {
+    if (hero) {
+      setCharacterToDelete(hero);
+      setShowDeleteDialog(true);
+    }
+  }, [hero]);
+
+  // Confirm delete - remove character and switch to another
+  const handleConfirmDelete = useCallback(() => {
+    if (!characterToDelete) return;
+
+    // Get all characters to find another one to switch to
+    const allCharacters = getAllCharacters();
+    const remainingCharacters = allCharacters.filter(c => c.id !== characterToDelete.id);
+
+    // Delete the character
+    deleteCharacter(characterToDelete.id);
+
+    // Switch to another character or show creation
+    if (remainingCharacters.length > 0) {
+      setHero(remainingCharacters[0].data);
+    } else {
+      setHero(null);
+      setShowCharacterCreation(true);
+    }
+
+    // Close dialog and clear state
+    setShowDeleteDialog(false);
+    setCharacterToDelete(null);
+  }, [characterToDelete, setHero]);
+
   const handleCreationComplete = () => {
     setShowCharacterCreation(false);
   };
@@ -98,10 +177,177 @@ function App() {
       recoveries: { ...hero.recoveries, current: hero.recoveries.max },
       surges: 0,
       activeSquads: [], // Dismiss all minions during respite
+      activeConditions: [], // Clear all conditions during respite
     });
 
     setShowRespiteConfirm(false);
   };
+
+  const handleAddCondition = (conditionId: ConditionId) => {
+    if (!hero) return;
+    // Check if condition already exists
+    if (hero.activeConditions.some((c) => c.conditionId === conditionId)) return;
+
+    updateHero({
+      activeConditions: [
+        ...hero.activeConditions,
+        {
+          conditionId,
+          appliedAt: Date.now(),
+          endType: getDefaultEndType(conditionId),
+        },
+      ],
+    });
+  };
+
+  const handleRemoveCondition = (conditionId: ConditionId) => {
+    if (!hero) return;
+    updateHero({
+      activeConditions: hero.activeConditions.filter((c) => c.conditionId !== conditionId),
+    });
+  };
+
+  const handleUpdateConditionEndType = (conditionId: ConditionId, endType: ConditionEndType) => {
+    if (!hero) return;
+    updateHero({
+      activeConditions: hero.activeConditions.map((c) =>
+        c.conditionId === conditionId ? { ...c, endType } : c
+      ),
+    });
+  };
+
+  // Power roll tier calculation
+  const calculatePowerRollTier = (total: number): { tier: number; label: string } => {
+    if (total <= 2) return { tier: 1, label: 'Tier 1 (Critical Fail)' };
+    if (total <= 6) return { tier: 1, label: 'Tier 1' };
+    if (total <= 11) return { tier: 2, label: 'Tier 2' };
+    if (total <= 16) return { tier: 3, label: 'Tier 3' };
+    return { tier: 3, label: 'Tier 3+ (Critical!)' };
+  };
+
+  // Dice roll handler
+  const handleRoll = useCallback((type: DiceType, label?: string) => {
+    let results: number[];
+
+    switch (type) {
+      case '2d10':
+      case 'power':
+        results = [
+          Math.floor(Math.random() * 10) + 1,
+          Math.floor(Math.random() * 10) + 1,
+        ];
+        break;
+      case 'd10':
+        results = [Math.floor(Math.random() * 10) + 1];
+        break;
+      case 'd6':
+        results = [Math.floor(Math.random() * 6) + 1];
+        break;
+      case 'd3':
+        results = [Math.floor(Math.random() * 3) + 1];
+        break;
+      default:
+        results = [0];
+    }
+
+    const total = results.reduce((a, b) => a + b, 0);
+    const isPowerRoll = type === '2d10' || type === 'power';
+    const tierInfo = isPowerRoll ? calculatePowerRollTier(total) : undefined;
+
+    const roll: DiceRoll = {
+      id: crypto.randomUUID(),
+      type,
+      results,
+      total,
+      finalTotal: total,
+      tier: tierInfo?.tier,
+      tierLabel: tierInfo?.label,
+      timestamp: Date.now(),
+      label: label || (isPowerRoll ? 'Power Roll' : undefined),
+    };
+
+    // Add to history (newest first, keep last 50)
+    setRollHistory((prev) => [roll, ...prev].slice(0, 50));
+  }, []);
+
+  // Characteristic roll handler (rolls 2d10 + modifier)
+  const handleRollCharacteristic = useCallback((
+    characteristicId: CharacteristicId,
+    modifier: number
+  ) => {
+    // Roll 2d10
+    const results = [
+      Math.floor(Math.random() * 10) + 1,
+      Math.floor(Math.random() * 10) + 1,
+    ];
+
+    const total = results.reduce((a, b) => a + b, 0);
+    const finalTotal = total + modifier;
+
+    // Calculate tier based on final total (with modifier)
+    const tierInfo = calculatePowerRollTier(finalTotal);
+
+    // Get characteristic display name
+    const charInfo = CHARACTERISTICS.find(c => c.id === characteristicId);
+    const modifierName = charInfo?.name || characteristicId;
+
+    const roll: DiceRoll = {
+      id: crypto.randomUUID(),
+      type: 'power',
+      results,
+      total,
+      modifier,
+      modifierName,
+      finalTotal,
+      tier: tierInfo.tier,
+      tierLabel: tierInfo.label,
+      timestamp: Date.now(),
+      label: 'Power Roll',
+    };
+
+    setRollHistory((prev) => [roll, ...prev].slice(0, 50));
+  }, []);
+
+  // Clear roll history
+  const handleClearRollHistory = useCallback(() => {
+    setRollHistory([]);
+  }, []);
+
+  // Turn tracking handlers
+  const handleTogglePhase = useCallback((phaseId: TurnPhaseId) => {
+    setCompletedPhases((prev) => {
+      const next = new Set(prev);
+      if (next.has(phaseId)) {
+        next.delete(phaseId);
+      } else {
+        next.add(phaseId);
+      }
+      return next;
+    });
+  }, []);
+
+  // End turn - called after processing conditions
+  const handleEndTurn = useCallback(() => {
+    setTurnNumber((prev) => prev + 1);
+    setCompletedPhases(new Set());
+  }, []);
+
+  // Reset current turn (don't advance turn number)
+  const handleResetTurn = useCallback(() => {
+    setCompletedPhases(new Set());
+  }, []);
+
+  // Reset turn tracking when combat ends
+  const handleEndCombatWithTurnReset = useCallback(() => {
+    endCombat();
+    setTurnNumber(1);
+    setCompletedPhases(new Set());
+  }, [endCombat]);
+
+  // Portrait change handler
+  const handlePortraitChange = useCallback((portraitUrl: string | null) => {
+    updateHero({ portraitUrl });
+  }, [updateHero]);
 
   if (!hero || showCharacterCreation) {
     return (
@@ -121,6 +367,10 @@ function App() {
           onRecoveriesChange={() => {}}
           onVictoriesChange={() => {}}
           onSurgesChange={() => {}}
+          onAddCondition={() => {}}
+          onRemoveCondition={() => {}}
+          onUpdateConditionEndType={() => {}}
+          onImportCharacter={handleImportCharacter}
           resourceConfig={{
             name: 'Resource',
             abbreviation: 'RES',
@@ -135,11 +385,18 @@ function App() {
           <CharacterManager
             onClose={() => setShowCharacterManager(false)}
             onCreateNew={handleCreateNew}
+            onCharacterLoaded={handleCharacterLoaded}
           />
         )}
         <LegalModal
           isOpen={showLegalModal}
           onClose={() => setShowLegalModal(false)}
+        />
+        <ImportCharacterDialog
+          open={showImportDialog}
+          onOpenChange={setShowImportDialog}
+          onImport={handleImportComplete}
+          existingNames={getAllCharacters().map(c => c.name)}
         />
       </div>
     );
@@ -167,7 +424,7 @@ function App() {
         hero={hero}
         isInCombat={isInCombat}
         onStartCombat={startCombat}
-        onEndCombat={endCombat}
+        onEndCombat={handleEndCombatWithTurnReset}
         onRespite={() => setShowRespiteConfirm(true)}
         onManageCharacters={() => setShowCharacterManager(true)}
         onCreateCharacter={handleCreateNew}
@@ -202,6 +459,25 @@ function App() {
         onSurgesChange={(newValue: number) => {
           updateHero({ surges: newValue });
         }}
+        onAddCondition={handleAddCondition}
+        onRemoveCondition={handleRemoveCondition}
+        onUpdateConditionEndType={handleUpdateConditionEndType}
+        rollHistory={rollHistory}
+        onRoll={handleRoll}
+        onClearRollHistory={handleClearRollHistory}
+        onRollCharacteristic={handleRollCharacteristic}
+        // Turn tracking
+        turnNumber={turnNumber}
+        completedPhases={completedPhases}
+        onTogglePhase={handleTogglePhase}
+        onEndTurn={handleEndTurn}
+        onResetTurn={handleResetTurn}
+        // Portrait
+        onPortraitChange={handlePortraitChange}
+        // Character management
+        onExportCharacter={handleExportCharacter}
+        onImportCharacter={handleImportCharacter}
+        onDuplicateCharacter={handleDuplicateCharacter}
       />
 
       {/* Navigation Tabs - Dynamic based on hero class */}
@@ -308,6 +584,7 @@ function App() {
         <CharacterManager
           onClose={() => setShowCharacterManager(false)}
           onCreateNew={handleCreateNew}
+          onCharacterLoaded={handleCharacterLoaded}
         />
       )}
 
@@ -356,6 +633,23 @@ function App() {
       <LegalModal
         isOpen={showLegalModal}
         onClose={() => setShowLegalModal(false)}
+      />
+
+      {/* Import Character Dialog */}
+      <ImportCharacterDialog
+        open={showImportDialog}
+        onOpenChange={setShowImportDialog}
+        onImport={handleImportComplete}
+        existingNames={getAllCharacters().map(c => c.name)}
+      />
+
+      {/* Delete Character Confirmation Dialog */}
+      <DeleteCharacterDialog
+        open={showDeleteDialog}
+        onOpenChange={setShowDeleteDialog}
+        character={characterToDelete}
+        onConfirm={handleConfirmDelete}
+        isCurrentCharacter={characterToDelete?.id === hero?.id}
       />
     </div>
   );

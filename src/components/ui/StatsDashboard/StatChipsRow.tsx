@@ -7,12 +7,15 @@ import {
   Trophy,
   BarChart3,
   Swords,
+  AlertTriangle,
+  Dices,
 } from 'lucide-react';
 
 import { StatChip } from './StatChip';
+import { TurnChip } from './TurnChip';
 import type { Hero } from '@/types/hero';
 import type { HeroicResourceConfig } from '@/data/class-resources';
-import type { StatCardType } from './types';
+import type { StatCardType, TurnPhaseId } from './types';
 
 interface StatChipsRowProps {
   hero: Hero;
@@ -25,6 +28,9 @@ interface StatChipsRowProps {
   onResourceChange?: (value: number) => void;
   onSurgesChange: (value: number) => void;
   onVictoriesChange: (value: number) => void;
+  // Turn tracking (combat only)
+  turnNumber?: number;
+  completedPhases?: Set<TurnPhaseId>;
 }
 
 export const StatChipsRow: React.FC<StatChipsRowProps> = ({
@@ -38,6 +44,8 @@ export const StatChipsRow: React.FC<StatChipsRowProps> = ({
   onResourceChange,
   onSurgesChange,
   onVictoriesChange,
+  turnNumber = 1,
+  completedPhases = new Set(),
 }) => {
   const showResource = onResourceChange !== undefined;
 
@@ -136,6 +144,30 @@ export const StatChipsRow: React.FC<StatChipsRowProps> = ({
         minValue={0}
       />
 
+      {/* Conditions */}
+      <StatChip
+        id="conditions"
+        icon={AlertTriangle}
+        label="Conditions"
+        value={hero.activeConditions.length}
+        displayValue={hero.activeConditions.length > 0 ? `${hero.activeConditions.length}` : 'None'}
+        color={hero.activeConditions.length > 0 ? 'var(--warning)' : 'var(--text-muted)'}
+        isPinned={pinnedCards.has('conditions')}
+        onTogglePin={() => onTogglePin('conditions')}
+        highlight={hero.activeConditions.length > 0}
+        // No onChange - conditions are managed in the card
+      />
+
+      {/* Turn Tracker - ONLY visible during combat */}
+      {isInCombat && (
+        <TurnChip
+          turnNumber={turnNumber}
+          completedPhases={completedPhases}
+          isPinned={pinnedCards.has('turn')}
+          onTogglePin={() => onTogglePin('turn')}
+        />
+      )}
+
       {/* Characteristics (no +/- controls) */}
       <StatChip
         id="characteristics"
@@ -161,6 +193,19 @@ export const StatChipsRow: React.FC<StatChipsRowProps> = ({
         onTogglePin={() => onTogglePin('combat')}
         highlight={isInCombat}
         // No onChange - combat is controlled via header buttons
+      />
+
+      {/* Dice Roller */}
+      <StatChip
+        id="dice"
+        icon={Dices}
+        label="Dice"
+        value={0}
+        displayValue="Roll"
+        color="var(--warning)"
+        isPinned={pinnedCards.has('dice')}
+        onTogglePin={() => onTogglePin('dice')}
+        // No onChange - dice is controlled in the card
       />
     </div>
   );

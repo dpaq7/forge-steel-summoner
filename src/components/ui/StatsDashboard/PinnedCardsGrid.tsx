@@ -7,12 +7,16 @@ import { RecoveriesCard } from './cards/RecoveriesCard';
 import { HeroicResourceCard } from './cards/HeroicResourceCard';
 import { SurgesCard } from './cards/SurgesCard';
 import { VictoriesCard } from './cards/VictoriesCard';
+import { ConditionsCard } from './cards/ConditionsCard';
 import { CharacteristicsCard } from './cards/CharacteristicsCard';
 import { CombatCard } from './cards/CombatCard';
+import { DiceCard } from './cards/DiceCard';
+import { TurnCard } from './cards/TurnCard';
 
 import type { Hero } from '@/types/hero';
+import type { ConditionId } from '@/types/common';
 import type { HeroicResourceConfig } from '@/data/class-resources';
-import type { StatCardType } from './types';
+import type { StatCardType, DiceRoll, DiceType, TurnPhaseId, CharacteristicId, ConditionEndType } from './types';
 
 interface PinnedCardsGridProps {
   pinnedCards: StatCardType[];
@@ -27,9 +31,23 @@ interface PinnedCardsGridProps {
   onResourceChange?: (value: number) => void;
   onSurgesChange: (value: number) => void;
   onVictoriesChange: (value: number) => void;
+  onAddCondition: (conditionId: ConditionId) => void;
+  onRemoveCondition: (conditionId: ConditionId) => void;
+  onUpdateConditionEndType: (conditionId: ConditionId, endType: ConditionEndType) => void;
   onStartCombat: () => void;
   onEndCombat: () => void;
   onRespite: () => void;
+  // Dice props
+  rollHistory: DiceRoll[];
+  onRoll: (type: DiceType, label?: string) => void;
+  onClearRollHistory: () => void;
+  onRollCharacteristic: (characteristicId: CharacteristicId, modifier: number) => void;
+  // Turn tracking props (combat only)
+  turnNumber?: number;
+  completedPhases?: Set<TurnPhaseId>;
+  onTogglePhase?: (phaseId: TurnPhaseId) => void;
+  onEndTurn?: () => void;
+  onResetTurn?: () => void;
 }
 
 const cardVariants = {
@@ -56,9 +74,21 @@ export const PinnedCardsGrid: React.FC<PinnedCardsGridProps> = ({
   onResourceChange,
   onSurgesChange,
   onVictoriesChange,
+  onAddCondition,
+  onRemoveCondition,
+  onUpdateConditionEndType,
   onStartCombat,
   onEndCombat,
   onRespite,
+  rollHistory,
+  onRoll,
+  onClearRollHistory,
+  onRollCharacteristic,
+  turnNumber = 1,
+  completedPhases = new Set(),
+  onTogglePhase,
+  onEndTurn,
+  onResetTurn,
 }) => {
   return (
     <motion.div
@@ -145,11 +175,22 @@ export const PinnedCardsGrid: React.FC<PinnedCardsGridProps> = ({
               />
             )}
 
+            {type === 'conditions' && (
+              <ConditionsCard
+                conditions={hero.activeConditions}
+                onAddCondition={onAddCondition}
+                onRemoveCondition={onRemoveCondition}
+                onUpdateConditionEndType={onUpdateConditionEndType}
+                onUnpin={() => onUnpin('conditions')}
+              />
+            )}
+
             {type === 'characteristics' && (
               <CharacteristicsCard
                 characteristics={hero.characteristics}
                 speed={hero.speed}
                 stability={hero.stability}
+                onRollCharacteristic={onRollCharacteristic}
                 onUnpin={() => onUnpin('characteristics')}
               />
             )}
@@ -166,6 +207,29 @@ export const PinnedCardsGrid: React.FC<PinnedCardsGridProps> = ({
                 onRespite={onRespite}
                 onSurgesChange={onSurgesChange}
                 onUnpin={() => onUnpin('combat')}
+              />
+            )}
+
+            {type === 'dice' && (
+              <DiceCard
+                rollHistory={rollHistory}
+                onRoll={onRoll}
+                onClearHistory={onClearRollHistory}
+                onUnpin={() => onUnpin('dice')}
+              />
+            )}
+
+            {/* Turn Card - ONLY renders during combat */}
+            {type === 'turn' && isInCombat && onTogglePhase && onEndTurn && onResetTurn && (
+              <TurnCard
+                turnNumber={turnNumber}
+                completedPhases={completedPhases}
+                conditions={hero.activeConditions}
+                onTogglePhase={onTogglePhase}
+                onEndTurn={onEndTurn}
+                onResetTurn={onResetTurn}
+                onRemoveCondition={onRemoveCondition}
+                onUnpin={() => onUnpin('turn')}
               />
             )}
           </motion.div>

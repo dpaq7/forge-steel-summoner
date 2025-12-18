@@ -1,0 +1,54 @@
+/* Shadow-specific styles */
+
+.class-view-shadow .insight-tracker {
+  background: linear-gradient(135deg, rgba(74, 74, 106, 0.1), rgba(74, 74, 106, 0.03));
+}
+
+.class-view-shadow .hidden-toggle {
+  width: 100%;
+  padding: 0.625rem;
+  background: var(--bg-dark);
+  border: 1px solid var(--border-dark);
+  border-radius: var(--radius-sm);
+  color: var(--text-secondary);
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.class-view-shadow .hidden-toggle:hover {
+  border-color: var(--class-shadow);
+}
+
+.class-view-shadow .hidden-toggle.hidden {
+  background: linear-gradient(135deg, rgba(74, 74, 106, 0.3), rgba(0, 0, 0, 0.5));
+  border-color: var(--class-shadow);
+  color: var(--class-shadow);
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+}
+
+.class-view-shadow .hidden-toggle.visible {
+  background: var(--bg-dark);
+}
+
+.class-view-shadow .college-badge {
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+  padding: 0.375rem 0.5rem;
+  background: var(--bg-darkest);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--class-shadow);
+}
+
+.class-view-shadow .college-name {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--class-shadow);
+}
+
+.class-view-shadow .college-desc {
+  font-size: 0.6rem;
+  color: var(--text-muted);
+}

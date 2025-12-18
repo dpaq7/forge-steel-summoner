@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { useSummonerContext } from '../../context/HeroContext';
 import { useCombatContext } from '../../context/CombatContext';
 import { useSquads } from '../../hooks/useSquads';
@@ -12,11 +12,13 @@ import { calculateMaxMinions } from '../../utils/calculations';
 import { performPowerRoll, PowerRollResult, getTierColor, RollModifier } from '../../utils/dice';
 import SummonMinionCard from '../ui/SummonMinionCard';
 import FixtureCard from '../ui/FixtureCard';
+import { TurnTracker } from './TurnTracker';
+import type { ConditionId } from '@/types/common';
 import './CombatView.css';
 
 const CombatView: React.FC = () => {
   const { hero: genericHero, updateHero } = useSummonerContext();
-  const { isInCombat, essenceState, hasSacrificedThisTurn, sacrificeMinion } = useCombatContext();
+  const { isInCombat, essenceState, hasSacrificedThisTurn, sacrificeMinion, combatTurnNumber, onEndTurn } = useCombatContext();
   const { createSquad, addSquad, removeSquad, updateSquad, damageSquad, healSquad } = useSquads();
   const { getSignatureMinions, getUnlockedMinions, getMinionById, getActualEssenceCost, isMinionUnlockedByLevel, getRequiredLevel, isSignatureMinion } = usePortfolio();
   const { canAffordMinion, spendForMinion, currentEssence } = useEssence();
@@ -315,8 +317,23 @@ const CombatView: React.FC = () => {
     });
   };
 
+  // Handle condition removal for TurnTracker
+  const handleRemoveCondition = useCallback((conditionId: ConditionId) => {
+    updateHero({
+      activeConditions: hero.activeConditions.filter((c) => c.conditionId !== conditionId),
+    });
+  }, [hero.activeConditions, updateHero]);
+
   return (
     <div className="combat-view-merged">
+      {/* Turn Tracker - Only visible in combat */}
+      <TurnTracker
+        isInCombat={isInCombat}
+        turnNumber={combatTurnNumber}
+        conditions={hero.activeConditions}
+        onEndTurn={onEndTurn}
+        onRemoveCondition={handleRemoveCondition}
+      />
       {/* Left Panel: Summon Cards (Scrollable) */}
       <div className="combat-left-panel">
         <div className="summon-panel">

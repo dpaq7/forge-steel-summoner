@@ -1,5 +1,6 @@
 import React, { useCallback } from 'react';
 import { useSummonerContext } from '../../../context/HeroContext';
+import { useCombatContext } from '../../../context/CombatContext';
 import {
   isNullHero,
   NullHero,
@@ -20,6 +21,8 @@ import {
   calculateTriggerGain,
 } from '../../../data/null/features';
 import { PSI_BOOST_OPTIONS, PsiBoostOption } from '../../../data/null/psi-boost';
+import { TurnTracker } from '../../combat/TurnTracker';
+import type { ConditionId } from '@/types/common';
 import './NullFieldView.css';
 
 /**
@@ -28,6 +31,15 @@ import './NullFieldView.css';
  */
 export const NullFieldView: React.FC = () => {
   const { hero, updateHero } = useSummonerContext();
+  const { isInCombat, combatTurnNumber, onEndTurn } = useCombatContext();
+
+  // Handle condition removal for TurnTracker
+  const handleRemoveCondition = useCallback((conditionId: ConditionId) => {
+    if (!hero) return;
+    updateHero({
+      activeConditions: hero.activeConditions.filter((c) => c.conditionId !== conditionId),
+    });
+  }, [hero, updateHero]);
 
   // Type guard - only render for Null heroes
   if (!hero || !isNullHero(hero)) {
@@ -168,6 +180,15 @@ export const NullFieldView: React.FC = () => {
 
   return (
     <div className="null-field-view">
+      {/* Turn Tracker - Only visible in combat */}
+      <TurnTracker
+        isInCombat={isInCombat}
+        turnNumber={combatTurnNumber}
+        conditions={hero.activeConditions}
+        onEndTurn={onEndTurn}
+        onRemoveCondition={handleRemoveCondition}
+      />
+
       <header className="null-field-view__header">
         <h1 className="null-field-view__title">Null Field</h1>
         <p className="null-field-view__subtitle">

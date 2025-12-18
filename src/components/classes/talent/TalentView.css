@@ -1,0 +1,67 @@
+/* Talent-specific styles */
+
+.class-view-talent .clarity-tracker {
+  background: linear-gradient(135deg, rgba(218, 112, 214, 0.05), rgba(218, 112, 214, 0.02));
+}
+
+.class-view-talent .clarity-tracker.strained {
+  background: linear-gradient(135deg, rgba(239, 68, 68, 0.1), rgba(239, 68, 68, 0.03));
+  border-color: var(--danger);
+}
+
+.class-view-talent .strained-badge {
+  display: inline-block;
+  padding: 0.125rem 0.375rem;
+  margin-left: 0.25rem;
+  background: var(--danger);
+  border-radius: var(--radius-sm);
+  font-size: 0.5rem;
+  font-weight: 700;
+  color: white;
+  vertical-align: middle;
+}
+
+.class-view-talent .clarity-tracker.strained .resource-current {
+  color: var(--danger);
+}
+
+.class-view-talent .strain-warning {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem;
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid var(--danger);
+  border-radius: var(--radius-sm);
+}
+
+.class-view-talent .strain-icon {
+  font-size: 1rem;
+}
+
+.class-view-talent .strain-text {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--danger);
+}
+
+.class-view-talent .tradition-badge {
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+  padding: 0.375rem 0.5rem;
+  background: var(--bg-darkest);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--class-talent);
+}
+
+.class-view-talent .tradition-name {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--class-talent);
+}
+
+.class-view-talent .tradition-desc {
+  font-size: 0.6rem;
+  color: var(--text-muted);
+}

@@ -1,0 +1,76 @@
+/* Null-specific styles */
+
+.class-view-null .discipline-tracker {
+  background: linear-gradient(135deg, rgba(0, 206, 209, 0.05), rgba(0, 206, 209, 0.02));
+}
+
+.class-view-null .null-traits {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+}
+
+.class-view-null .trait-badge {
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+  padding: 0.375rem 0.5rem;
+  background: var(--bg-darkest);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-dark);
+}
+
+.class-view-null .trait-badge.tradition {
+  border-color: var(--class-null);
+}
+
+.class-view-null .trait-badge.augmentation {
+  border-color: rgba(0, 206, 209, 0.5);
+}
+
+.class-view-null .trait-name {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--class-null);
+}
+
+.class-view-null .trait-desc {
+  font-size: 0.6rem;
+  color: var(--text-muted);
+}
+
+.class-view-null .null-field-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+}
+
+.class-view-null .field-toggle {
+  width: 100%;
+  padding: 0.5rem;
+  background: var(--bg-dark);
+  border: 1px solid var(--border-dark);
+  border-radius: var(--radius-sm);
+  color: var(--text-secondary);
+  font-size: 0.7rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.class-view-null .field-toggle:hover {
+  border-color: var(--class-null);
+}
+
+.class-view-null .field-toggle.active {
+  background: rgba(0, 206, 209, 0.15);
+  border-color: var(--class-null);
+  color: var(--class-null);
+  box-shadow: 0 0 10px rgba(0, 206, 209, 0.2);
+}
+
+.class-view-null .field-enhancement {
+  font-size: 0.6rem;
+  color: var(--text-muted);
+  text-align: center;
+}

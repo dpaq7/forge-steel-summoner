@@ -1,0 +1,24 @@
+/* Censor-specific styles */
+
+.class-view-censor .wrath-tracker {
+  background: linear-gradient(135deg, rgba(212, 175, 55, 0.05), rgba(212, 175, 55, 0.02));
+}
+
+.class-view-censor .subclass-display {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 0.25rem;
+}
+
+/* Judgment target styling */
+.class-view-censor .judgment-target {
+  padding: 0.5rem;
+  background: var(--bg-darkest);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--class-censor);
+  text-align: center;
+}
+
+.class-view-censor .judgment-target strong {
+  color: var(--class-censor);
+}

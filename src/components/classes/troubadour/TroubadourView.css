@@ -1,0 +1,90 @@
+/* Troubadour-specific styles */
+
+.class-view-troubadour .drama-tracker {
+  background: linear-gradient(135deg, rgba(255, 105, 180, 0.05), rgba(255, 105, 180, 0.02));
+}
+
+.class-view-troubadour .class-act-badge {
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+  padding: 0.375rem 0.5rem;
+  background: var(--bg-darkest);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--class-troubadour);
+}
+
+.class-view-troubadour .class-act-name {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--class-troubadour);
+}
+
+.class-view-troubadour .class-act-desc {
+  font-size: 0.6rem;
+  color: var(--text-muted);
+}
+
+.class-view-troubadour .routines-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+}
+
+.class-view-troubadour .routine-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+  padding: 0.375rem 0.5rem;
+  background: var(--bg-dark);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-dark);
+}
+
+.class-view-troubadour .routine-card.active {
+  border-color: var(--class-troubadour);
+  background: rgba(255, 105, 180, 0.1);
+}
+
+.class-view-troubadour .routine-card.secondary {
+  border-style: dashed;
+  opacity: 0.8;
+}
+
+.class-view-troubadour .routine-label {
+  font-size: 0.55rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+}
+
+.class-view-troubadour .routine-name {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--class-troubadour);
+}
+
+.class-view-troubadour .routine-effect {
+  font-size: 0.6rem;
+  color: var(--text-secondary);
+}
+
+.class-view-troubadour .routine-aura {
+  font-size: 0.55rem;
+  color: var(--text-muted);
+}
+
+.class-view-troubadour .partners-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+}
+
+.class-view-troubadour .partner-badge {
+  padding: 0.25rem 0.5rem;
+  background: rgba(255, 105, 180, 0.15);
+  border: 1px solid var(--class-troubadour);
+  border-radius: var(--radius-sm);
+  font-size: 0.65rem;
+  color: var(--class-troubadour);
+}

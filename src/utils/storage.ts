@@ -524,27 +524,159 @@ export const setActiveCharacterId = (id: string | null): void => {
 };
 
 /**
- * Export character to JSON
+ * Export character to JSON with metadata wrapper
  */
 export const exportCharacterToJSON = (character: Hero): string => {
-  return JSON.stringify(character, null, 2);
+  const exportData = {
+    schemaVersion: '1.0.0',
+    exportedAt: new Date().toISOString(),
+    appVersion: '0.4.1', // Mettle version
+    character,
+  };
+  return JSON.stringify(exportData, null, 2);
 };
 
 /**
- * Import character from JSON
+ * Sanitize character name for use as filename
  */
-export const importCharacterFromJSON = (json: string): Hero | null => {
+const sanitizeFilename = (name: string): string => {
+  return name
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9\s-]/g, '') // Remove special characters
+    .replace(/\s+/g, '-')          // Replace spaces with hyphens
+    .replace(/-+/g, '-')           // Remove multiple hyphens
+    .substring(0, 50);             // Limit length
+};
+
+/**
+ * Export a character to a downloadable JSON file
+ */
+export const downloadCharacterJSON = (character: Hero): void => {
+  const jsonString = exportCharacterToJSON(character);
+  const blob = new Blob([jsonString], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+
+  // Create temporary link and trigger download
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = `${sanitizeFilename(character.name)}.json`;
+  document.body.appendChild(link);
+  link.click();
+
+  // Cleanup
+  document.body.removeChild(link);
+  URL.revokeObjectURL(url);
+};
+
+/**
+ * Duplicate a character with a new ID and "(Copy)" suffix
+ */
+export const duplicateCharacter = (character: Hero): Hero => {
+  return {
+    ...character,
+    id: crypto.randomUUID(),
+    name: `${character.name} (Copy)`,
+    // Reset combat state on duplicate
+    stamina: {
+      ...character.stamina,
+      current: character.stamina.max,
+    },
+    recoveries: {
+      ...character.recoveries,
+      current: character.recoveries.max,
+    },
+    surges: 0,
+    activeConditions: [],
+    // Keep victories, XP, and other progression data
+  };
+};
+
+/**
+ * Validation result for imported character
+ */
+export interface ImportValidationResult {
+  valid: boolean;
+  errors: string[];
+  warnings: string[];
+  hero: Hero | null;
+}
+
+/**
+ * Validate and import character from JSON string
+ * Handles both wrapped format (with schemaVersion) and raw Hero format
+ */
+export const importCharacterFromJSON = (json: string): ImportValidationResult => {
+  const errors: string[] = [];
+  const warnings: string[] = [];
+
   try {
-    const character = JSON.parse(json);
-    // Basic validation
-    if (!character.id || !character.name || !character.level) {
-      throw new Error('Invalid character data');
+    const data = JSON.parse(json);
+
+    // Check if data is an object
+    if (!data || typeof data !== 'object') {
+      errors.push('Invalid file format: expected JSON object');
+      return { valid: false, errors, warnings, hero: null };
     }
-    // Migrate to ensure all fields are present
-    return migrateCharacter(character);
+
+    // Extract character (handle wrapped or raw format)
+    let character: Record<string, unknown>;
+
+    if ('character' in data && typeof data.character === 'object') {
+      // Wrapped format (ExportedCharacter)
+      character = data.character as Record<string, unknown>;
+
+      // Check schema version
+      if (data.schemaVersion && data.schemaVersion !== '1.0.0') {
+        warnings.push(`Character was exported with schema version ${data.schemaVersion}`);
+      }
+    } else if ('name' in data && 'heroClass' in data) {
+      // Raw Hero format (legacy or direct)
+      character = data;
+      warnings.push('Character file is in legacy format (unwrapped)');
+    } else if ('name' in data && 'level' in data) {
+      // Very old legacy format without heroClass
+      character = data;
+      warnings.push('Character file is in very old format, some data may be missing');
+    } else {
+      errors.push('Invalid character format: missing required fields');
+      return { valid: false, errors, warnings, hero: null };
+    }
+
+    // Validate required fields
+    if (!character.name || typeof character.name !== 'string' || character.name.trim().length === 0) {
+      errors.push('Character name must be a non-empty string');
+    }
+
+    if (typeof character.level !== 'number' || character.level < 1 || character.level > 10) {
+      errors.push('Character level must be a number between 1 and 10');
+    }
+
+    // Validate heroClass if present
+    const validClasses = [
+      'censor', 'conduit', 'elementalist', 'fury', 'null',
+      'shadow', 'tactician', 'talent', 'troubadour', 'summoner'
+    ];
+    if (character.heroClass && !validClasses.includes(character.heroClass as string)) {
+      errors.push(`Invalid heroClass: ${character.heroClass}`);
+    }
+
+    if (errors.length > 0) {
+      return { valid: false, errors, warnings, hero: null };
+    }
+
+    // Migrate to ensure all fields are present and generate new ID
+    const migratedHero = migrateCharacter(character as Partial<Hero>);
+    const importedHero: Hero = {
+      ...migratedHero,
+      id: crypto.randomUUID(), // Always generate new ID to avoid conflicts
+    };
+
+    return { valid: true, errors, warnings, hero: importedHero };
+
   } catch (error) {
-    console.error('Error importing character:', error);
-    return null;
+    errors.push(`Failed to parse JSON: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    return { valid: false, errors, warnings, hero: null };
   }
 };
 

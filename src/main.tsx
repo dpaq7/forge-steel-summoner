@@ -5,7 +5,7 @@ import App from './App.tsx'
 import { HeroProvider } from './context/HeroContext'
 import { CombatProvider } from './context/CombatContext'
 import { RollHistoryProvider } from './context/RollHistoryContext'
-import { ThemeProvider } from './context/ThemeContext'
+import { ThemeProvider } from './themes'
 import { TooltipProvider } from '@/components/ui/shadcn'
 
 createRoot(document.getElementById('root')!).render(

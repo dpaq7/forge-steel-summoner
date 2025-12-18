@@ -1,8 +1,11 @@
 import React, { useCallback } from 'react';
 import { useSummonerContext } from '../../../context/HeroContext';
+import { useCombatContext } from '../../../context/CombatContext';
 import { isTalentHero, TalentHero, TalentTradition } from '../../../types/hero';
 import { ClarityGauge } from './ClarityGauge';
 import { StrainDamagePreview } from './StrainDamagePreview';
+import { TurnTracker } from '../../combat/TurnTracker';
+import type { ConditionId } from '@/types/common';
 import './StrainView.css';
 
 // Tradition descriptions from Draw Steel rules
@@ -57,6 +60,15 @@ const LEVEL_FEATURES: LevelFeature[] = [
  */
 export const StrainView: React.FC = () => {
   const { hero, updateHero } = useSummonerContext();
+  const { isInCombat, combatTurnNumber, onEndTurn } = useCombatContext();
+
+  // Handle condition removal for TurnTracker
+  const handleRemoveCondition = useCallback((conditionId: ConditionId) => {
+    if (!hero) return;
+    updateHero({
+      activeConditions: hero.activeConditions.filter((c) => c.conditionId !== conditionId),
+    });
+  }, [hero, updateHero]);
 
   // Type guard - only render for Talent heroes
   if (!hero || !isTalentHero(hero)) {
@@ -94,6 +106,15 @@ export const StrainView: React.FC = () => {
 
   return (
     <div className="strain-view">
+      {/* Turn Tracker - Only visible in combat */}
+      <TurnTracker
+        isInCombat={isInCombat}
+        turnNumber={combatTurnNumber}
+        conditions={hero.activeConditions}
+        onEndTurn={onEndTurn}
+        onRemoveCondition={handleRemoveCondition}
+      />
+
       <header className="strain-view__header">
         <h1 className="strain-view__title">Strain</h1>
         <p className="strain-view__subtitle">

@@ -1,5 +1,6 @@
 import React, { useCallback, useState } from 'react';
 import { useSummonerContext } from '../../../context/HeroContext';
+import { useCombatContext } from '../../../context/CombatContext';
 import {
   isTroubadourHero,
   TroubadourHero,
@@ -15,6 +16,8 @@ import {
 } from '../../../data/troubadour/routines';
 import { classActDefinitions, TroubadourClassAct } from '../../../data/troubadour/subclasses';
 import { getFeaturesForLevel, SubclassFeature } from '../../../data/troubadour/features';
+import { TurnTracker } from '../../combat/TurnTracker';
+import type { ConditionId } from '@/types/common';
 import './RoutinesView.css';
 
 // Helper to generate unique IDs
@@ -26,10 +29,19 @@ const generateId = () => `${Date.now()}-${Math.random().toString(36).substr(2, 9
  */
 export const RoutinesView: React.FC = () => {
   const { hero, updateHero } = useSummonerContext();
+  const { isInCombat, combatTurnNumber, onEndTurn } = useCombatContext();
 
   // Local state for scene partner input
   const [newPartnerName, setNewPartnerName] = useState('');
   const [showAddPartner, setShowAddPartner] = useState(false);
+
+  // Handle condition removal for TurnTracker
+  const handleRemoveCondition = useCallback((conditionId: ConditionId) => {
+    if (!hero) return;
+    updateHero({
+      activeConditions: hero.activeConditions.filter((c) => c.conditionId !== conditionId),
+    });
+  }, [hero, updateHero]);
 
   // Type guard - only render for Troubadour heroes
   if (!hero || !isTroubadourHero(hero)) {
@@ -233,6 +245,15 @@ export const RoutinesView: React.FC = () => {
 
   return (
     <div className="routines-view">
+      {/* Turn Tracker - Only visible in combat */}
+      <TurnTracker
+        isInCombat={isInCombat}
+        turnNumber={combatTurnNumber}
+        conditions={hero.activeConditions}
+        onEndTurn={onEndTurn}
+        onRemoveCondition={handleRemoveCondition}
+      />
+
       <header className="routines-view__header">
         <h1 className="routines-view__title">Routines</h1>
         <p className="routines-view__subtitle">

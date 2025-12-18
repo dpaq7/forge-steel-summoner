@@ -1,0 +1,102 @@
+/* Summoner-specific styles */
+
+.class-view-summoner .essence-tracker {
+  background: linear-gradient(135deg, rgba(139, 92, 246, 0.05), rgba(139, 92, 246, 0.02));
+}
+
+.class-view-summoner .circle-badge {
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+  padding: 0.375rem 0.5rem;
+  background: var(--bg-darkest);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--class-summoner);
+}
+
+.class-view-summoner .circle-name {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--class-summoner);
+}
+
+.class-view-summoner .circle-portfolio {
+  font-size: 0.6rem;
+  color: var(--text-muted);
+}
+
+.class-view-summoner .formation-badge {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.375rem 0.5rem;
+  background: var(--bg-darkest);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-dark);
+}
+
+.class-view-summoner .formation-name {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.class-view-summoner .formation-bonus {
+  font-size: 0.6rem;
+  color: var(--class-summoner);
+}
+
+.class-view-summoner .minions-summary {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.class-view-summoner .minion-count {
+  display: flex;
+  align-items: baseline;
+  gap: 0.25rem;
+  justify-content: center;
+}
+
+.class-view-summoner .count-value {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--class-summoner);
+}
+
+.class-view-summoner .count-label {
+  font-size: 0.65rem;
+  color: var(--text-muted);
+}
+
+.class-view-summoner .squads-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.class-view-summoner .squad-chip {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.25rem 0.5rem;
+  background: var(--bg-dark);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-dark);
+  font-size: 0.65rem;
+}
+
+.class-view-summoner .squad-count {
+  font-weight: 700;
+  color: var(--class-summoner);
+}
+
+.class-view-summoner .squad-name {
+  color: var(--text-primary);
+  flex: 1;
+}
+
+.class-view-summoner .squad-stamina {
+  color: var(--text-muted);
+}

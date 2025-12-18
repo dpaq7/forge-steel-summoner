@@ -5,9 +5,12 @@ import {
   Info,
   Swords,
   Tent,
-  Plus,
   Download,
   Upload,
+  UserPlus,
+  FolderOpen,
+  Copy,
+  ChevronDown,
 } from 'lucide-react';
 
 import { Button } from '@/components/ui/shadcn/button';
@@ -18,6 +21,7 @@ import {
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
+  DropdownMenuLabel,
 } from '@/components/ui/shadcn/dropdown-menu';
 import {
   Tooltip,
@@ -25,6 +29,7 @@ import {
   TooltipContent,
 } from '@/components/ui/shadcn/tooltip';
 import { ThemeSelector } from '@/components/theme';
+import { AvatarUpload } from '@/components/ui/AvatarUpload';
 
 import type { Hero } from '@/types/hero';
 
@@ -37,7 +42,21 @@ interface DashboardHeaderProps {
   onManageCharacters: () => void;
   onCreateCharacter: () => void;
   onShowAbout: () => void;
+  // Additional handlers for full menu functionality
+  onImportCharacter?: () => void;
+  onExportCharacter?: () => void;
+  onDuplicateCharacter?: () => void;
+  // Portrait upload
+  onPortraitChange?: (portraitUrl: string | null) => void;
 }
+
+// Format subclass name (capitalize words, handle hyphens)
+const formatSubclassName = (subclass: string): string => {
+  return subclass
+    .split('-')
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(' ');
+};
 
 export const DashboardHeader: React.FC<DashboardHeaderProps> = ({
   hero,
@@ -48,9 +67,17 @@ export const DashboardHeader: React.FC<DashboardHeaderProps> = ({
   onManageCharacters,
   onCreateCharacter,
   onShowAbout,
+  onImportCharacter,
+  onExportCharacter,
+  onDuplicateCharacter,
+  onPortraitChange,
 }) => {
   const classDisplayName = hero?.heroClass
     ? hero.heroClass.charAt(0).toUpperCase() + hero.heroClass.slice(1)
+    : '';
+
+  const subclassDisplayName = hero?.subclass
+    ? formatSubclassName(hero.subclass)
     : '';
 
   return (
@@ -71,7 +98,15 @@ export const DashboardHeader: React.FC<DashboardHeaderProps> = ({
 
             {/* Character Info */}
             <div className="dashboard-character">
-              {hero.portraitUrl ? (
+              {/* Clickable Avatar with Portrait Upload */}
+              {onPortraitChange ? (
+                <AvatarUpload
+                  currentPortrait={hero.portraitUrl}
+                  characterName={hero.name}
+                  onPortraitChange={onPortraitChange}
+                  size="md"
+                />
+              ) : hero.portraitUrl ? (
                 <img
                   src={hero.portraitUrl}
                   alt={hero.name}
@@ -92,6 +127,15 @@ export const DashboardHeader: React.FC<DashboardHeaderProps> = ({
                   <Badge variant="secondary" className="dashboard-badge class">
                     {classDisplayName}
                   </Badge>
+                  {subclassDisplayName && (
+                    <Badge
+                      variant="secondary"
+                      className="dashboard-badge subclass"
+                      data-class={hero.heroClass}
+                    >
+                      {subclassDisplayName}
+                    </Badge>
+                  )}
                 </div>
               </div>
             </div>
@@ -154,33 +198,80 @@ export const DashboardHeader: React.FC<DashboardHeaderProps> = ({
 
         {/* Characters Dropdown */}
         <DropdownMenu>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon" className="dashboard-icon-btn">
-                  <Users className="w-4 h-4" />
-                </Button>
-              </DropdownMenuTrigger>
-            </TooltipTrigger>
-            <TooltipContent side="bottom">Characters</TooltipContent>
-          </Tooltip>
-          <DropdownMenuContent align="end" className="dropdown-fantasy">
-            <DropdownMenuItem onClick={onManageCharacters}>
-              <Users className="w-4 h-4 mr-2" />
-              Manage Characters
+          <DropdownMenuTrigger asChild>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="dashboard-characters-btn"
+            >
+              <Users className="w-4 h-4" />
+              <span className="dashboard-btn-text">Characters</span>
+              <ChevronDown className="w-3 h-3 ml-1 opacity-60" />
+            </Button>
+          </DropdownMenuTrigger>
+
+          <DropdownMenuContent
+            align="end"
+            sideOffset={8}
+            className="dropdown-fantasy characters-dropdown"
+          >
+            {/* Current Character Section - only show when hero exists */}
+            {hero && (
+              <>
+                <DropdownMenuLabel className="dropdown-section-label">
+                  Current Character
+                </DropdownMenuLabel>
+
+                <DropdownMenuItem
+                  onClick={onExportCharacter}
+                  disabled={!onExportCharacter}
+                  className="dropdown-item"
+                >
+                  <Download className="w-4 h-4 mr-2" />
+                  Export {hero.name}
+                </DropdownMenuItem>
+
+                <DropdownMenuItem
+                  onClick={onDuplicateCharacter}
+                  disabled={!onDuplicateCharacter}
+                  className="dropdown-item"
+                >
+                  <Copy className="w-4 h-4 mr-2" />
+                  Duplicate Character
+                </DropdownMenuItem>
+
+                <DropdownMenuSeparator />
+              </>
+            )}
+
+            {/* Character Management Section */}
+            <DropdownMenuLabel className="dropdown-section-label">
+              Character Management
+            </DropdownMenuLabel>
+
+            <DropdownMenuItem
+              onClick={onManageCharacters}
+              className="dropdown-item"
+            >
+              <FolderOpen className="w-4 h-4 mr-2" />
+              Manage All Characters
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={onCreateCharacter}>
-              <Plus className="w-4 h-4 mr-2" />
-              Create New
+
+            <DropdownMenuItem
+              onClick={onCreateCharacter}
+              className="dropdown-item"
+            >
+              <UserPlus className="w-4 h-4 mr-2" />
+              Create New Character
             </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>
+
+            <DropdownMenuItem
+              onClick={onImportCharacter}
+              disabled={!onImportCharacter}
+              className="dropdown-item"
+            >
               <Upload className="w-4 h-4 mr-2" />
-              Import
-            </DropdownMenuItem>
-            <DropdownMenuItem>
-              <Download className="w-4 h-4 mr-2" />
-              Export
+              Import Character
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

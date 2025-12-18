@@ -1,53 +1,60 @@
 /* ============================================
-   DRAW STEEL SUMMONER - Design System
-   Color palette from Summoner cover art
+   METTLE - Design System
+   Default theme: Midnight Ink
+   Colors are overridden by ThemeProvider
    ============================================ */
 
 :root {
   /* === BACKGROUNDS === */
-  --bg-darkest: #050d0b;      /* Deepest shadows, inputs */
-  --bg-dark: #0a1a18;         /* Main app background */
-  --bg-medium: #1a3a32;       /* Cards, panels */
-  --bg-light: #2d5a4a;        /* Hover states, elevated elements */
-  --bg-hover: #3d5a4d;        /* Active hover */
+  /* Midnight Ink: Cool blue/slate with warm eggshell accents */
+  --bg-darkest: #0a0f1a;      /* Deepest shadows, inputs */
+  --bg-dark: #0f1524;         /* Main app background */
+  --bg-medium: #1d2a49;       /* Cards, panels */
+  --bg-light: #2c3f6d;        /* Hover states, elevated elements */
+  --bg-hover: #3a4d7a;        /* Active hover */
+  --bg-card: #1f3047;         /* Card backgrounds */
 
-  /* === MAGICAL CYAN ACCENTS === */
-  --accent-bright: #00e6c3;   /* Primary accent, active states */
-  --accent-glow: #4aeadc;     /* Glowing effects */
-  --accent-soft: #7fffd4;     /* Subtle highlights */
-  --accent-dim: #3d8b7a;      /* Secondary/muted accent */
+  /* === ACCENT COLORS === */
+  /* Eggshell (warm gold) */
+  --accent-bright: #c6b26c;   /* Primary accent, active states */
+  --accent-glow: #d4c691;     /* Glowing effects */
+  --accent-soft: #e2d9b8;     /* Subtle highlights */
+  --accent-dim: #6e602b;      /* Secondary/muted accent */
 
   /* === TEXT === */
-  --text-primary: #e8e6e0;    /* Main text */
-  --text-secondary: #a8b4b0;  /* Secondary text */
-  --text-bone: #d4c8b0;       /* Labels, parchment feel */
-  --text-muted: #708880;      /* Disabled, hints */
+  /* Blue Slate lights */
+  --text-primary: #eef3f6;    /* Main text */
+  --text-secondary: #9bb4ca;  /* Secondary text */
+  --text-bone: #d4e0eb;       /* Labels, parchment feel */
+  --text-muted: #5882a7;      /* Disabled, hints */
 
   /* === BORDERS === */
-  --border-glow: rgba(74, 234, 220, 0.25);
-  --border-solid: #3d6b5a;
-  --border-bright: #4aeadc;
+  /* Dusty Denim */
+  --border-glow: rgba(198, 178, 108, 0.25);
+  --border-solid: #394a60;
+  --border-bright: #c6b26c;
 
   /* === STATUS COLORS === */
   --success: #4caf50;
   --success-dim: rgba(76, 175, 80, 0.15);
-  --success-dark: #1a2a1a;
-  --danger: #f44336;
-  --danger-dim: rgba(244, 67, 54, 0.15);
+  --success-dark: #1a2a2a;
+  --danger: #ef5350;
+  --danger-dim: rgba(239, 83, 80, 0.15);
   --danger-dark: #2a1a1a;
-  --warning: #f0c674;
-  --warning-dim: rgba(240, 198, 116, 0.15);
-  --essence: #a87de8;
-  --essence-dim: rgba(168, 125, 232, 0.15);
-  --xp: #e8c844;
-  --xp-dim: rgba(232, 200, 68, 0.15);
+  --warning: #ff9800;
+  --warning-dim: rgba(255, 152, 0, 0.15);
+  --info: #496ab6;
+  --essence: #496ab6;
+  --essence-dim: rgba(73, 106, 182, 0.15);
+  --xp: #b89f47;
+  --xp-dim: rgba(184, 159, 71, 0.15);
 
   /* === EFFECTS === */
-  --shadow-glow: 0 0 10px rgba(0, 230, 195, 0.3), 0 0 20px rgba(0, 230, 195, 0.15);
-  --shadow-glow-strong: 0 0 15px rgba(0, 230, 195, 0.5), 0 0 30px rgba(0, 230, 195, 0.25);
-  --shadow-card: 0 2px 8px rgba(0, 0, 0, 0.4);
-  --inner-glow: inset 0 0 20px rgba(0, 230, 195, 0.1);
-  --text-glow: 0 0 10px rgba(0, 230, 195, 0.5);
+  --shadow-glow: 0 0 10px rgba(198, 178, 108, 0.3), 0 0 20px rgba(198, 178, 108, 0.15);
+  --shadow-glow-strong: 0 0 15px rgba(198, 178, 108, 0.5), 0 0 30px rgba(198, 178, 108, 0.25);
+  --shadow-card: 0 2px 8px rgba(0, 0, 0, 0.5);
+  --inner-glow: inset 0 0 20px rgba(198, 178, 108, 0.1);
+  --text-glow: 0 0 10px rgba(198, 178, 108, 0.5);
 
   /* === SPACING === */
   --space-xs: 0.25rem;

@@ -1,5 +1,6 @@
 import React, { useState, useMemo, useCallback } from 'react';
 import { useSummonerContext } from '../../../context/HeroContext';
+import { useCombatContext } from '../../../context/CombatContext';
 import { isFuryHero, FuryHero, FuryAspect, FuryForm } from '../../../types/hero';
 import { rollDie } from '../../../utils/dice';
 import {
@@ -10,6 +11,8 @@ import {
 } from '../../../data/fury/growing-ferocity';
 import { furyAspects } from '../../../data/fury/subclasses';
 import { stormwightKits } from '../../../data/fury/stormwight-kits';
+import { TurnTracker } from '../../combat/TurnTracker';
+import type { ConditionId } from '@/types/common';
 import './FerocityTrackerView.css';
 
 /**
@@ -18,8 +21,17 @@ import './FerocityTrackerView.css';
  */
 export const FerocityTrackerView: React.FC = () => {
   const { hero, updateHero } = useSummonerContext();
+  const { isInCombat, combatTurnNumber, onEndTurn } = useCombatContext();
   const [lastRoll, setLastRoll] = useState<number | null>(null);
   const [isRolling, setIsRolling] = useState(false);
+
+  // Handle condition removal for TurnTracker
+  const handleRemoveCondition = useCallback((conditionId: ConditionId) => {
+    if (!hero) return;
+    updateHero({
+      activeConditions: hero.activeConditions.filter((c) => c.conditionId !== conditionId),
+    });
+  }, [hero, updateHero]);
 
   // Type guard - only render for Fury heroes
   if (!hero || !isFuryHero(hero)) {
@@ -189,6 +201,15 @@ export const FerocityTrackerView: React.FC = () => {
 
   return (
     <div className="ferocity-tracker">
+      {/* Turn Tracker - Only visible in combat */}
+      <TurnTracker
+        isInCombat={isInCombat}
+        turnNumber={combatTurnNumber}
+        conditions={hero.activeConditions}
+        onEndTurn={onEndTurn}
+        onRemoveCondition={handleRemoveCondition}
+      />
+
       {/* Aspect Header */}
       <div className="aspect-header">
         <h2>{aspectInfo.name}</h2>

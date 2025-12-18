@@ -1,27 +1,100 @@
 /* ============================================
-   THEME SELECTOR - shadcn DropdownMenu Overrides
+   THEME SELECTOR
    ============================================ */
 
-/* Default Badge - shown next to theme that matches hero's class */
-.theme-option__default-badge {
-  display: inline-block;
-  padding: 0.1rem 0.4rem;
-  font-size: 0.55rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  background: var(--accent-dim);
-  color: var(--accent-bright);
-  border-radius: 2px;
-  vertical-align: middle;
+.theme-selector-trigger {
+  color: var(--text-secondary);
 }
 
-/* Color Swatches - preview of theme colors */
-.theme-option__swatch {
-  width: 16px;
-  height: 16px;
+.theme-selector-trigger:hover {
+  color: var(--accent-bright);
+}
+
+.theme-selector-dropdown {
+  min-width: 260px;
+  padding: 0.5rem;
+}
+
+.theme-dropdown-label {
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+  padding: 0.25rem 0.5rem;
+}
+
+/* Theme Menu Item */
+.theme-menu-item {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  padding: 0.5rem;
   border-radius: var(--radius-sm);
-  border: 1px solid rgba(255, 255, 255, 0.15);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.theme-menu-item:hover {
+  background: var(--bg-medium);
+}
+
+.theme-menu-item.selected {
+  background: var(--accent-dim);
+}
+
+/* Color Preview Swatches */
+.theme-preview {
+  display: flex;
+  gap: 2px;
+  flex-shrink: 0;
+}
+
+.theme-swatch {
+  width: 16px;
+  height: 24px;
+  border-radius: 2px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.theme-swatch.bg-swatch {
+  border-radius: 2px 0 0 2px;
+}
+
+.theme-swatch.text-swatch {
+  border-radius: 0 2px 2px 0;
+}
+
+/* Theme Info */
+.theme-info {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+}
+
+.theme-name {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.theme-description {
+  font-size: 0.65rem;
+  color: var(--text-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Selected Indicator */
+.theme-selected-indicator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  color: var(--accent-bright);
   flex-shrink: 0;
 }
 
@@ -47,65 +120,3 @@ select,
 textarea {
   transition: var(--theme-transition);
 }
-
-/* ============================================
-   DEPRECATED STYLES (migrated to shadcn)
-   Kept for reference, can be removed later
-   ============================================
-
-.theme-selector {
-  position: relative;
-  display: inline-block;
-}
-
-.theme-selector__button {
-  padding: 0.375rem 0.75rem;
-  background: var(--accent-bright);
-  color: var(--bg-darkest);
-  border: none;
-  border-radius: var(--radius-sm);
-  cursor: pointer;
-  font-size: 0.85rem;
-  font-weight: 600;
-  transition: all var(--transition-fast);
-}
-
-.theme-selector__dropdown {
-  position: absolute;
-  top: 100%;
-  right: 0;
-  margin-top: 0.5rem;
-  min-width: 280px;
-  background: var(--bg-medium);
-  border: 1px solid var(--border-solid);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-card), var(--shadow-glow);
-  z-index: 1000;
-  overflow: hidden;
-  opacity: 0;
-  transform: translateY(-10px);
-  pointer-events: none;
-  transition: opacity 200ms ease, transform 200ms ease;
-}
-
-.theme-selector__dropdown--open {
-  opacity: 1;
-  transform: translateY(0);
-  pointer-events: auto;
-}
-
-.theme-selector__header { ... }
-.theme-selector__reset-btn { ... }
-.theme-selector__hint { ... }
-.theme-selector__list { ... }
-.theme-option { ... }
-.theme-option--selected { ... }
-.theme-option__radio { ... }
-.theme-option__radio-dot { ... }
-.theme-option__content { ... }
-.theme-option__name { ... }
-.theme-option--default { ... }
-.theme-option__description { ... }
-.theme-option__swatches { ... }
-
-============================================ */
