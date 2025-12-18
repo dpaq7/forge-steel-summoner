@@ -44,27 +44,22 @@ const DialogContent = React.forwardRef<
       )}
       {...props}
     >
-      {/* Fantasy decorations */}
+      {/* Fantasy border glow decoration */}
       {variant !== "default" && (
-        <>
-          <div className="dialog-border-glow" />
-          <div className="dialog-corner dialog-corner-tl" />
-          <div className="dialog-corner dialog-corner-tr" />
-          <div className="dialog-corner dialog-corner-bl" />
-          <div className="dialog-corner dialog-corner-br" />
-        </>
+        <div className="dialog-border-glow" aria-hidden="true" />
       )}
 
       <div className="dialog-inner">
         {children}
-      </div>
 
-      {!hideClose && (
-        <DialogPrimitive.Close className="dialog-close">
-          <X className="h-4 w-4" />
-          <span className="sr-only">Close</span>
-        </DialogPrimitive.Close>
-      )}
+        {/* Close button inside dialog-inner so it's visible against the background */}
+        {!hideClose && (
+          <DialogPrimitive.Close className="dialog-close">
+            <X className="dialog-close-icon" style={{ width: 16, height: 16 }} />
+            <span className="sr-only">Close</span>
+          </DialogPrimitive.Close>
+        )}
+      </div>
     </DialogPrimitive.Content>
   </DialogPortal>
 ))

@@ -206,6 +206,17 @@
   color: var(--accent-primary);
 }
 
+/* Expand toggle button in identity-actions - matches SmartHeader style */
+.identity-actions .expand-toggle {
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
 .minimize-btn {
   display: flex;
   align-items: center;

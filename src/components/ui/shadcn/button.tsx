@@ -52,12 +52,14 @@ const buttonVariants = cva(
 
         // === FANTASY VARIANTS ===
         chamfered: [
-          "bg-[var(--bg-dark)] border border-[var(--border-solid)]",
+          "bg-[var(--bg-dark)]",
           "text-[var(--text-primary)]",
           "font-[var(--font-display)] uppercase tracking-wider text-sm",
           "[clip-path:var(--clip-chamfer-sm)]",
-          "hover:bg-[var(--accent-dim)] hover:border-[var(--accent-primary)]",
-          "hover:shadow-[0_0_12px_var(--border-glow)]",
+          // Use inset box-shadow instead of border - it follows the clip-path shape
+          "shadow-[inset_0_0_0_1px_var(--border-solid)]",
+          "hover:bg-[var(--accent-dim)]",
+          "hover:shadow-[inset_0_0_0_1px_var(--accent-primary),0_0_12px_var(--border-glow)]",
         ].join(" "),
 
         combat: [

@@ -31,6 +31,7 @@ src-tauri/target.nosync/
 .claude/plans/
 
 # Project documentation and reference files
+class compendium.md
 Magic Items.md
 Summoner v1.0.pdf
 summoner v10.md

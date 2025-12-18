@@ -1,27 +1,40 @@
 import React, { useCallback } from 'react';
+import { Shield, Plus, Minus, Wind } from 'lucide-react';
+import { Button } from '@/components/ui/shadcn/button';
+import {
+  Tooltip,
+  TooltipTrigger,
+  TooltipContent,
+} from '@/components/ui/shadcn/tooltip';
 import './RecoveriesTracker.css';
 
 interface RecoveriesTrackerProps {
-  stamina: number;     // Stamina regained per recovery
-  current: number;     // Current recoveries available
-  max: number;         // Maximum recoveries
+  current: number;
+  max: number;
+  value: number; // Recovery value (how much stamina is restored)
+  currentStamina: number;
+  maxStamina: number;
   onCurrentChange: (value: number) => void;
-  onUseRecovery?: () => void;  // Optional callback for using a recovery
+  onCatchBreath?: () => void;
   className?: string;
 }
 
 /**
  * Recoveries Tracker component matching Draw Steel character sheet.
- * Shows recovery stamina value and current/max recoveries with counter buttons.
+ * Single connected box with diamonds, +/- controls, and Catch Breath button.
  */
 const RecoveriesTracker: React.FC<RecoveriesTrackerProps> = ({
-  stamina,
   current,
   max,
+  value,
+  currentStamina,
+  maxStamina,
   onCurrentChange,
-  onUseRecovery,
+  onCatchBreath,
   className = '',
 }) => {
+  const canCatchBreath = current > 0 && currentStamina < maxStamina;
+
   const handleIncrement = useCallback(() => {
     if (current < max) onCurrentChange(current + 1);
   }, [current, max, onCurrentChange]);
@@ -30,59 +43,116 @@ const RecoveriesTracker: React.FC<RecoveriesTrackerProps> = ({
     if (current > 0) onCurrentChange(current - 1);
   }, [current, onCurrentChange]);
 
-  const handleUseRecovery = useCallback(() => {
-    if (current > 0 && onUseRecovery) {
-      onUseRecovery();
+  const handleCatchBreath = useCallback(() => {
+    if (canCatchBreath && onCatchBreath) {
+      onCatchBreath();
     }
-  }, [current, onUseRecovery]);
+  }, [canCatchBreath, onCatchBreath]);
+
+  // Generate recovery diamonds
+  const renderDiamonds = () => {
+    const diamonds = [];
+    for (let i = 0; i < max; i++) {
+      diamonds.push(
+        <span
+          key={i}
+          className={`recovery-diamond ${i < current ? 'filled' : 'empty'}`}
+          aria-hidden="true"
+        >
+          ◆
+        </span>
+      );
+    }
+    return diamonds;
+  };
 
   return (
     <div className={`recoveries-tracker ${className}`}>
-      <div className="recoveries-boxes">
-        <div className="recovery-box">
-          <span className="recovery-label">Stamina</span>
-          <span className="recovery-value stamina-value">{stamina}</span>
-          <span className="recovery-sublabel">per recovery</span>
-        </div>
-
-        <div className="recovery-box editable">
-          <span className="recovery-label">Recoveries</span>
-          <div className="recovery-counter">
-            <button
-              className="counter-btn"
-              onClick={handleDecrement}
-              disabled={current <= 0}
-              aria-label="Decrease recoveries"
-              type="button"
-            >
-              -
-            </button>
-            <span className="recovery-value">{current}</span>
-            <button
-              className="counter-btn"
-              onClick={handleIncrement}
-              disabled={current >= max}
-              aria-label="Increase recoveries"
-              type="button"
-            >
-              +
-            </button>
-          </div>
-          <span className="recovery-max">/ {max}</span>
-        </div>
+      {/* Header */}
+      <div className="recoveries-header">
+        <Shield className="recoveries-icon" />
+        <span className="recoveries-label">Recoveries</span>
       </div>
 
-      {onUseRecovery && (
-        <button
-          className="use-recovery-btn"
-          onClick={handleUseRecovery}
-          disabled={current <= 0}
-          title={`Use recovery to restore ${stamina} stamina`}
-          type="button"
-        >
-          Use Recovery (+{stamina})
-        </button>
-      )}
+      {/* Main Content Box */}
+      <div className="recoveries-box">
+        {/* Controls Row */}
+        <div className="recoveries-controls">
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <button
+                className="recoveries-adjust-btn"
+                onClick={handleDecrement}
+                disabled={current <= 0}
+                aria-label="Decrease recoveries"
+                type="button"
+              >
+                <Minus className="w-3 h-3" />
+              </button>
+            </TooltipTrigger>
+            <TooltipContent side="bottom">Decrease Recoveries</TooltipContent>
+          </Tooltip>
+
+          {/* Diamonds Display */}
+          <div className="recoveries-diamonds">{renderDiamonds()}</div>
+
+          {/* Numeric Value */}
+          <span className="recoveries-value">
+            {current}/{max}
+          </span>
+
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <button
+                className="recoveries-adjust-btn"
+                onClick={handleIncrement}
+                disabled={current >= max}
+                aria-label="Increase recoveries"
+                type="button"
+              >
+                <Plus className="w-3 h-3" />
+              </button>
+            </TooltipTrigger>
+            <TooltipContent side="bottom">Increase Recoveries</TooltipContent>
+          </Tooltip>
+        </div>
+
+        {/* Recovery Value Display */}
+        <div className="recovery-value-row">
+          <span className="recovery-value-label">Recovery Value:</span>
+          <span className="recovery-value-amount">{value}</span>
+        </div>
+
+        {/* Catch Breath Button */}
+        {onCatchBreath && (
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                variant="outline"
+                size="sm"
+                className="catch-breath-btn"
+                onClick={handleCatchBreath}
+                disabled={!canCatchBreath}
+              >
+                <Wind className="w-4 h-4 mr-1.5" />
+                Catch Breath
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent side="bottom">
+              <div className="catch-breath-tooltip">
+                <strong>Catch Breath</strong>
+                <p>Spend 1 Recovery to heal {value} Stamina</p>
+                {!canCatchBreath && current <= 0 && (
+                  <p className="warning">No recoveries remaining</p>
+                )}
+                {!canCatchBreath && currentStamina >= maxStamina && (
+                  <p className="warning">Already at full Stamina</p>
+                )}
+              </div>
+            </TooltipContent>
+          </Tooltip>
+        )}
+      </div>
     </div>
   );
 };

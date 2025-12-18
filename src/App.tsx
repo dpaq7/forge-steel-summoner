@@ -4,7 +4,6 @@ import { useCombatContext } from './context/CombatContext';
 import { useTheme } from './context/ThemeContext';
 import CharacterCreation from './components/creation/CharacterCreation';
 import CharacterManager from './components/character/CharacterManager';
-import CharacterStatsPanel from './components/character/CharacterStatsPanel';
 import CharacterDetailsView from './components/character/CharacterDetailsView';
 import LevelUp from './components/character/LevelUp';
 import CombatView from './components/combat/CombatView';
@@ -14,8 +13,7 @@ import MagicItemsView from './components/items/MagicItemsView';
 import InventoryView from './components/inventory/InventoryView';
 import RollHistoryPanel from './components/shared/RollHistoryPanel';
 import LegalModal from './components/shared/LegalModal';
-import CollapsibleHeader from './components/ui/CollapsibleHeader';
-import { ThemeSelector } from './components/theme';
+import { StatsDashboard } from './components/ui/StatsDashboard';
 import { StrainView } from './components/classDetails/TalentDetails/StrainView';
 import { NullFieldView } from './components/classDetails/NullDetails/NullFieldView';
 import { RoutinesView } from './components/classDetails/TroubadourDetails';
@@ -108,23 +106,28 @@ function App() {
   if (!hero || showCharacterCreation) {
     return (
       <div className="app dark-mode">
-        <header className="app-header">
-          <h1>Mettle</h1>
-          <div className="header-actions">
-            <Button variant="ghost" size="sm" onClick={() => setShowCharacterManager(true)}>
-              Manage Characters
-            </Button>
-            <ThemeSelector />
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => setShowLegalModal(true)}
-              aria-label="About Mettle"
-            >
-              About
-            </Button>
-          </div>
-        </header>
+        <StatsDashboard
+          hero={null}
+          isInCombat={false}
+          onStartCombat={() => {}}
+          onEndCombat={() => {}}
+          onRespite={() => {}}
+          onManageCharacters={() => setShowCharacterManager(true)}
+          onCreateCharacter={handleCreateNew}
+          onShowAbout={() => setShowLegalModal(true)}
+          onLevelUp={() => {}}
+          onCatchBreath={() => {}}
+          onStaminaChange={() => {}}
+          onRecoveriesChange={() => {}}
+          onVictoriesChange={() => {}}
+          onSurgesChange={() => {}}
+          resourceConfig={{
+            name: 'Resource',
+            abbreviation: 'RES',
+            color: 'var(--accent-primary)',
+            minValue: 0,
+          }}
+        />
         <main className="app-main">
           <CharacterCreation onComplete={handleCreationComplete} />
         </main>
@@ -154,88 +157,52 @@ function App() {
   // Check if hero is a Summoner
   const isSummoner = heroClass === 'summoner';
 
+  // Get resource config for current hero
+  const resourceConfig = getResourceConfig(hero.heroClass);
+
   return (
     <div className="app dark-mode">
-      {/* Minimal Header */}
-      <header className="app-header compact">
-        <h1>Mettle</h1>
-        <div className="header-actions">
-          <Button variant="ghost" size="sm" onClick={() => setShowCharacterManager(true)}>
-            Characters
-          </Button>
-          <ThemeSelector />
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => setShowLegalModal(true)}
-            aria-label="About Mettle"
-          >
-            About
-          </Button>
-        </div>
-      </header>
-
-      {/* Collapsible Character Stats Panel */}
-      <CollapsibleHeader
-        compactData={(() => {
-          const resourceConfig = getResourceConfig(hero.heroClass);
-          return {
-            name: hero.name,
-            level: hero.level,
-            portraitUrl: hero.portraitUrl || null,
-            stamina: {
-              current: hero.stamina.current,
-              max: hero.stamina.max,
-            },
-            // Use hero.heroicResource as single source of truth
-            heroicResource: {
-              current: hero.heroicResource?.current ?? 0,
-              name: resourceConfig.name,
-              abbreviation: resourceConfig.abbreviation,
-              color: resourceConfig.color,
-              minValue: resourceConfig.minValue,
-            },
-            recoveries: {
-              current: hero.recoveries.current,
-              max: hero.recoveries.max,
-            },
-            recoveryValue: hero.recoveries.value,
-            surges: hero.surges,
-            victories: hero.victories,
-            maxVictories: 12,
-            characteristics: hero.characteristics,
-            speed: hero.speed,
-            stability: hero.stability,
-            isInCombat,
-            onStartCombat: startCombat,
-            onEndCombat: endCombat,
-            onRespite: () => setShowRespiteConfirm(true),
-            // Update hero.heroicResource directly (single source of truth)
-            onResourceChange: (newValue: number) => {
-              // Type assertion needed due to discriminated union heroicResource types
-              const updatedResource = {
-                ...hero.heroicResource,
-                current: Math.max(resourceConfig.minValue, newValue),
-              };
-              updateHero({ heroicResource: updatedResource } as Partial<typeof hero>);
-            },
-            onCatchBreath: (healAmount: number) => {
-              if (hero.recoveries.current > 0) {
-                const newStamina = Math.min(hero.stamina.current + healAmount, hero.stamina.max);
-                updateHero({
-                  stamina: { ...hero.stamina, current: newStamina },
-                  recoveries: { ...hero.recoveries, current: hero.recoveries.current - 1 },
-                });
-              }
-            },
-            onVictoriesChange: (newVictories: number) => {
-              updateHero({ victories: newVictories });
-            },
+      {/* StatsDashboard - Unified Pinnable Stats Dashboard */}
+      <StatsDashboard
+        hero={hero}
+        isInCombat={isInCombat}
+        onStartCombat={startCombat}
+        onEndCombat={endCombat}
+        onRespite={() => setShowRespiteConfirm(true)}
+        onManageCharacters={() => setShowCharacterManager(true)}
+        onCreateCharacter={handleCreateNew}
+        onShowAbout={() => setShowLegalModal(true)}
+        onLevelUp={() => setShowLevelUp(true)}
+        resourceConfig={resourceConfig}
+        onResourceChange={(newValue: number) => {
+          const updatedResource = {
+            ...hero.heroicResource,
+            current: Math.max(resourceConfig.minValue, newValue),
           };
-        })()}
-      >
-        <CharacterStatsPanel onLevelUp={() => setShowLevelUp(true)} />
-      </CollapsibleHeader>
+          updateHero({ heroicResource: updatedResource } as Partial<typeof hero>);
+        }}
+        onCatchBreath={(healAmount: number) => {
+          if (hero.recoveries.current > 0) {
+            const newStamina = Math.min(hero.stamina.current + healAmount, hero.stamina.max);
+            updateHero({
+              stamina: { ...hero.stamina, current: newStamina },
+              recoveries: { ...hero.recoveries, current: hero.recoveries.current - 1 },
+            });
+          }
+        }}
+        onStaminaChange={(newValue: number) => {
+          updateHero({ stamina: { ...hero.stamina, current: newValue } });
+        }}
+        onRecoveriesChange={(newValue: number) => {
+          updateHero({ recoveries: { ...hero.recoveries, current: newValue } });
+        }}
+        onVictoriesChange={(newValue: number) => {
+          updateHero({ victories: newValue });
+        }}
+        onSurgesChange={(newValue: number) => {
+          updateHero({ surges: newValue });
+        }}
+      />
 
       {/* Navigation Tabs - Dynamic based on hero class */}
       <RadixTabs

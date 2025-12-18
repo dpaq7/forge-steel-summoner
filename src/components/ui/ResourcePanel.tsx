@@ -17,7 +17,7 @@ interface ResourcePanelProps {
     dyingThreshold: number;
   };
   recoveries: {
-    stamina: number;
+    stamina: number; // Recovery value (renamed from stamina for clarity)
     current: number;
     max: number;
   };
@@ -31,7 +31,7 @@ interface ResourcePanelProps {
   };
   onStaminaChange: (updates: Partial<ResourcePanelProps['stamina']>) => void;
   onRecoveriesChange: (current: number) => void;
-  onUseRecovery?: () => void;
+  onCatchBreath?: () => void; // Renamed from onUseRecovery
   onEssenceChange?: (current: number) => void;
   onSurgesChange?: (current: number) => void;
   onDyingTriggered?: () => void; // Called when hero becomes dying (for bleeding condition)
@@ -52,7 +52,7 @@ const ResourcePanel: React.FC<ResourcePanelProps> = ({
   surges,
   onStaminaChange,
   onRecoveriesChange,
-  onUseRecovery,
+  onCatchBreath,
   onEssenceChange,
   onSurgesChange,
   onDyingTriggered,
@@ -83,13 +83,14 @@ const ResourcePanel: React.FC<ResourcePanelProps> = ({
       </div>
 
       <div className="resource-panel-center">
-        <SectionHeader title="Recoveries" variant="compact" />
         <RecoveriesTracker
-          stamina={recoveries.stamina}
           current={recoveries.current}
           max={recoveries.max}
+          value={recoveries.stamina}
+          currentStamina={stamina.current}
+          maxStamina={stamina.max}
           onCurrentChange={onRecoveriesChange}
-          onUseRecovery={onUseRecovery}
+          onCatchBreath={onCatchBreath}
         />
       </div>
 

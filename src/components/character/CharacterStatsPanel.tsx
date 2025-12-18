@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Minimize2 } from 'lucide-react';
 import { useSummonerContext } from '../../context/HeroContext';
 import { useCombatContext } from '../../context/CombatContext';
 import { useConditions, SaveResult, BleedingDamageResult } from '../../hooks/useConditions';
@@ -7,12 +8,19 @@ import { ALL_CONDITIONS, ConditionDefinition } from '../../data/conditions';
 import { EdgeBaneState } from '../../utils/dice';
 import { Characteristic, ConditionId, HeroClass } from '../../types';
 import { isSummonerHero, SummonerHeroV2, isConduitHero, ConduitHero, Hero } from '../../types/hero';
+import { getResourceConfig } from '../../data/class-resources';
 import {
   classDefinitions,
   getSubclassTypeName,
   getSubclassTypeNamePlural,
   getSubclassById,
 } from '../../data/classes/class-definitions';
+import { Button } from '@/components/ui/shadcn/button';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from '@/components/ui/shadcn/tooltip';
 import PentagonStatBox from '../ui/PentagonStatBox';
 import StatBox from '../shared/StatBox';
 import ProgressionTracker from '../ui/ProgressionTracker';
@@ -88,7 +96,7 @@ interface CharacterStatsPanelProps {
 
 const CharacterStatsPanel: React.FC<CharacterStatsPanelProps> = ({ onLevelUp, onMinimize }) => {
   const { hero, updateHero } = useSummonerContext();
-  const { essenceState, spendEssence, gainEssence, isInCombat, startCombat, endCombat } = useCombatContext();
+  const { isInCombat, startCombat, endCombat } = useCombatContext();
   const {
     addCondition,
     removeCondition,
@@ -198,8 +206,11 @@ const CharacterStatsPanel: React.FC<CharacterStatsPanelProps> = ({ onLevelUp, on
 
   const chars = hero.characteristics;
 
-  // Get class-specific resource name
-  const resourceName = classDef?.heroicResource?.name || 'Essence';
+  // Get class-specific resource config (single source of truth)
+  const resourceConfig = getResourceConfig(heroClass);
+  const resourceName = resourceConfig.name;
+  const resourceMinValue = resourceConfig.minValue;
+  const currentResource = hero.heroicResource?.current ?? 0;
 
   const charLabels: Record<Characteristic, string> = {
     might: 'Might',
@@ -299,10 +310,20 @@ const CharacterStatsPanel: React.FC<CharacterStatsPanelProps> = ({ onLevelUp, on
           )}
           <button className="notes-btn" onClick={openNotes}>Notes</button>
           {onMinimize && (
-            <button className="minimize-btn" onClick={onMinimize} title="Minimize header (Ctrl+Shift+H)">
-              <span className="minimize-icon">&#9650;</span>
-              Minimize
-            </button>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="outline"
+                  size="icon"
+                  onClick={onMinimize}
+                  className="expand-toggle"
+                  aria-label="Minimize to smart header"
+                >
+                  <Minimize2 className="w-4 h-4" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent side="bottom">Minimize to Smart Header</TooltipContent>
+            </Tooltip>
           )}
         </div>
       </div>
@@ -355,7 +376,7 @@ const CharacterStatsPanel: React.FC<CharacterStatsPanelProps> = ({ onLevelUp, on
             max: hero.recoveries.max,
           }}
           essence={{
-            current: essenceState?.currentEssence ?? hero.heroicResource?.current ?? 0,
+            current: currentResource,
             max: isSummoner && summonerHero ? summonerHero.heroicResource.maxPerTurn : 10,
           }}
           resourceName={resourceName}
@@ -373,14 +394,15 @@ const CharacterStatsPanel: React.FC<CharacterStatsPanelProps> = ({ onLevelUp, on
           onRecoveriesChange={(current) => {
             updateHero({ recoveries: { ...hero.recoveries, current } });
           }}
-          onUseRecovery={useRecovery}
-          onEssenceChange={(current) => {
-            const diff = current - (essenceState?.currentEssence ?? 0);
-            if (diff > 0) {
-              gainEssence(diff);
-            } else if (diff < 0) {
-              spendEssence(-diff);
-            }
+          onCatchBreath={useRecovery}
+          onEssenceChange={(newValue) => {
+            // Single source of truth: update hero.heroicResource directly
+            const clampedValue = Math.max(resourceMinValue, newValue);
+            const updatedResource = {
+              ...hero.heroicResource,
+              current: clampedValue,
+            };
+            updateHero({ heroicResource: updatedResource } as Partial<typeof hero>);
           }}
           onDyingTriggered={() => {
             // Per Draw Steel rules: when you become dying, you gain the Bleeding condition

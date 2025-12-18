@@ -40,14 +40,9 @@ const AlertDialogContent = React.forwardRef<
       )}
       {...props}
     >
+      {/* Fantasy border glow decoration */}
       {variant === "fantasy" && (
-        <>
-          <div className="dialog-border-glow" />
-          <div className="dialog-corner dialog-corner-tl" />
-          <div className="dialog-corner dialog-corner-tr" />
-          <div className="dialog-corner dialog-corner-bl" />
-          <div className="dialog-corner dialog-corner-br" />
-        </>
+        <div className="dialog-border-glow" aria-hidden="true" />
       )}
 
       <div className="dialog-inner">
