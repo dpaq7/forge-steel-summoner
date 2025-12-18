@@ -70,6 +70,15 @@ jobs:
       - name: Install npm dependencies
         run: npm ci
 
+      - name: Clean Tauri build directories (macOS)
+        if: matrix.platform == 'macos-latest'
+        run: |
+          echo "Cleaning Tauri target directories..."
+          rm -rf src-tauri/target/universal-apple-darwin || true
+          rm -rf src-tauri/target/aarch64-apple-darwin/release/bundle || true
+          rm -rf src-tauri/target/x86_64-apple-darwin/release/bundle || true
+          echo "Clean complete"
+
       - name: Build Tauri app
         uses: tauri-apps/tauri-action@v0
         env:
