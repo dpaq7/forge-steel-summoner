@@ -206,7 +206,7 @@ export const levelProgressions: LevelProgression[] = [
       {
         id: 'summoners_dominion',
         name: "Summoner's Dominion",
-        description: 'You can now summon your portfolio\'s Fixture (The Boil, Crystal, Glade Pond, or Barrow Gates) once per encounter as a standard action.',
+        description: 'You can now summon your portfolio\'s Fixture (The Boil, Primordial Crystal, Glade Pond, or Barrow Gates) once per encounter as a maneuver. Summoning costs 0 essence. Relocate (free maneuver, 1 essence) to move the fixture up to 5 squares.',
         type: 'automatic',
       },
     ],
@@ -243,7 +243,7 @@ export const levelProgressions: LevelProgression[] = [
     ],
   },
 
-  // Level 4
+  // Level 4 - Minion Improvement (Summoner v1.0 SRD)
   {
     level: 4,
     features: [
@@ -257,6 +257,18 @@ export const levelProgressions: LevelProgression[] = [
         id: 'minion_cap_increase',
         name: 'Minion Cap Increase',
         description: 'Your maximum minion count increases by 4 (to 12 total, or 16 with Horde).',
+        type: 'automatic',
+      },
+      {
+        id: 'essence_salvage',
+        name: 'Essence Salvage',
+        description: 'The first minion death each round now grants 2 Essence instead of 1.',
+        type: 'automatic',
+      },
+      {
+        id: 'minion_stats',
+        name: 'Minion Stat Boost',
+        description: 'Signature minions gain +1 Stamina. 3-Essence minions gain +3 Stamina. 5-Essence minions gain +2 Stamina.',
         type: 'automatic',
       },
       {
@@ -276,10 +288,13 @@ export const levelProgressions: LevelProgression[] = [
     statChanges: {
       reason: 3,
       minionCap: 4,
+      signatureStaminaBonus: 1,
+      threeEssenceStaminaBonus: 3,
+      fiveEssenceStaminaBonus: 2,
     },
   },
 
-  // Level 5
+  // Level 5 - Circle Feature Upgrade
   {
     level: 5,
     features: [
@@ -297,29 +312,12 @@ export const levelProgressions: LevelProgression[] = [
         category: 'circle-upgrade',
       },
       {
-        id: 'essence_salvage',
-        name: 'Essence Salvage',
-        description: 'The first minion death each round now grants 2 Essence instead of 1.',
-        type: 'automatic',
-      },
-      {
         id: 'minion_chain',
         name: 'Minion Chain',
         description: 'Your minions can grapple each other to form bridges across gaps.',
         type: 'automatic',
       },
-      {
-        id: 'minion_stats',
-        name: 'Minion Stat Boost',
-        description: 'Signature minions gain +1 Stamina. 3-Essence minions gain +3 Stamina. 5-Essence minions gain +2 Stamina.',
-        type: 'automatic',
-      },
     ],
-    statChanges: {
-      signatureStaminaBonus: 1,
-      threeEssenceStaminaBonus: 3,
-      fiveEssenceStaminaBonus: 2,
-    },
   },
 
   // Level 6
@@ -353,7 +351,7 @@ export const levelProgressions: LevelProgression[] = [
     ],
   },
 
-  // Level 7
+  // Level 7 - Minion Improvement II (Summoner v1.0 SRD)
   {
     level: 7,
     features: [
@@ -364,15 +362,27 @@ export const levelProgressions: LevelProgression[] = [
         type: 'automatic',
       },
       {
+        id: 'minion_cap_increase_l7',
+        name: 'Minion Cap Increase',
+        description: 'Your maximum minion count increases by 4 (to 16 total, or 20 with Horde).',
+        type: 'automatic',
+      },
+      {
         id: 'minion_improvement',
         name: 'Minion Improvement',
-        description: 'Your free summon count at the start of your turn increases by 1.',
+        description: 'Your free summon count at the start of your turn increases by 1 (to 4 base).',
         type: 'automatic',
       },
       {
         id: 'font_of_creation',
         name: 'Font of Creation',
         description: 'You now gain 3 Essence at the start of your turn instead of 2.',
+        type: 'automatic',
+      },
+      {
+        id: 'minion_stats_l7',
+        name: 'Minion Stat Boost II',
+        description: 'All minions gain additional Stamina: Signature +1 (total +2), 3-Essence +3 (total +6), 5-Essence +2 (total +4), 7-Essence +5.',
         type: 'automatic',
       },
       {
@@ -384,8 +394,13 @@ export const levelProgressions: LevelProgression[] = [
     ],
     statChanges: {
       allStats: 1,
+      minionCap: 4,
       freeSummonCount: 1,
       essencePerTurn: 3,
+      signatureStaminaBonus: 1,
+      threeEssenceStaminaBonus: 3,
+      fiveEssenceStaminaBonus: 2,
+      sevenEssenceStaminaBonus: 5,
     },
   },
 
@@ -426,7 +441,7 @@ export const levelProgressions: LevelProgression[] = [
     ],
   },
 
-  // Level 10
+  // Level 10 - Minion Improvement III (Summoner v1.0 SRD)
   {
     level: 10,
     features: [
@@ -437,9 +452,21 @@ export const levelProgressions: LevelProgression[] = [
         type: 'automatic',
       },
       {
+        id: 'minion_cap_increase_l10',
+        name: 'Minion Cap Increase',
+        description: 'Your maximum minion count increases by 4 (to 20 total, or 24 with Horde).',
+        type: 'automatic',
+      },
+      {
         id: 'minion_improvement_combat',
         name: 'Combat Summon Scaling',
-        description: 'Your start of combat free summon now scales with your Victories (up to 6 additional Signature Minions).',
+        description: 'Your start of combat free summon now scales with your Victories (+2 per 2 Victories).',
+        type: 'automatic',
+      },
+      {
+        id: 'minion_stats_l10',
+        name: 'Minion Stat Boost III',
+        description: 'All minions gain additional Stamina: Signature +1 (total +3), 3-Essence +3 (total +9), 5-Essence +2 (total +6), 7-Essence +5 (total +10).',
         type: 'automatic',
       },
       {
@@ -457,6 +484,11 @@ export const levelProgressions: LevelProgression[] = [
     ],
     statChanges: {
       reason: 5,
+      minionCap: 4,
+      signatureStaminaBonus: 1,
+      threeEssenceStaminaBonus: 3,
+      fiveEssenceStaminaBonus: 2,
+      sevenEssenceStaminaBonus: 5,
     },
   },
 ];

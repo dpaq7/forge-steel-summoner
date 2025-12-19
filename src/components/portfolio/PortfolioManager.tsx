@@ -1,17 +1,18 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useSummonerContext } from '../../context/HeroContext';
 import { usePortfolio } from '../../hooks/usePortfolio';
 import { useEssence } from '../../hooks/useEssence';
 import { useSquads } from '../../hooks/useSquads';
 import { isSummonerHero } from '../../types/hero';
 import { MinionTemplate } from '../../types';
+import { SummonValidationResult } from '../../utils/summonerValidation';
 import MinionCard from './MinionCard';
 import './PortfolioManager.css';
 
 const PortfolioManager: React.FC = () => {
   const { hero: genericHero } = useSummonerContext();
   const { getSignatureMinions, getUnlockedMinions, getActualEssenceCost } = usePortfolio();
-  const { canAffordMinion, currentEssence, spendForMinion } = useEssence();
+  const { validateMinionSummon, currentEssence, spendForMinion, getMinionCounts, getSquadCount } = useEssence();
   const { createSquad, addSquad } = useSquads();
 
   const [selectedMinion, setSelectedMinion] = useState<MinionTemplate | null>(null);
@@ -20,17 +21,34 @@ const PortfolioManager: React.FC = () => {
   // Only for Summoner heroes
   const hero = genericHero && isSummonerHero(genericHero) ? genericHero : null;
 
-  if (!hero) return null;
+  // Get validation results for all minions
+  const signatureMinions = useMemo(() => (hero ? getSignatureMinions() : []), [hero, getSignatureMinions]);
+  const unlockedMinions = useMemo(() => (hero ? getUnlockedMinions() : []), [hero, getUnlockedMinions]);
 
-  const signatureMinions = getSignatureMinions();
-  const unlockedMinions = getUnlockedMinions();
+  // Build validation cache for all minions
+  const validationCache = useMemo<Record<string, SummonValidationResult>>(() => {
+    if (!hero) return {};
+
+    const cache: Record<string, SummonValidationResult> = {};
+    [...signatureMinions, ...unlockedMinions].forEach(minion => {
+      cache[minion.id] = validateMinionSummon(minion);
+    });
+    return cache;
+  }, [hero, signatureMinions, unlockedMinions, validateMinionSummon]);
+
+  // Get minion/squad counts for header display
+  const minionCounts = useMemo(() => getMinionCounts(), [getMinionCounts]);
+  const squadCount = useMemo(() => getSquadCount(), [getSquadCount]);
+
+  if (!hero) return null;
 
   const filteredMinions = filterCost === 'all'
     ? [...signatureMinions, ...unlockedMinions]
     : [...signatureMinions, ...unlockedMinions].filter(m => m.essenceCost === filterCost);
 
   const handleSummon = (minion: MinionTemplate) => {
-    if (canAffordMinion(minion)) {
+    const validation = validationCache[minion.id];
+    if (validation?.canSummon) {
       const success = spendForMinion(minion);
       if (success) {
         const newSquad = createSquad(minion);
@@ -39,13 +57,45 @@ const PortfolioManager: React.FC = () => {
     }
   };
 
+  // Helper to get validation result for a minion
+  const getValidation = (minion: MinionTemplate): SummonValidationResult => {
+    return validationCache[minion.id] || {
+      canSummon: false,
+      message: 'Unknown error',
+      details: {
+        currentEssence: 0,
+        requiredEssence: minion.essenceCost,
+        currentMinions: 0,
+        maxMinions: 8,
+        currentSquads: 0,
+        maxSquads: 2,
+        minionsToSummon: minion.minionsPerSummon ?? 1,
+        isFreeSummon: false,
+      },
+    };
+  };
+
   return (
     <div className="portfolio-manager">
       <div className="portfolio-header">
         <h2>Portfolio: {hero.portfolio.type.charAt(0).toUpperCase() + hero.portfolio.type.slice(1)}</h2>
-        <div className="essence-display">
-          <span className="essence-label">Available Essence:</span>
-          <span className="essence-value">{currentEssence}</span>
+        <div className="portfolio-stats">
+          <div className="essence-display">
+            <span className="essence-label">Essence:</span>
+            <span className="essence-value">{currentEssence}★</span>
+          </div>
+          <div className="minion-count-display">
+            <span className="count-label">Minions:</span>
+            <span className={`count-value ${minionCounts.current >= minionCounts.max ? 'at-max' : ''}`}>
+              {minionCounts.current}/{minionCounts.max}
+            </span>
+          </div>
+          <div className="squad-count-display">
+            <span className="count-label">Squads:</span>
+            <span className={`count-value ${squadCount >= 2 ? 'at-max' : ''}`}>
+              {squadCount}/2
+            </span>
+          </div>
         </div>
       </div>
 
@@ -85,34 +135,44 @@ const PortfolioManager: React.FC = () => {
       <div className="signature-section">
         <h3>Signature Minions</h3>
         <div className="minions-grid">
-          {signatureMinions.filter(m => filterCost === 'all' || m.essenceCost === filterCost).map((minion) => (
-            <MinionCard
-              key={minion.id}
-              minion={minion}
-              isAffordable={canAffordMinion(minion)}
-              actualCost={getActualEssenceCost(minion)}
-              onSummon={() => handleSummon(minion)}
-              onSelect={() => setSelectedMinion(minion)}
-              isSelected={selectedMinion?.id === minion.id}
-            />
-          ))}
+          {signatureMinions.filter(m => filterCost === 'all' || m.essenceCost === filterCost).map((minion) => {
+            const validation = getValidation(minion);
+            return (
+              <MinionCard
+                key={minion.id}
+                minion={minion}
+                isAffordable={validation.canSummon}
+                actualCost={getActualEssenceCost(minion)}
+                onSummon={() => handleSummon(minion)}
+                onSelect={() => setSelectedMinion(minion)}
+                isSelected={selectedMinion?.id === minion.id}
+                blockReason={validation.canSummon ? undefined : validation.message}
+                failedConstraint={validation.failedConstraint}
+              />
+            );
+          })}
         </div>
       </div>
 
       <div className="unlocked-section">
         <h3>Unlocked Minions</h3>
         <div className="minions-grid">
-          {unlockedMinions.filter(m => filterCost === 'all' || m.essenceCost === filterCost).map((minion) => (
-            <MinionCard
-              key={minion.id}
-              minion={minion}
-              isAffordable={canAffordMinion(minion)}
-              actualCost={getActualEssenceCost(minion)}
-              onSummon={() => handleSummon(minion)}
-              onSelect={() => setSelectedMinion(minion)}
-              isSelected={selectedMinion?.id === minion.id}
-            />
-          ))}
+          {unlockedMinions.filter(m => filterCost === 'all' || m.essenceCost === filterCost).map((minion) => {
+            const validation = getValidation(minion);
+            return (
+              <MinionCard
+                key={minion.id}
+                minion={minion}
+                isAffordable={validation.canSummon}
+                actualCost={getActualEssenceCost(minion)}
+                onSummon={() => handleSummon(minion)}
+                onSelect={() => setSelectedMinion(minion)}
+                isSelected={selectedMinion?.id === minion.id}
+                blockReason={validation.canSummon ? undefined : validation.message}
+                failedConstraint={validation.failedConstraint}
+              />
+            );
+          })}
         </div>
       </div>
 

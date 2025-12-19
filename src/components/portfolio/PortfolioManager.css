@@ -24,26 +24,57 @@
   letter-spacing: 0.1em;
 }
 
-.essence-display {
+/* Portfolio Stats Row */
+.portfolio-stats {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  flex-wrap: wrap;
+}
+
+.essence-display,
+.minion-count-display,
+.squad-count-display {
   display: flex;
   align-items: center;
   gap: var(--space-sm);
   background: var(--bg-card);
-  padding: var(--space-md) var(--space-lg);
+  padding: var(--space-sm) var(--space-md);
   border-radius: var(--radius-lg);
   border: 1px solid var(--border-dark);
 }
 
-.essence-label {
+.essence-label,
+.count-label {
   color: var(--text-secondary);
-  font-size: var(--font-size-md);
+  font-size: var(--font-size-sm);
 }
 
 .essence-value {
   color: var(--color-essence);
-  font-size: 1.8rem;
+  font-size: 1.4rem;
   font-weight: 700;
   text-shadow: 0 0 12px rgba(168, 125, 232, 0.4);
+}
+
+.count-value {
+  color: var(--accent-primary);
+  font-size: var(--font-size-lg);
+  font-weight: 600;
+}
+
+.count-value.at-max {
+  color: var(--color-warning);
+  animation: pulse-warning 2s infinite;
+}
+
+@keyframes pulse-warning {
+  0%, 100% {
+    text-shadow: none;
+  }
+  50% {
+    text-shadow: 0 0 8px var(--color-warning);
+  }
 }
 
 /* ============================================
@@ -131,7 +162,28 @@
 }
 
 .minion-card.unaffordable {
-  opacity: 0.5;
+  opacity: 0.6;
+}
+
+/* Constraint-specific border colors for blocked minions */
+.minion-card.constraint-essence {
+  border-left-color: var(--color-essence);
+}
+
+.minion-card.constraint-maxMinions {
+  border-left-color: var(--color-warning);
+}
+
+.minion-card.constraint-maxSquads {
+  border-left-color: var(--color-danger);
+}
+
+.minion-card.constraint-squadSize {
+  border-left-color: var(--color-xp);
+}
+
+.minion-card.constraint-squadComposition {
+  border-left-color: var(--text-muted);
 }
 
 .minion-header {

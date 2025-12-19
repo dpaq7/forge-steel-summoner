@@ -1,14 +1,19 @@
-import React, { createContext, useContext, useState, ReactNode, useCallback } from 'react';
+import React, { createContext, useContext, useState, ReactNode, useCallback, useEffect } from 'react';
 import { EssenceEconomy, TurnState, TurnPhase, Squad, Minion, MinionTemplate } from '../types';
 import { useHeroContext } from './HeroContext';
 import { isSummonerHero, SummonerHeroV2 } from '../types/hero';
-import { generateId, calculateMinionBonusStamina } from '../utils/calculations';
+import {
+  generateId,
+  calculateMinionBonusStamina,
+  calculateEssencePerTurn,
+  calculateMinionDeathEssence,
+  calculateCombatStartMinions,
+  calculateSignatureMinionsPerTurn,
+  calculateMinionLevelStaminaBonus,
+} from '../utils/calculations';
 
-// SRD Constants
-const ESSENCE_PER_TURN = 2; // Flat +2 essence per turn (SRD)
-const MINION_DEATH_ESSENCE = 1; // +1 essence when minion dies (1/round limit)
-const FREE_SUMMONS_COMBAT_START = 2; // Free signature minions at combat start
-const FREE_SUMMONS_TURN_START = 3; // Free signature minions at start of each turn
+// Note: SRD values are now calculated dynamically based on hero level
+// via calculateEssencePerTurn, calculateMinionDeathEssence, etc.
 
 interface CombatContextType {
   essenceState: EssenceEconomy;
@@ -72,11 +77,29 @@ export const CombatProvider: React.FC<CombatProviderProps> = ({ children }) => {
     phasesCompleted: [],
   });
 
+  // SYNC: Keep essenceState.currentEssence in sync with hero.heroicResource.current
+  // This handles cases where essence is modified externally (e.g., via StatChip)
+  useEffect(() => {
+    if (hero?.heroicResource?.current !== undefined) {
+      const heroEssence = hero.heroicResource.current;
+      // Only sync if values differ (avoid infinite loops)
+      if (essenceState.currentEssence !== heroEssence) {
+        setEssenceState(prev => ({
+          ...prev,
+          currentEssence: heroEssence,
+        }));
+      }
+    }
+  }, [hero?.heroicResource?.current]); // eslint-disable-line react-hooks/exhaustive-deps
+
   // Helper function to create a squad from a minion template
   const createSquadFromTemplate = useCallback((template: MinionTemplate): Squad | null => {
     if (!hero) return null;
 
-    const bonusStamina = calculateMinionBonusStamina(hero.formation);
+    // Formation bonus (Elite: +3)
+    const formationBonus = calculateMinionBonusStamina(hero.formation);
+    // Level-based bonus (Minion Improvement at L4, L7, L10)
+    const levelBonus = calculateMinionLevelStaminaBonus(template.essenceCost, hero.level);
 
     // Create minion members and calculate total pool
     const members: Minion[] = [];
@@ -86,7 +109,7 @@ export const CombatProvider: React.FC<CombatProviderProps> = ({ children }) => {
       const baseStamina = Array.isArray(template.stamina)
         ? template.stamina[i] || template.stamina[0]
         : template.stamina;
-      const minionMaxStamina = baseStamina + bonusStamina;
+      const minionMaxStamina = baseStamina + formationBonus + levelBonus;
       totalStamina += minionMaxStamina;
 
       members.push({
@@ -113,11 +136,15 @@ export const CombatProvider: React.FC<CombatProviderProps> = ({ children }) => {
   const createSingleMinion = useCallback((template: MinionTemplate): Minion | null => {
     if (!hero) return null;
 
-    const bonusStamina = calculateMinionBonusStamina(hero.formation);
+    // Formation bonus (Elite: +3)
+    const formationBonus = calculateMinionBonusStamina(hero.formation);
+    // Level-based bonus (Minion Improvement at L4, L7, L10)
+    const levelBonus = calculateMinionLevelStaminaBonus(template.essenceCost, hero.level);
+
     const baseStamina = Array.isArray(template.stamina)
       ? template.stamina[0]
       : template.stamina;
-    const minionMaxStamina = baseStamina + bonusStamina;
+    const minionMaxStamina = baseStamina + formationBonus + levelBonus;
 
     return {
       id: generateId(),
@@ -195,8 +222,33 @@ export const CombatProvider: React.FC<CombatProviderProps> = ({ children }) => {
       // SRD: Start of Combat - Essence = Current Victories
       const startingEssence = hero.victories || 0;
 
-      // SRD: Start of Combat - Summon up to 2 signature minions for free
-      const freeSquads = summonFreeSignatureMinions(FREE_SUMMONS_COMBAT_START, []);
+      // SRD: Start of Combat - Summon free signature minions
+      // Base: 2, Level 10: +2 per 2 Victories
+      const freeMinionCount = calculateCombatStartMinions(hero.level, hero.victories || 0);
+      const freeSquads = summonFreeSignatureMinions(freeMinionCount, []);
+
+      // Reset champion state for new encounter (Summoner v1.0 SRD)
+      const newChampionState = hero.championState ? {
+        ...hero.championState,
+        summonedThisEncounter: false,
+        championActionUsed: false,
+        canSummon: !hero.championState.requiresVictoryToResummon,
+      } : {
+        canSummon: true,
+        summonedThisEncounter: false,
+        championActionUsed: false,
+        requiresVictoryToResummon: false,
+      };
+
+      // Dismiss out-of-combat minions (Summoner v1.0 SRD)
+      const newOutOfCombatState = hero.outOfCombatState ? {
+        ...hero.outOfCombatState,
+        activeMinions: [], // Dismissed when combat starts
+      } : {
+        activeMinions: [],
+        usedAbilities: {},
+        shouldDismissOnCombatStart: true,
+      };
 
       // Update hero with the new squads AND sync heroicResource
       updateHero({
@@ -205,6 +257,9 @@ export const CombatProvider: React.FC<CombatProviderProps> = ({ children }) => {
           ...hero.heroicResource,
           current: startingEssence,
         },
+        activeChampion: null, // Reset champion at combat start
+        championState: newChampionState,
+        outOfCombatState: newOutOfCombatState,
       });
 
       setEssenceState({
@@ -259,33 +314,50 @@ export const CombatProvider: React.FC<CombatProviderProps> = ({ children }) => {
       phasesCompleted: [],
     });
 
-    // SRD: Start of Turn - Gain +2 Essence (flat, not level-based)
-    // Essence carries over between turns (no reset to 0)
-    const newEssence = currentEssence + ESSENCE_PER_TURN;
+    // SRD: Start of Turn - Gain essence (level-based)
+    // Base: +2, Level 7+ (Font of Creation): +3
+    const essenceGain = calculateEssencePerTurn(hero.level);
+    const newEssence = currentEssence + essenceGain;
 
     setEssenceState(prev => ({
       ...prev,
       currentEssence: newEssence,
-      essenceGainedThisTurn: ESSENCE_PER_TURN,
+      essenceGainedThisTurn: essenceGain,
       turnNumber: newTurnNumber,
       signatureMinionsSpawnedThisTurn: true, // Mark that we've spawned this turn
       minionDeathEssenceGainedThisRound: false, // Reset for new round
     }));
 
-    // Reset squad action states and add free signature minions
-    // SRD: Start of Turn - Summon up to 3 signature minions for free
+    // Reset squad and minion action states (for sacrifice tracking)
     const resetSquads = hero.activeSquads.map(squad => ({
       ...squad,
       hasMoved: false,
       hasActed: false,
+      // Reset individual minion action states for sacrifice eligibility
+      members: squad.members.map(minion => ({
+        ...minion,
+        hasActedThisTurn: false,
+        hasMovedThisTurn: false,
+      })),
     }));
 
-    // Add 3 free signature minion squads
-    const squadsWithFreeMinions = summonFreeSignatureMinions(FREE_SUMMONS_TURN_START, resetSquads);
+    // SRD: Start of Turn - Free signature minions (level-based)
+    // Base: 3, Level 7+ (Minion Improvement): 4, Horde: +1
+    const freeMinionCount = calculateSignatureMinionsPerTurn(hero.formation, hero.level);
+    const squadsWithFreeMinions = summonFreeSignatureMinions(freeMinionCount, resetSquads);
+
+    // Reset champion actions if active
+    const updatedChampion = hero.activeChampion ? {
+      ...hero.activeChampion,
+      hasMoved: false,
+      hasActed: false,
+      hasUsedManeuver: false,
+    } : null;
 
     // Sync heroicResource with the new essence value
     updateHero({
       activeSquads: squadsWithFreeMinions,
+      activeChampion: updatedChampion,
       heroicResource: {
         ...hero.heroicResource,
         current: newEssence,
@@ -346,10 +418,12 @@ export const CombatProvider: React.FC<CombatProviderProps> = ({ children }) => {
     }
   };
 
-  // SRD: Gain +1 Essence when any minion dies in range (limit 1/round)
+  // SRD: Gain essence when any minion dies in Summoner's Range (limit 1/round)
+  // Base: +1, Level 4+ (Essence Salvage): +2
   const onMinionDeath = () => {
-    if (!essenceState.minionDeathEssenceGainedThisRound) {
-      gainEssence(MINION_DEATH_ESSENCE);
+    if (!essenceState.minionDeathEssenceGainedThisRound && hero) {
+      const essenceGain = calculateMinionDeathEssence(hero.level);
+      gainEssence(essenceGain);
       setEssenceState(prev => ({
         ...prev,
         minionDeathEssenceGainedThisRound: true,
@@ -357,12 +431,37 @@ export const CombatProvider: React.FC<CombatProviderProps> = ({ children }) => {
     }
   };
 
-  // Sacrifice a signature minion to gain 1 essence (limit 1/turn)
+  /**
+   * Calculate sacrifice cost reduction for summoning.
+   * SRD: Sacrificing minions reduces the essence cost of summoning.
+   * - Base: Cost reduced by 1 per minion sacrificed
+   * - Level 10 (No Matter the Cost): Cost reduced by each minion's full essence value
+   *
+   * NOTE: This is NOT an action that grants essence - it's used when summoning.
+   * The old sacrificeMinion() function was incorrect.
+   *
+   * @param minionsToSacrifice - Number of minions being sacrificed
+   * @returns The cost reduction amount
+   */
+  const calculateSacrificeCostReduction = (minionsToSacrifice: number): number => {
+    if (!hero || minionsToSacrifice <= 0) return 0;
+
+    // Level 10 (No Matter the Cost): Each minion reduces cost by its essence value
+    // For signature minions (1 essence), this is the same as base
+    // For implementation, we'll treat each sacrifice as reducing cost by 1
+    // (since we sacrifice signature minions, which cost 1)
+    return minionsToSacrifice;
+  };
+
+  // Legacy function - kept for backward compatibility but should not be used
+  // The correct behavior is to use sacrifice when summoning (cost reduction)
   const sacrificeMinion = (): boolean => {
     if (hasSacrificedThisTurn) {
       return false; // Already sacrificed this turn
     }
     setHasSacrificedThisTurn(true);
+    // Legacy: grants 1 essence (incorrect per SRD, but kept for compatibility)
+    // TODO: Remove this and implement proper sacrifice-on-summon
     gainEssence(1);
     return true;
   };

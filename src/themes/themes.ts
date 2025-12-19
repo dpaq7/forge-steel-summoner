@@ -119,67 +119,68 @@ export const midnightInk: Theme = {
 
 // ════════════════════════════════════════════════════════════════
 // THEME 2: CRIMSON VEIL
-// Dark bordeaux/amaranth with pink accents
+// Deep crimsons, warm oranges, and dark teal accents
+// Palette: Crimson Violet, Deep Crimson, Princeton Orange, Autumn Leaf, Dark Teal
 // ════════════════════════════════════════════════════════════════
 
 export const crimsonVeil: Theme = {
   id: 'crimson-veil',
   name: 'Crimson Veil',
-  description: 'Deep bordeaux shadows with vibrant rose highlights',
+  description: 'Deep crimsons with warm orange highlights and teal accents',
   colors: {
-    // Backgrounds - Night Bordeaux
-    bgDarkest: '#1f040c',
-    bgDark: '#2d0611',
-    bgMedium: '#590d22',
-    bgLight: '#861334',
-    bgHover: '#961844',
-    bgCard: '#5b0b22',
+    // Backgrounds - Derived from Crimson Violet (#5f0f40)
+    bgDarkest: '#0d0509',    // Near black with crimson hint
+    bgDark: '#1a0812',       // Very dark crimson
+    bgMedium: '#2d0f1c',     // Dark crimson
+    bgLight: '#3d1426',      // Medium dark crimson
+    bgHover: '#4d1930',      // Elevated/hover crimson
+    bgCard: '#3a1020',       // Card background
 
-    // Text - Lavender Blush lights
-    textPrimary: '#ffe5eb',
-    textSecondary: '#ff99ad',
-    textBone: '#ffccda',
-    textMuted: '#cc0029',
+    // Text - Warm whites for readability
+    textPrimary: '#fff5f0',
+    textSecondary: '#e8c4b8',
+    textBone: '#f5ddd5',
+    textMuted: '#9a6050',
 
-    // Borders - Rosewood
-    borderGlow: 'rgba(255, 51, 88, 0.25)',
-    borderSolid: '#891032',
-    borderBright: '#ff3358',
+    // Borders - Crimson Violet (#5f0f40)
+    borderGlow: 'rgba(251, 139, 36, 0.25)',  // Princeton Orange glow
+    borderSolid: '#5f0f40',                   // Crimson Violet
+    borderBright: '#fb8b24',                  // Princeton Orange
 
-    // Accent - Bubblegum Pink
-    accentBright: '#ff3358',
-    accentGlow: '#ff6682',
-    accentSoft: '#ff99ad',
-    accentDim: '#99001c',
+    // Accent - Princeton Orange (#fb8b24) and Autumn Leaf (#e36414)
+    accentBright: '#fb8b24',   // Princeton Orange - highlights
+    accentGlow: '#fca54e',     // Princeton Orange lightened
+    accentSoft: '#e36414',     // Autumn Leaf - secondary
+    accentDim: '#9a031e',      // Deep Crimson - muted accent
 
     // Semantic
-    success: '#4caf50',
-    successDim: 'rgba(76, 175, 80, 0.15)',
-    successDark: '#1a2a2a',
-    warning: '#ffab40',
-    warningDim: 'rgba(255, 171, 64, 0.15)',
-    danger: '#ff002f',
-    dangerDim: 'rgba(255, 0, 47, 0.15)',
-    dangerDark: '#2a1a1a',
-    info: '#e64c78',
+    success: '#0f4c5c',        // Dark Teal
+    successDim: 'rgba(15, 76, 92, 0.2)',
+    successDark: '#0a343f',
+    warning: '#fb8b24',        // Princeton Orange
+    warningDim: 'rgba(251, 139, 36, 0.15)',
+    danger: '#9a031e',         // Deep Crimson
+    dangerDim: 'rgba(154, 3, 30, 0.15)',
+    dangerDark: '#3d0a12',
+    info: '#0f4c5c',           // Dark Teal
 
     // Special
-    essence: '#e41b54',
-    essenceDim: 'rgba(228, 27, 84, 0.15)',
-    xp: '#ff6682',
-    xpDim: 'rgba(255, 102, 130, 0.15)',
+    essence: '#9a031e',        // Deep Crimson
+    essenceDim: 'rgba(154, 3, 30, 0.2)',
+    xp: '#fb8b24',             // Princeton Orange
+    xpDim: 'rgba(251, 139, 36, 0.15)',
 
-    // Effects
-    shadowGlow: '0 0 10px rgba(255, 51, 88, 0.3), 0 0 20px rgba(255, 51, 88, 0.15)',
-    shadowGlowStrong: '0 0 15px rgba(255, 51, 88, 0.5), 0 0 30px rgba(255, 51, 88, 0.25)',
+    // Effects - Based on Princeton Orange for warmth
+    shadowGlow: '0 0 10px rgba(251, 139, 36, 0.3), 0 0 20px rgba(251, 139, 36, 0.15)',
+    shadowGlowStrong: '0 0 15px rgba(251, 139, 36, 0.5), 0 0 30px rgba(251, 139, 36, 0.25)',
     shadowCard: '0 2px 8px rgba(0, 0, 0, 0.5)',
-    innerGlow: 'inset 0 0 20px rgba(255, 51, 88, 0.1)',
-    textGlow: '0 0 10px rgba(255, 51, 88, 0.5)',
+    innerGlow: 'inset 0 0 20px rgba(251, 139, 36, 0.1)',
+    textGlow: '0 0 10px rgba(251, 139, 36, 0.5)',
   },
   preview: {
-    bg: '#2d0611',
-    accent: '#ff3358',
-    text: '#ffe5eb',
+    bg: '#1a0812',
+    accent: '#fb8b24',
+    text: '#fff5f0',
   },
 };
 

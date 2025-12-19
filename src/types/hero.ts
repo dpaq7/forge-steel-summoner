@@ -3,7 +3,8 @@
 
 import { Ancestry, Career, Culture, Kit, Item, Characteristics, ActiveCondition } from './common';
 import { Ability, Feature } from './abilities';
-import { Portfolio, Squad, Fixture } from './minion';
+import { Portfolio, Squad, Fixture, Champion } from './minion';
+import { ChampionState, OutOfCombatState } from './combat';
 import { ProgressionChoices } from './progression';
 import { ActiveProject, InventoryItem } from './projects';
 import { EquippedItem } from './equipment';
@@ -381,6 +382,13 @@ export interface SummonerHeroV2 extends HeroBase {
   minionPortraits: Record<string, string | null>;
   fixturePortrait: string | null;
   inactiveMinions: string[];
+
+  // Champion (Level 8+ feature) - Summoner v1.0 SRD
+  activeChampion: Champion | null;
+  championState: ChampionState;
+
+  // Out-of-combat minion tracking - Summoner v1.0 SRD
+  outOfCombatState: OutOfCombatState;
 }
 
 export interface TacticianHero extends HeroBase {

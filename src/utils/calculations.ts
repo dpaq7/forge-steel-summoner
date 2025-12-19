@@ -41,40 +41,137 @@ export const calculateSummonerRange = (hero: Partial<SummonerHero>): number => {
 
 /**
  * Calculate maximum number of minions based on formation and level
- * Base: 8
- * Level 4+: +4 (12 total)
- * Horde: +4 (16 total at level 4+)
+ * Summoner v1.0 SRD:
+ * - Base: 8 minions
+ * - Level 4+: +4 (12 total)
+ * - Level 7+: +4 (16 total)
+ * - Level 10: +4 (20 total)
+ * - Horde Formation: +4 additional
  */
 export const calculateMaxMinions = (formation: Formation, level: number = 1): number => {
   let max = 8;
-  if (level >= 4) {
-    max += 4; // Level 4 grants +4 minion cap
-  }
+
+  // Minion Improvement bonuses at levels 4, 7, and 10
+  if (level >= 4) max += 4;
+  if (level >= 7) max += 4;
+  if (level >= 10) max += 4;
+
+  // Horde formation allows +4 more
   if (formation === 'horde') {
-    max += 4; // Horde formation allows +4 more
+    max += 4;
   }
+
   return max;
 };
 
 /**
- * Calculate number of signature minions spawned per turn
- * Base: 3
- * Horde: 4
+ * Calculate number of signature minions spawned at turn start
+ * Summoner v1.0 SRD:
+ * - Base: 3 minions
+ * - Level 7+ (Minion Improvement): +1 (4 total)
+ * - Horde Formation: +1 additional
  */
-export const calculateSignatureMinionsPerTurn = (formation: Formation): number => {
-  return formation === 'horde' ? 4 : 3;
+export const calculateSignatureMinionsPerTurn = (
+  formation: Formation,
+  level: number = 1
+): number => {
+  let count = 3;
+
+  // Level 7 Minion Improvement: +1 free summon
+  if (level >= 7) count += 1;
+
+  // Horde formation: +1 additional
+  if (formation === 'horde') count += 1;
+
+  return count;
 };
 
 /**
  * Calculate essence gained per turn based on level
- * Level 1-5: 5 essence
- * Level 6-8: 6 essence
- * Level 9-10: 7 essence
+ * Summoner v1.0 SRD:
+ * - Base: +2 essence per turn
+ * - Level 7+ (Font of Creation): +3 essence per turn
  */
 export const calculateEssencePerTurn = (level: number): number => {
-  if (level >= 9) return 7;
-  if (level >= 6) return 6;
-  return 5;
+  return level >= 7 ? 3 : 2;
+};
+
+/**
+ * Calculate essence gained from minion death
+ * Summoner v1.0 SRD:
+ * - Base: +1 essence (first minion death per round within Summoner's Range)
+ * - Level 4+ (Essence Salvage): +2 essence
+ */
+export const calculateMinionDeathEssence = (level: number): number => {
+  return level >= 4 ? 2 : 1;
+};
+
+/**
+ * Calculate free signature minions summoned at combat start
+ * Summoner v1.0 SRD:
+ * - Base: 2 signature minions
+ * - Level 10 (Minion Improvement): +2 per 2 Victories
+ */
+export const calculateCombatStartMinions = (level: number, victories: number): number => {
+  let count = 2;
+
+  // Level 10 bonus: +2 per 2 Victories
+  if (level >= 10) {
+    count += Math.floor(victories / 2) * 2;
+  }
+
+  return count;
+};
+
+/**
+ * Calculate minion stamina bonus from level (Minion Improvement feature)
+ * Summoner v1.0 SRD:
+ * These bonuses are cumulative and applied at levels 4, 7, and 10.
+ *
+ * @param essenceCost - The minion's essence cost (1=signature, 3, 5, 7)
+ * @param level - The summoner's level
+ * @returns Total stamina bonus to add to base stamina
+ */
+export const calculateMinionLevelStaminaBonus = (
+  essenceCost: number,
+  level: number
+): number => {
+  // Signature minions (1 essence): +1 at L4, +1 at L7, +1 at L10
+  if (essenceCost === 1) {
+    let bonus = 0;
+    if (level >= 4) bonus += 1;
+    if (level >= 7) bonus += 1;
+    if (level >= 10) bonus += 1;
+    return bonus;
+  }
+
+  // 3-essence minions: +3 at L4, +3 at L7, +3 at L10
+  if (essenceCost === 3) {
+    let bonus = 0;
+    if (level >= 4) bonus += 3;
+    if (level >= 7) bonus += 3;
+    if (level >= 10) bonus += 3;
+    return bonus;
+  }
+
+  // 5-essence minions: +2 at L4, +2 at L7, +2 at L10
+  if (essenceCost === 5) {
+    let bonus = 0;
+    if (level >= 4) bonus += 2;
+    if (level >= 7) bonus += 2;
+    if (level >= 10) bonus += 2;
+    return bonus;
+  }
+
+  // 7-essence minions: +5 at L7, +5 at L10 (no L4 bonus)
+  if (essenceCost === 7) {
+    let bonus = 0;
+    if (level >= 7) bonus += 5;
+    if (level >= 10) bonus += 5;
+    return bonus;
+  }
+
+  return 0;
 };
 
 /**
@@ -169,4 +266,109 @@ export const calculateFixtureSize = (level: number): number => {
  */
 export const generateId = (): string => {
   return `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+};
+
+// =============================================================================
+// SACRIFICE MECHANICS (Summoner v1.0 SRD)
+// =============================================================================
+
+/**
+ * Calculate sacrifice cost reduction
+ * Summoner v1.0 SRD:
+ * - Base: Each sacrificed minion reduces cost by 1
+ * - Level 10 (No Matter the Cost): Each minion reduces cost by its essence value
+ *
+ * Note: Can only sacrifice signature minions (1 essence each), so pre-L10
+ * each sacrifice reduces cost by 1. At L10, each signature reduces by 1 too.
+ * For non-signature minions being sacrificed (if ever allowed), this would
+ * return the minion's essence cost instead.
+ *
+ * @param minionsToSacrifice - Number of minions being sacrificed
+ * @param level - Summoner's level
+ * @param minionEssenceCosts - Array of essence costs for each sacrificed minion (default: all 1s)
+ */
+export const calculateSacrificeCostReduction = (
+  minionsToSacrifice: number,
+  level: number,
+  minionEssenceCosts: number[] = []
+): number => {
+  if (minionsToSacrifice <= 0) return 0;
+
+  // Fill with 1s (signature minion cost) if not provided
+  const costs = minionEssenceCosts.length > 0
+    ? minionEssenceCosts
+    : Array(minionsToSacrifice).fill(1);
+
+  // Level 10 (No Matter the Cost): Full essence value per minion
+  if (level >= 10) {
+    return costs.reduce((sum, cost) => sum + cost, 0);
+  }
+
+  // Before Level 10: 1 per minion regardless of essence cost
+  return minionsToSacrifice;
+};
+
+// =============================================================================
+// CHAMPION MECHANICS (Summoner v1.0 SRD)
+// =============================================================================
+
+/**
+ * Check if champion is unlocked
+ * Summoner v1.0 SRD: Champion unlocks at Level 8
+ */
+export const isChampionUnlocked = (level: number): boolean => {
+  return level >= 8;
+};
+
+/**
+ * Check if Champion Action is unlocked (Level 10)
+ * Summoner v1.0 SRD: Champion Action costs eidos, once per encounter
+ */
+export const isChampionActionUnlocked = (level: number): boolean => {
+  return level >= 10;
+};
+
+/**
+ * Calculate champion stamina (includes level-based bonus)
+ * Champions get the same stamina improvements as 9-essence minions
+ */
+export const calculateChampionStamina = (
+  baseStamina: number,
+  level: number,
+  formation: Formation
+): number => {
+  // Formation bonus (Elite: +3)
+  const formationBonus = calculateMinionBonusStamina(formation);
+  // Level-based bonus (same as 9-essence minions - treating as 7-essence tier)
+  const levelBonus = calculateMinionLevelStaminaBonus(7, level);
+
+  return baseStamina + formationBonus + levelBonus;
+};
+
+// =============================================================================
+// OUT-OF-COMBAT MECHANICS (Summoner v1.0 SRD)
+// =============================================================================
+
+/**
+ * Maximum free minions outside combat
+ */
+export const OUT_OF_COMBAT_MAX_MINIONS = 4;
+
+/**
+ * Check if a non-signature minion can be summoned outside combat
+ * Summoner v1.0 SRD: Other minions require Victories >= essence cost
+ *
+ * @param essenceCost - The minion's essence cost
+ * @param victories - Current number of Victories
+ */
+export const canSummonOutOfCombat = (
+  essenceCost: number,
+  victories: number,
+  isSignature: boolean
+): boolean => {
+  // Signature minions are always freely summonable
+  if (isSignature || essenceCost === 1) return true;
+
+  // Other minions require Victories >= essence cost
+  return victories >= essenceCost;
 };

@@ -47,8 +47,8 @@ export const formations: Record<Formation, FormationData> = {
     description:
       'You overwhelm your enemies with sheer numbers, commanding a vast army of minions.',
     benefits: [
-      'Maximum minions increased to 12 (from 8)',
-      'Start of turn summon count increased to 4 (from 3)',
+      'Maximum minions increased by 4 (base 12 at L1, 16 at L4, 20 at L7, 24 at L10)',
+      'Start of turn free summon count increased by 1 (4 base at L1, 5 at L7)',
     ],
     quickCommands: quickCommands,
   },

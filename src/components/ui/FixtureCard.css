@@ -344,7 +344,8 @@
 }
 
 .fixture-feature.locked .feature-desc {
-  filter: blur(1px);
+  /* Text should be readable but dimmed - no blur per design requirements */
+  color: var(--text-muted);
 }
 
 .feature-header {

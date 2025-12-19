@@ -199,26 +199,28 @@ const FixtureCard: React.FC<FixtureCardProps> = ({
           <p className="feature-desc">{fixture.level5Feature.description}</p>
         </div>
 
-        {/* Level 9 Feature */}
-        <div className={`fixture-feature ${hasLevel9Feature ? 'unlocked' : 'locked'}`}>
-          <div className="feature-header">
-            <span className="feature-level">Lv 9</span>
-            <span className="feature-name">{fixture.level9Feature.name}</span>
-            {!hasLevel9Feature && <span className="lock-icon">🔒</span>}
+        {/* Level 9 Features (Size Increase + unique ability) */}
+        {fixture.level9Features.map((feature, index) => (
+          <div key={feature.id || index} className={`fixture-feature ${hasLevel9Feature ? 'unlocked' : 'locked'}`}>
+            <div className="feature-header">
+              <span className="feature-level">Lv 9</span>
+              <span className="feature-name">{feature.name}</span>
+              {!hasLevel9Feature && <span className="lock-icon">🔒</span>}
+            </div>
+            <p className="feature-desc">{feature.description}</p>
           </div>
-          <p className="feature-desc">{fixture.level9Feature.description}</p>
-        </div>
+        ))}
 
         {/* Summon info */}
         <div className="fixture-info">
           <p className="fixture-rules">
-            <strong>Summon:</strong> Maneuver · Within Summoner's Range · Unoccupied ground
+            <strong>Summon:</strong> Maneuver (0 Essence) · Once per encounter · Within Summoner's Range
           </p>
           <p className="fixture-rules">
-            <strong>Relocate:</strong> Free Maneuver · Move up to 5 squares
+            <strong>Relocate:</strong> Free Maneuver (1 Essence) · Move up to 5 squares
           </p>
           <p className="fixture-rules">
-            <strong>Duration:</strong> Until end of encounter, 0 Stamina, or summoner is dying
+            <strong>Duration:</strong> Until end of encounter, 0 Stamina, or summoner becomes dying
           </p>
         </div>
 

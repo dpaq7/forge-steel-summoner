@@ -8,7 +8,14 @@ import {
   getEnhancementTier,
   getItemById,
 } from '../data/magicItems';
+import {
+  calculateDerivedStats,
+  calculateDerivedStatsWithItem,
+  calculateStatDifference,
+} from '../utils/statCalculator';
+import type { DerivedStats, EquipmentBonuses as EnhancedEquipmentBonuses } from '../types/items';
 
+// Legacy interface for backward compatibility
 export interface EquipmentBonuses {
   stamina: number;
   stability: number;
@@ -171,6 +178,48 @@ export const useEquipment = () => {
     updateHero({ equippedItems: updatedItems });
   }, [hero, updateHero]);
 
+  /**
+   * Calculate derived stats (class + kit + equipment combined)
+   */
+  const derivedStats = useMemo((): DerivedStats | null => {
+    if (!hero) return null;
+    return calculateDerivedStats(hero);
+  }, [hero]);
+
+  /**
+   * Preview stats with a hypothetical item equipped
+   * Returns stat differences for comparison UI
+   */
+  const previewItemStats = useCallback(
+    (item: MagicItem): { preview: DerivedStats; diff: Partial<Record<keyof DerivedStats, number>> } | null => {
+      if (!hero || !derivedStats) return null;
+
+      // Create an EquippedItem from the MagicItem for preview
+      const parsedBonuses = parseItemBonuses(item, hero.level);
+      const previewEquipped: EquippedItem = {
+        itemId: item.id,
+        name: item.name,
+        slot: item.slot || 'held',
+        category: item.category,
+        effect: item.effect,
+        bonuses: parsedBonuses.map((b) => ({
+          stat: b.stat as StatBonus['stat'],
+          value: b.value,
+          conditional: b.conditional,
+        })),
+        equippedAt: Date.now(),
+        currentEnhancementLevel:
+          item.category === 'leveled' ? getEnhancementTier(item, hero.level) : undefined,
+      };
+
+      const preview = calculateDerivedStatsWithItem(hero, previewEquipped, item.slot || 'held');
+      const diff = calculateStatDifference(derivedStats, preview);
+
+      return { preview, diff };
+    },
+    [hero, derivedStats]
+  );
+
   return {
     equipItem,
     unequipItem,
@@ -179,5 +228,8 @@ export const useEquipment = () => {
     totalBonuses,
     equippedItems,
     refreshItemBonuses,
+    // New derived stats exports
+    derivedStats,
+    previewItemStats,
   };
 };

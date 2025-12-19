@@ -12,6 +12,7 @@ import { CharacteristicsCard } from './cards/CharacteristicsCard';
 import { CombatCard } from './cards/CombatCard';
 import { DiceCard } from './cards/DiceCard';
 import { TurnCard } from './cards/TurnCard';
+import { useDerivedStats } from '@/hooks/useDerivedStats';
 
 import type { Hero } from '@/types/hero';
 import type { ConditionId } from '@/types/common';
@@ -90,6 +91,17 @@ export const PinnedCardsGrid: React.FC<PinnedCardsGridProps> = ({
   onEndTurn,
   onResetTurn,
 }) => {
+  // Get derived stats with equipment bonuses applied
+  const { maxStamina, windedThreshold, recoveryValue, maxRecoveries, speed, stability } = useDerivedStats();
+
+  // Use derived stats or fall back to hero values
+  const effectiveMaxStamina = maxStamina || hero.stamina.max;
+  const effectiveWinded = windedThreshold || hero.stamina.winded;
+  const effectiveMaxRecoveries = maxRecoveries || hero.recoveries.max;
+  const effectiveRecoveryValue = recoveryValue || hero.recoveries.value;
+  const effectiveSpeed = speed || hero.speed;
+  const effectiveStability = stability || hero.stability;
+
   return (
     <motion.div
       className="pinned-cards-area"
@@ -123,9 +135,9 @@ export const PinnedCardsGrid: React.FC<PinnedCardsGridProps> = ({
             {type === 'stamina' && (
               <StaminaCard
                 current={hero.stamina.current}
-                max={hero.stamina.max}
+                max={effectiveMaxStamina}
                 tempStamina={0}
-                winded={hero.stamina.winded}
+                winded={effectiveWinded}
                 onChange={onStaminaChange}
                 onUnpin={() => onUnpin('stamina')}
               />
@@ -134,10 +146,10 @@ export const PinnedCardsGrid: React.FC<PinnedCardsGridProps> = ({
             {type === 'recoveries' && (
               <RecoveriesCard
                 current={hero.recoveries.current}
-                max={hero.recoveries.max}
-                value={hero.recoveries.value}
+                max={effectiveMaxRecoveries}
+                value={effectiveRecoveryValue}
                 currentStamina={hero.stamina.current}
-                maxStamina={hero.stamina.max}
+                maxStamina={effectiveMaxStamina}
                 onChange={onRecoveriesChange}
                 onCatchBreath={onCatchBreath}
                 onUnpin={() => onUnpin('recoveries')}
@@ -188,8 +200,8 @@ export const PinnedCardsGrid: React.FC<PinnedCardsGridProps> = ({
             {type === 'characteristics' && (
               <CharacteristicsCard
                 characteristics={hero.characteristics}
-                speed={hero.speed}
-                stability={hero.stability}
+                speed={effectiveSpeed}
+                stability={effectiveStability}
                 onRollCharacteristic={onRollCharacteristic}
                 onUnpin={() => onUnpin('characteristics')}
               />
@@ -200,8 +212,8 @@ export const PinnedCardsGrid: React.FC<PinnedCardsGridProps> = ({
                 isInCombat={isInCombat}
                 surges={hero.surges}
                 victories={hero.victories}
-                speed={hero.speed}
-                stability={hero.stability}
+                speed={effectiveSpeed}
+                stability={effectiveStability}
                 onStartCombat={onStartCombat}
                 onEndCombat={onEndCombat}
                 onRespite={onRespite}

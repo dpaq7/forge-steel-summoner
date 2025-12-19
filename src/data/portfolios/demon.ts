@@ -553,32 +553,43 @@ const theBoil: FixtureTemplate = {
   name: 'The Boil',
   portfolioType: 'demon',
   role: 'Hazard Support',
-  baseStamina: 20, // + level
+  flavorText: 'The boil arises from the chaotic depths of the Abyssal Waste, concentrated into a heaving mass by the pressure of a coherent reality. As it slushes and threatens to burst, the noises drive nearby demons into a frenzy.',
+  baseStamina: 20, // actual stamina = 20 + level
   size: 2, // becomes 3 at level 9
   traits: [
     {
-      name: 'Infernal Taunt',
+      name: 'Hunger Thrush',
       description:
-        'When you summon the Boil or at the start of each of your turns, each enemy within 5 squares must make a Presence resistance roll. On failure, they are taunted by the Boil until the start of your next turn.',
+        'Each enemy that starts their turn within 3 squares of the boil is I<AVERAGE taunted (EoT) by the boil, or I<WEAK taunted (EoT) by the boil and can\'t move further from it.',
     },
     {
-      name: 'Volatile Core',
+      name: 'Oh, It Pops',
       description:
-        'When the Boil is reduced to 0 Stamina, it explodes. Each creature within 5 squares takes 2d6 fire damage.',
+        'When the boil is destroyed, each enemy within 3 squares of the boil takes acid damage equal to your level and is A<STRONG weakened (save ends).',
     },
   ],
   level5Feature: {
     id: 'the_boil_level5',
-    name: 'Searing Presence',
+    name: 'Soul Rancor',
     description:
-      'The radius of Infernal Taunt increases to 10 squares. Enemies who fail their roll also take 2 fire damage.',
+      'You gain a surge the first time in a round that your demon minions deal 3 or more damage to a creature while you have line of effect to the boil. You can choose to give the surge to an ally who also has line of effect to the boil.',
+    levelRequired: 5,
   },
-  level9Feature: {
-    id: 'the_boil_level9',
-    name: 'Cataclysmic Explosion',
-    description:
-      'The Boil becomes size 3. Volatile Core radius increases to 10 squares and deals 4d6 fire damage.',
-  },
+  level9Features: [
+    {
+      id: 'the_boil_level9_size',
+      name: 'Size Increase',
+      description: 'The boil is now size 3.',
+      levelRequired: 9,
+    },
+    {
+      id: 'the_boil_level9_fester',
+      name: 'Fester Field',
+      description:
+        'Each non-abyssal enemy that starts their turn within 3 squares of the boil takes 5 corruption damage.',
+      levelRequired: 9,
+    },
+  ],
 };
 
 // -----------------------------------------------------------------------------

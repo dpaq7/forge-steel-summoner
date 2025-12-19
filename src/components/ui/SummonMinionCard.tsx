@@ -1,6 +1,17 @@
 import { useRef, useState, useCallback, ChangeEvent } from 'react';
-import { MinionTemplate } from '../../types';
+import { MinionTemplate, Formation } from '../../types';
+import {
+  calculateMinionBonusStamina,
+  calculateMinionLevelStaminaBonus,
+} from '../../utils/calculations';
 import './SummonMinionCard.css';
+
+// Summonability states for visual styling
+export type SummonState =
+  | 'available'      // Can summon: full color, interactive
+  | 'insufficient'   // Not enough essence: dimmed but not greyed
+  | 'at-capacity'    // Pool/squad full: dimmed, show capacity info
+  | 'locked';        // Level requirement not met: greyscale
 
 interface SummonMinionCardProps {
   minion: MinionTemplate;
@@ -8,9 +19,14 @@ interface SummonMinionCardProps {
   isActive?: boolean;
   canSummon: boolean;
   reason: string;
+  summonState: SummonState;
   totalMinions: number;
   totalCost: number;
   multiplier: number;
+  maxSummonable: number;
+  formation: Formation;
+  heroLevel: number;
+  currentEssence: number;
   imageUrl?: string | null;
   onSummon: () => void;
   onAdjustMultiplier: (delta: number) => void;
@@ -27,9 +43,14 @@ export const SummonMinionCard = ({
   isActive = true,
   canSummon,
   reason,
+  summonState,
   totalMinions,
   totalCost,
   multiplier,
+  maxSummonable,
+  formation,
+  heroLevel,
+  currentEssence,
   imageUrl,
   onSummon,
   onAdjustMultiplier,
@@ -39,6 +60,11 @@ export const SummonMinionCard = ({
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [imageHover, setImageHover] = useState(false);
   const [imageError, setImageError] = useState<string | null>(null);
+
+  // Calculate formation-adjusted stats
+  const formationStaminaBonus = calculateMinionBonusStamina(formation);
+  const levelStaminaBonus = calculateMinionLevelStaminaBonus(minion.essenceCost, heroLevel);
+  const formationStabilityBonus = formation === 'elite' ? 1 : 0;
 
   const handleImageClick = useCallback(() => {
     if (onImageChange) {
@@ -82,13 +108,21 @@ export const SummonMinionCard = ({
     setImageError(null);
   }, [onImageChange]);
 
-  // Get stamina display value (handle array for multi-minion summons)
+  // Get stamina display value with formation and level bonuses
   const getStaminaDisplay = () => {
-    if (Array.isArray(minion.stamina)) {
-      return minion.stamina[0];
-    }
-    return minion.stamina;
+    const baseStamina = Array.isArray(minion.stamina)
+      ? minion.stamina[0]
+      : minion.stamina;
+    return baseStamina + formationStaminaBonus + levelStaminaBonus;
   };
+
+  // Get stability display value with formation bonus
+  const getStabilityDisplay = () => {
+    return minion.stability + formationStabilityBonus;
+  };
+
+  // Calculate total bonus for display
+  const totalStaminaBonus = formationStaminaBonus + levelStaminaBonus;
 
   // Format characteristics for display
   const getCharacteristicValue = (value: number) => {
@@ -96,8 +130,20 @@ export const SummonMinionCard = ({
     return value.toString();
   };
 
+  // Determine the CSS state class based on summonState
+  const getStateClass = () => {
+    if (!isActive) return 'is-inactive';
+    switch (summonState) {
+      case 'available': return 'state-available';
+      case 'insufficient': return 'state-insufficient';
+      case 'at-capacity': return 'state-at-capacity';
+      case 'locked': return 'state-locked';
+      default: return '';
+    }
+  };
+
   return (
-    <div className={`summon-minion-card ${isSignature ? 'is-signature' : ''} ${!isActive ? 'is-inactive' : ''} ${!canSummon ? 'disabled' : ''}`}>
+    <div className={`summon-minion-card ${isSignature ? 'is-signature' : ''} ${!isActive ? 'is-inactive' : ''} ${getStateClass()}`}>
       <div className="summon-card-border" />
 
       <div className="summon-card-content">
@@ -202,12 +248,22 @@ export const SummonMinionCard = ({
             <span className="stat-value">{minion.speed}</span>
             <span className="stat-label">Speed</span>
           </div>
-          <div className="summon-stat">
-            <span className="stat-value">{getStaminaDisplay()}</span>
+          <div className="summon-stat has-bonus">
+            <span className="stat-value">
+              {getStaminaDisplay()}
+              {totalStaminaBonus > 0 && (
+                <span className="stat-bonus">+{totalStaminaBonus}</span>
+              )}
+            </span>
             <span className="stat-label">Stamina</span>
           </div>
-          <div className="summon-stat">
-            <span className="stat-value">{minion.stability}</span>
+          <div className="summon-stat has-bonus">
+            <span className="stat-value">
+              {getStabilityDisplay()}
+              {formationStabilityBonus > 0 && (
+                <span className="stat-bonus">+{formationStabilityBonus}</span>
+              )}
+            </span>
             <span className="stat-label">Stability</span>
           </div>
           <div className="summon-stat wide">
@@ -295,11 +351,28 @@ export const SummonMinionCard = ({
         {/* Summon Controls */}
         <div className="summon-controls">
           <button
-            className="qty-btn"
+            className={`qty-btn qty-minus ${multiplier <= 1 ? 'disabled' : ''}`}
             onClick={() => onAdjustMultiplier(-1)}
             disabled={multiplier <= 1}
+            aria-label="Decrease summon count"
           >
-            -
+            −
+          </button>
+
+          <div className="summon-count-display">
+            <span className="count-value">{totalMinions}</span>
+            {maxSummonable > 0 && summonState === 'available' && (
+              <span className="count-max">/{maxSummonable}</span>
+            )}
+          </div>
+
+          <button
+            className={`qty-btn qty-plus ${totalMinions >= maxSummonable || summonState !== 'available' ? 'disabled' : ''}`}
+            onClick={() => onAdjustMultiplier(1)}
+            disabled={totalMinions >= maxSummonable || summonState !== 'available'}
+            aria-label="Increase summon count"
+          >
+            +
           </button>
 
           <button
@@ -311,18 +384,11 @@ export const SummonMinionCard = ({
             {canSummon ? (
               <>
                 <span className="summon-action">Summon</span>
-                <span className="summon-count">×{totalMinions} for {totalCost} Ess</span>
+                <span className="summon-cost-text">{totalCost} Essence</span>
               </>
             ) : (
               <span className="summon-reason">{reason}</span>
             )}
-          </button>
-
-          <button
-            className="qty-btn"
-            onClick={() => onAdjustMultiplier(1)}
-          >
-            +
           </button>
         </div>
       </div>

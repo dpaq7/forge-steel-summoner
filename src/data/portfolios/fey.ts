@@ -474,33 +474,44 @@ const gladePond: FixtureTemplate = {
   id: 'fixture_glade_pond',
   name: 'Glade Pond',
   portfolioType: 'fey',
-  role: 'Hazard Support',
+  role: 'Hazard Ambusher',
+  flavorText: 'The vibrant waters of Arcadia pour through a hole in reality and pool into a verdant cup of paradise. As the pond babbles, it causes the surrounding flora to grow and provides the fey places to hide.',
   baseStamina: 20,
   size: 2,
   traits: [
     {
-      name: 'Fey Concealment',
+      name: 'Bubbling Boost',
       description:
-        'Your fey minions within 5 squares of the Glade Pond can hide even without cover or concealment.',
+        'You and each non-minion ally that enters one or more squares within 3 squares of the pond or starts their turn there has their speed increased by 2 until the end of their turn.',
     },
     {
-      name: 'Quickening Waters',
+      name: 'Overgrowth',
       description:
-        'When you summon the Glade Pond or at the start of each of your turns, one ally or one of your fey minions within 5 squares of the pond gains +2 speed until the start of your next turn.',
+        'Each of your fey minions that ends their turn within 3 squares of the pond is hidden until the start of their next turn.',
     },
   ],
   level5Feature: {
     id: 'glade_pond_level5',
-    name: 'Mist of Glamour',
+    name: 'Garden of Jest',
     description:
-      'The radius of Fey Concealment and Quickening Waters increases to 10 squares. Additionally, the speed bonus from Quickening Waters increases to +4.',
+      'You can spend a Recovery the first time in a round a creature gains or starts their turn with a condition while you have line of effect to the pond. Alternatively, you can choose to enable an ally who also has line of effect to the pond to spend a Recovery instead.',
+    levelRequired: 5,
   },
-  level9Feature: {
-    id: 'glade_pond_level9',
-    name: 'Portal to Faerie',
-    description:
-      'The Glade Pond becomes size 3. As a free maneuver once per round, you can teleport one fey minion from anywhere to a square adjacent to the Glade Pond. That minion can immediately shift up to half their speed and has concealment until the start of your next turn.',
-  },
+  level9Features: [
+    {
+      id: 'glade_pond_level9_size',
+      name: 'Size Increase',
+      description: 'The pond is now size 3.',
+      levelRequired: 9,
+    },
+    {
+      id: 'glade_pond_level9_folly',
+      name: 'Folly Field',
+      description:
+        'Each non-fey enemy that starts their turn within 3 squares of the pond has a -1 penalty to saving throws and resisting potencies until the start of their next turn.',
+      levelRequired: 9,
+    },
+  ],
 };
 
 // Complete Fey Portfolio

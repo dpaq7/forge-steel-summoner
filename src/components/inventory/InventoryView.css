@@ -2036,3 +2036,23 @@
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
+
+/* ============================================
+   EQUIPMENT BONUSES SECTION
+   ============================================ */
+
+.equipment-bonuses-section {
+  padding: 0.5rem;
+  margin-bottom: 0.5rem;
+  background: var(--bg-darker, #0d1515);
+  border-radius: 6px;
+  border: 1px solid var(--accent-dim, #1a3535);
+}
+
+.bonuses-label {
+  font-size: 0.7rem;
+  color: var(--text-muted, #666);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 0.35rem;
+}

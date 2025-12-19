@@ -3,6 +3,7 @@ import { useEquipment } from '../../hooks/useEquipment';
 import { usePortrait } from '../../hooks/usePortrait';
 import { useCustomItems, CustomMagicItem } from '../../hooks/useCustomItems';
 import { useSummonerContext } from '../../context/HeroContext';
+import { useDerivedStats } from '../../hooks/useDerivedStats';
 import { MagicItem, EquipmentSlot } from '../../data/magicItems';
 import { EquippedItem } from '../../types/equipment';
 import { VisualSlot, SLOT_CONFIG } from './slotConfig';
@@ -12,6 +13,7 @@ import ConsumablesGrid from './ConsumablesGrid';
 import ArtifactDisplay from './ArtifactDisplay';
 import PortraitUploader from './PortraitUploader';
 import CustomItemForm from './CustomItemForm';
+import { EquipmentBonusSummary } from './EquipmentBonusDisplay';
 import './InventoryView.css';
 
 interface ConsumableInventoryItem {
@@ -23,6 +25,13 @@ interface ConsumableInventoryItem {
 const InventoryView: React.FC = () => {
   const { hero, updateHero } = useSummonerContext();
   const { equippedItems, equipItem, unequipItem, totalBonuses } = useEquipment();
+  const {
+    equipmentStamina,
+    equipmentSpeed,
+    equipmentStability,
+    equipmentDamage,
+    hasEquipmentBonuses,
+  } = useDerivedStats();
   const {
     portrait,
     setPortrait,
@@ -240,6 +249,21 @@ const InventoryView: React.FC = () => {
             <div className="section-header">
               <h3>Active Effects</h3>
             </div>
+
+            {/* Equipment Bonuses Summary */}
+            {hasEquipmentBonuses && (
+              <div className="equipment-bonuses-section">
+                <div className="bonuses-label">Equipment Bonuses</div>
+                <EquipmentBonusSummary
+                  stamina={equipmentStamina}
+                  speed={equipmentSpeed}
+                  stability={equipmentStability}
+                  damage={equipmentDamage}
+                  savingThrows={totalBonuses.savingThrow}
+                />
+              </div>
+            )}
+
             {equippedItems.length > 0 ? (
               <div className="effects-list">
                 {equippedItems.map((item) => (

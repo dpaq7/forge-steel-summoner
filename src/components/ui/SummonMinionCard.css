@@ -8,8 +8,67 @@
   max-width: 360px;
   min-width: 0; /* Allow cards to shrink to fit container */
   opacity: 1;
+  transition: all 0.2s ease;
 }
 
+/* ============================================
+   SUMMONABILITY VISUAL STATES
+   ============================================ */
+
+/* AVAILABLE: Can summon - full saturation, glow effect */
+.summon-minion-card.state-available {
+  filter: none;
+  opacity: 1;
+}
+
+.summon-minion-card.state-available .summon-card-border {
+  border-color: var(--accent-primary);
+  box-shadow: 0 0 8px var(--accent-dim);
+}
+
+.summon-minion-card.state-available:hover .summon-card-border {
+  box-shadow: 0 0 12px var(--accent-primary);
+}
+
+/* INSUFFICIENT ESSENCE: Almost available - tinted warning, NOT greyscale */
+.summon-minion-card.state-insufficient {
+  filter: none; /* NOT desaturated - still in color */
+  opacity: 0.8;
+}
+
+.summon-minion-card.state-insufficient .summon-card-border {
+  background: var(--color-warning, #e8a844);
+  box-shadow: 0 0 6px rgba(232, 168, 68, 0.3);
+}
+
+.summon-minion-card.state-insufficient .summon-cost-count .cost-circle:first-child {
+  border-color: var(--color-warning, #e8a844);
+  color: var(--color-warning, #e8a844);
+}
+
+/* AT CAPACITY: Pool or squad full - dim but colored, NOT greyscale */
+.summon-minion-card.state-at-capacity {
+  filter: none; /* NOT desaturated */
+  opacity: 0.65;
+}
+
+.summon-minion-card.state-at-capacity .summon-card-border {
+  background: var(--text-muted);
+}
+
+/* LOCKED: Level requirement not met - greyscale */
+.summon-minion-card.state-locked {
+  filter: grayscale(100%);
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.summon-minion-card.state-locked .summon-card-border {
+  background: var(--border-dark);
+  box-shadow: none;
+}
+
+/* Legacy disabled class for backwards compatibility */
 .summon-minion-card.disabled {
   opacity: 0.5;
 }
@@ -387,6 +446,25 @@
   font-size: 0.9rem;
   font-weight: bold;
   color: var(--text-primary);
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 0.15rem;
+}
+
+/* Stat bonus indicator */
+.summon-stat .stat-bonus {
+  font-size: 0.55rem;
+  font-weight: 600;
+  color: var(--color-success, #4de8b2);
+  background: rgba(77, 232, 178, 0.15);
+  padding: 0.05rem 0.15rem;
+  border-radius: 2px;
+  line-height: 1;
+}
+
+.summon-stat.has-bonus .stat-value {
+  color: var(--color-success, #4de8b2);
 }
 
 /* ============================================
@@ -560,6 +638,7 @@
   gap: 0.35rem;
   padding: 0.5rem;
   background: var(--bg-dark);
+  align-items: center;
 }
 
 .summon-controls .qty-btn {
@@ -569,20 +648,56 @@
   border: 1px solid var(--border-dark);
   background: var(--bg-card);
   color: var(--text-secondary);
-  font-size: 1rem;
+  font-size: 1.25rem;
   font-weight: bold;
   cursor: pointer;
   transition: all 0.15s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.summon-controls .qty-btn:hover:not(:disabled) {
+.summon-controls .qty-btn:hover:not(.disabled) {
   border-color: var(--accent-primary);
   color: var(--accent-primary);
 }
 
-.summon-controls .qty-btn:disabled {
+.summon-controls .qty-btn.disabled {
   opacity: 0.3;
   cursor: not-allowed;
+  pointer-events: none;
+}
+
+.summon-controls .qty-btn.qty-plus:not(.disabled) {
+  background: var(--accent-dim);
+  border-color: var(--accent-primary);
+  color: var(--accent-primary);
+}
+
+.summon-controls .qty-btn.qty-plus:hover:not(.disabled) {
+  background: var(--accent-primary);
+  color: var(--bg-darkest);
+}
+
+/* Count display between +/- buttons */
+.summon-count-display {
+  min-width: 50px;
+  text-align: center;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.1rem;
+}
+
+.summon-count-display .count-value {
+  font-size: 1.1rem;
+  color: var(--text-primary);
+}
+
+.summon-count-display .count-max {
+  font-size: 0.75rem;
+  color: var(--text-muted);
 }
 
 .summon-controls .summon-btn {
@@ -624,6 +739,12 @@
   font-size: 0.65rem;
   font-weight: 400;
   opacity: 0.8;
+}
+
+.summon-controls .summon-btn .summon-cost-text {
+  font-size: 0.65rem;
+  font-weight: 500;
+  opacity: 0.9;
 }
 
 .summon-controls .summon-btn .summon-reason {

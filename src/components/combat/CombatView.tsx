@@ -10,7 +10,8 @@ import { isSummonerHero, SummonerHeroV2 } from '../../types/hero';
 import { Squad, MinionTemplate } from '../../types';
 import { calculateMaxMinions } from '../../utils/calculations';
 import { performPowerRoll, PowerRollResult, getTierColor, RollModifier } from '../../utils/dice';
-import SummonMinionCard from '../ui/SummonMinionCard';
+import { validateFixtureSummon } from '../../utils/summonerValidation';
+import SummonMinionCard, { SummonState } from '../ui/SummonMinionCard';
 import FixtureCard from '../ui/FixtureCard';
 import './CombatView.css';
 
@@ -108,39 +109,61 @@ const CombatView: React.FC = () => {
   };
 
   // Check if we can summon a minion (with multiplier)
-  const canSummon = (minion: MinionTemplate): { canSummon: boolean; reason: string } => {
-    if (!isInCombat) {
-      return { canSummon: false, reason: 'Not in combat' };
-    }
-
-    // Check level requirement
+  const checkSummonability = (minion: MinionTemplate): { canSummon: boolean; reason: string; state: SummonState } => {
+    // Check level requirement first - this results in greyscale "locked" state
     if (!isMinionUnlockedByLevel(minion)) {
       const requiredLevel = getRequiredLevel(minion);
-      return { canSummon: false, reason: `Requires Level ${requiredLevel}` };
+      return { canSummon: false, reason: `Requires Level ${requiredLevel}`, state: 'locked' };
+    }
+
+    if (!isInCombat) {
+      return { canSummon: false, reason: 'Not in combat', state: 'at-capacity' };
     }
 
     const { totalMinions, totalCost } = getSummonInfo(minion);
 
-    if (currentEssence < totalCost) {
-      return { canSummon: false, reason: `Need ${totalCost} essence` };
-    }
-
+    // Check capacity limits - at-capacity state (dimmed, not greyscale)
     const newMinions = totalActiveMinions + totalMinions;
     if (newMinions > maxMinions) {
-      return { canSummon: false, reason: `Exceeds cap (${totalActiveMinions}/${maxMinions})` };
+      return { canSummon: false, reason: `Exceeds cap (${totalActiveMinions}/${maxMinions})`, state: 'at-capacity' };
     }
 
-    // Check squad limit - can we add to existing or create new?
+    // Check squad limit
     const existingSquad = hero.activeSquads.find(s => s.templateId === minion.id);
     if (!existingSquad && squadCount >= maxSquads) {
-      return { canSummon: false, reason: `Max ${maxSquads} squads` };
+      return { canSummon: false, reason: `Max ${maxSquads} squads`, state: 'at-capacity' };
     }
 
-    return { canSummon: true, reason: '' };
+    // Check essence - insufficient state (tinted warning, not greyscale)
+    if (currentEssence < totalCost) {
+      return { canSummon: false, reason: `Need ${totalCost} essence`, state: 'insufficient' };
+    }
+
+    return { canSummon: true, reason: '', state: 'available' };
+  };
+
+  // Calculate max summonable for a minion type
+  const calculateMaxSummonable = (minion: MinionTemplate): number => {
+    const baseCost = getActualEssenceCost(minion);
+    const minionsPerSummon = minion.minionsPerSummon;
+
+    // How many we can afford with current essence
+    const affordableCount = Math.floor(currentEssence / baseCost) * minionsPerSummon;
+
+    // How many more fit in the pool
+    const poolSpace = maxMinions - totalActiveMinions;
+
+    // Squad limit check
+    const existingSquad = hero.activeSquads.find(s => s.templateId === minion.id);
+    const squadSpace = existingSquad
+      ? 8 - existingSquad.members.length // Max 8 per squad
+      : (squadCount >= maxSquads ? 0 : 8);
+
+    return Math.max(0, Math.min(affordableCount, poolSpace, squadSpace));
   };
 
   const handleSummon = (minion: MinionTemplate) => {
-    const check = canSummon(minion);
+    const check = checkSummonability(minion);
     if (!check.canSummon) return;
 
     const { multiplier } = getSummonInfo(minion);
@@ -283,12 +306,18 @@ const CombatView: React.FC = () => {
 
   // Check if fixture can be summoned
   const canSummonFixture = (): { canSummon: boolean; reason: string } => {
+    // Use the validation utility which checks level requirement
+    const validation = validateFixtureSummon(hero);
+
+    if (!validation.canSummon) {
+      return { canSummon: false, reason: validation.message };
+    }
+
+    // Additional combat-specific check
     if (!isInCombat) {
-      return { canSummon: false, reason: 'Not in combat' };
+      return { canSummon: false, reason: 'Start combat to summon' };
     }
-    if (hero.fixture?.isActive) {
-      return { canSummon: false, reason: 'Fixture already active' };
-    }
+
     return { canSummon: true, reason: '' };
   };
 
@@ -350,8 +379,9 @@ const CombatView: React.FC = () => {
               <div className="summon-cards-row">
                 {signatureMinions.map(minion => {
                   const isActive = isMinionActive(minion.id);
-                  const check = canSummon(minion);
+                  const check = checkSummonability(minion);
                   const { totalMinions, totalCost, multiplier } = getSummonInfo(minion);
+                  const maxSummonable = calculateMaxSummonable(minion);
                   return (
                     <SummonMinionCard
                       key={minion.id}
@@ -360,9 +390,14 @@ const CombatView: React.FC = () => {
                       isActive={isActive}
                       canSummon={isActive && check.canSummon}
                       reason={!isActive ? 'Minion inactive' : check.reason}
+                      summonState={!isActive ? 'at-capacity' : check.state}
                       totalMinions={totalMinions}
                       totalCost={totalCost}
                       multiplier={multiplier}
+                      maxSummonable={maxSummonable}
+                      formation={hero.formation}
+                      heroLevel={hero.level}
+                      currentEssence={currentEssence}
                       imageUrl={getMinionPortrait(minion.id)}
                       onSummon={() => handleSummon(minion)}
                       onAdjustMultiplier={(delta) => adjustSummonMultiplier(minion.id, delta)}
@@ -380,8 +415,9 @@ const CombatView: React.FC = () => {
                 <h4 className="section-header">3 Essence Minions</h4>
                 <div className="summon-cards-row">
                   {unlockedMinions.filter(m => m.essenceCost === 3).map(minion => {
-                    const check = canSummon(minion);
+                    const check = checkSummonability(minion);
                     const { totalMinions, totalCost, multiplier } = getSummonInfo(minion);
+                    const maxSummonable = calculateMaxSummonable(minion);
                     return (
                       <SummonMinionCard
                         key={minion.id}
@@ -389,9 +425,14 @@ const CombatView: React.FC = () => {
                         isSignature={false}
                         canSummon={check.canSummon}
                         reason={check.reason}
+                        summonState={check.state}
                         totalMinions={totalMinions}
                         totalCost={totalCost}
                         multiplier={multiplier}
+                        maxSummonable={maxSummonable}
+                        formation={hero.formation}
+                        heroLevel={hero.level}
+                        currentEssence={currentEssence}
                         imageUrl={getMinionPortrait(minion.id)}
                         onSummon={() => handleSummon(minion)}
                         onAdjustMultiplier={(delta) => adjustSummonMultiplier(minion.id, delta)}
@@ -409,8 +450,9 @@ const CombatView: React.FC = () => {
                 <h4 className="section-header">5 Essence Minions</h4>
                 <div className="summon-cards-row">
                   {unlockedMinions.filter(m => m.essenceCost === 5).map(minion => {
-                    const check = canSummon(minion);
+                    const check = checkSummonability(minion);
                     const { totalMinions, totalCost, multiplier } = getSummonInfo(minion);
+                    const maxSummonable = calculateMaxSummonable(minion);
                     return (
                       <SummonMinionCard
                         key={minion.id}
@@ -418,9 +460,14 @@ const CombatView: React.FC = () => {
                         isSignature={false}
                         canSummon={check.canSummon}
                         reason={check.reason}
+                        summonState={check.state}
                         totalMinions={totalMinions}
                         totalCost={totalCost}
                         multiplier={multiplier}
+                        maxSummonable={maxSummonable}
+                        formation={hero.formation}
+                        heroLevel={hero.level}
+                        currentEssence={currentEssence}
                         imageUrl={getMinionPortrait(minion.id)}
                         onSummon={() => handleSummon(minion)}
                         onAdjustMultiplier={(delta) => adjustSummonMultiplier(minion.id, delta)}
@@ -438,8 +485,9 @@ const CombatView: React.FC = () => {
                 <h4 className="section-header">7 Essence Minions</h4>
                 <div className="summon-cards-row">
                   {unlockedMinions.filter(m => m.essenceCost === 7).map(minion => {
-                    const check = canSummon(minion);
+                    const check = checkSummonability(minion);
                     const { totalMinions, totalCost, multiplier } = getSummonInfo(minion);
+                    const maxSummonable = calculateMaxSummonable(minion);
                     return (
                       <SummonMinionCard
                         key={minion.id}
@@ -447,9 +495,14 @@ const CombatView: React.FC = () => {
                         isSignature={false}
                         canSummon={check.canSummon}
                         reason={check.reason}
+                        summonState={check.state}
                         totalMinions={totalMinions}
                         totalCost={totalCost}
                         multiplier={multiplier}
+                        maxSummonable={maxSummonable}
+                        formation={hero.formation}
+                        heroLevel={hero.level}
+                        currentEssence={currentEssence}
                         imageUrl={getMinionPortrait(minion.id)}
                         onSummon={() => handleSummon(minion)}
                         onAdjustMultiplier={(delta) => adjustSummonMultiplier(minion.id, delta)}
@@ -550,12 +603,12 @@ const CombatView: React.FC = () => {
                   <span className="trait-desc">{fixture.level5Feature.description}</span>
                 </div>
               )}
-              {hero.level >= 9 && (
-                <div className="fixture-trait unlocked">
-                  <span className="trait-name">{fixture.level9Feature.name}:</span>
-                  <span className="trait-desc">{fixture.level9Feature.description}</span>
+              {hero.level >= 9 && fixture.level9Features.map((feature, index) => (
+                <div key={feature.id || index} className="fixture-trait unlocked">
+                  <span className="trait-name">{feature.name}:</span>
+                  <span className="trait-desc">{feature.description}</span>
                 </div>
-              )}
+              ))}
             </div>
           </div>
         )}

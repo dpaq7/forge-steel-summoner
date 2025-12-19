@@ -516,34 +516,43 @@ const barrowGates: FixtureTemplate = {
   name: 'Barrow Gates',
   portfolioType: 'undead',
   role: 'Fortification Defender',
-  baseStamina: 20, // + level
+  flavorText: 'Tall iron gates from the Necropolitan Ruins arise from the earth as wailing spirits swirl around its bars. The undead refuse to stop moving while near the threshold of oblivion.',
+  baseStamina: 20, // actual stamina = 20 + level
   size: 2, // becomes 3 at level 9
   traits: [
     {
       name: 'The Bell Tolls',
       description:
-        'Enemies within 3 squares are frightened of the gates (for targets with Intuition less than the average potency of your Reason score).',
+        'Each enemy that starts their turn within 3 squares of the gates is I<AVERAGE frightened (EoT) by the gates. The potency increases by 1 for winded enemies.',
     },
     {
-      name: 'Undead Bulwark',
+      name: 'Undead Dominion',
       description:
-        'Your undead minions gain Damage Immunity 2 while adjacent to the Barrow Gates.',
+        'Each of your undead minions has damage immunity 2 while occupying a space within 3 squares of the gates.',
     },
   ],
   level5Feature: {
     id: 'barrow_gates_level5',
     name: 'Memento Mori',
     description:
-      'The first time an undead minion dies while you have line of effect to the Barrow Gates, you or an ally within 10 squares gains a surge.',
+      'You gain a surge the first time in a round one of your undead minions unwillingly dies while you have line of effect to the gates. You can choose to give the surge to an ally who also has line of effect to the gates.',
     levelRequired: 5,
   },
-  level9Feature: {
-    id: 'barrow_gates_level9',
-    name: 'Open the Gates',
-    description:
-      'The Barrow Gates increase to Size 3. Your Rise! ability costs 1 less essence when used within 5 squares of the gates, and risen minions appear adjacent to the gates.',
-    levelRequired: 9,
-  },
+  level9Features: [
+    {
+      id: 'barrow_gates_level9_size',
+      name: 'Size Increase',
+      description: 'The gates are now size 3.',
+      levelRequired: 9,
+    },
+    {
+      id: 'barrow_gates_level9_open',
+      name: 'Open the Gates',
+      description:
+        'You can use Rise! as a free triggered action each time an enemy dies within 3 squares of the gates while you have line of effect to the gates.',
+      levelRequired: 9,
+    },
+  ],
 };
 
 // -----------------------------------------------------------------------------

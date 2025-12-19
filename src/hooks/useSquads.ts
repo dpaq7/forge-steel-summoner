@@ -3,7 +3,11 @@ import { useSummonerContext } from '../context/HeroContext';
 import { useCombatContext } from '../context/CombatContext';
 import { Squad, Minion, MinionTemplate, GridPosition } from '../types';
 import { isSummonerHero, SummonerHeroV2 } from '../types/hero';
-import { generateId, calculateMinionBonusStamina } from '../utils/calculations';
+import {
+  generateId,
+  calculateMinionBonusStamina,
+  calculateMinionLevelStaminaBonus,
+} from '../utils/calculations';
 
 // SRD: Overflow damage to summoner when squad wiped = 2 + Level
 const calculateOverflowDamage = (level: number) => 2 + level;
@@ -19,7 +23,10 @@ export const useSquads = () => {
     (template: MinionTemplate): Squad => {
       if (!hero) throw new Error('No hero loaded');
 
-      const bonusStamina = calculateMinionBonusStamina(hero.formation);
+      // Formation bonus (Elite: +3)
+      const formationBonus = calculateMinionBonusStamina(hero.formation);
+      // Level-based bonus (Minion Improvement at L4, L7, L10)
+      const levelBonus = calculateMinionLevelStaminaBonus(template.essenceCost, hero.level);
 
       // Create minion members and calculate total pool
       const members: Minion[] = [];
@@ -29,7 +36,7 @@ export const useSquads = () => {
         const baseStamina = Array.isArray(template.stamina)
           ? template.stamina[i] || template.stamina[0]
           : template.stamina;
-        const minionMaxStamina = baseStamina + bonusStamina;
+        const minionMaxStamina = baseStamina + formationBonus + levelBonus;
         totalStamina += minionMaxStamina;
 
         members.push({

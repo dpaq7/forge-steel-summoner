@@ -13,6 +13,7 @@ import {
 
 import { StatChip } from './StatChip';
 import { TurnChip } from './TurnChip';
+import { useDerivedStats } from '@/hooks/useDerivedStats';
 import type { Hero } from '@/types/hero';
 import type { HeroicResourceConfig } from '@/data/class-resources';
 import type { StatCardType, TurnPhaseId } from './types';
@@ -49,22 +50,29 @@ export const StatChipsRow: React.FC<StatChipsRowProps> = ({
 }) => {
   const showResource = onResourceChange !== undefined;
 
+  // Get derived stats (includes equipment bonuses)
+  const { maxStamina, maxRecoveries, equipmentStamina } = useDerivedStats();
+
+  // Use derived max values, falling back to stored values if no derived stats
+  const effectiveMaxStamina = maxStamina || hero.stamina.max;
+  const effectiveMaxRecoveries = maxRecoveries || hero.recoveries.max;
+
   return (
     <div className="stat-chips-row">
       {/* Stamina */}
       <StatChip
         id="stamina"
         icon={Heart}
-        label="Stamina"
+        label={equipmentStamina > 0 ? `Stamina (+${equipmentStamina})` : "Stamina"}
         value={hero.stamina.current}
-        maxValue={hero.stamina.max}
+        maxValue={effectiveMaxStamina}
         color="var(--danger)"
         isPinned={pinnedCards.has('stamina')}
         onTogglePin={() => onTogglePin('stamina')}
         onChange={(delta) => {
           const newVal = Math.max(
             0,
-            Math.min(hero.stamina.max, hero.stamina.current + delta)
+            Math.min(effectiveMaxStamina, hero.stamina.current + delta)
           );
           onStaminaChange(newVal);
         }}
@@ -78,14 +86,14 @@ export const StatChipsRow: React.FC<StatChipsRowProps> = ({
         icon={Shield}
         label="Recoveries"
         value={hero.recoveries.current}
-        maxValue={hero.recoveries.max}
+        maxValue={effectiveMaxRecoveries}
         color="var(--success)"
         isPinned={pinnedCards.has('recoveries')}
         onTogglePin={() => onTogglePin('recoveries')}
         onChange={(delta) => {
           const newVal = Math.max(
             0,
-            Math.min(hero.recoveries.max, hero.recoveries.current + delta)
+            Math.min(effectiveMaxRecoveries, hero.recoveries.current + delta)
           );
           onRecoveriesChange(newVal);
         }}

@@ -31,9 +31,10 @@ export interface StatChanges {
   minionCap?: number; // Add to minion cap
   essencePerTurn?: number; // Set essence per turn to this value
   freeSummonCount?: number; // Add to free summon count per turn
-  signatureStaminaBonus?: number; // Add to signature minion stamina
-  threeEssenceStaminaBonus?: number; // Add to 3-cost minion stamina
-  fiveEssenceStaminaBonus?: number; // Add to 5-cost minion stamina
+  signatureStaminaBonus?: number; // Add to signature minion stamina (L4, L7, L10)
+  threeEssenceStaminaBonus?: number; // Add to 3-cost minion stamina (L4, L7, L10)
+  fiveEssenceStaminaBonus?: number; // Add to 5-cost minion stamina (L4, L7, L10)
+  sevenEssenceStaminaBonus?: number; // Add to 7-cost minion stamina (L7, L10)
 
   // Fury-specific
   might?: number; // Set Might to this value

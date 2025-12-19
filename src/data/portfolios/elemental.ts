@@ -389,22 +389,39 @@ const primordialCrystal: FixtureTemplate = {
   name: 'Primordial Crystal',
   portfolioType: 'elemental',
   role: 'Relic Artillery',
+  flavorText: 'The storm of elements from Quintessence coalesce into a hardened, crystalline structure. It magnifies the elemental composition of any matter that passes through it and emits supernatural colors while doing so.',
   baseStamina: 20,
   size: 2,
   traits: [
-    { name: 'Magnetic Pull', description: 'When you summon the crystal or at the start of your turn, each enemy within 5 squares is pulled 2 squares toward the crystal.' },
-    { name: 'Elemental Attunement', description: 'Your elemental minions within 5 squares deal +2 damage with their abilities.' },
+    {
+      name: 'Magnetic Pull',
+      description: 'Each enemy that starts their turn within 3 squares of the crystal is vertically pulled 3.',
+    },
+    {
+      name: 'Elemental Boost',
+      description: 'When you or an ally uses a ranged ability that draws a line through the crystal, the distance increases by 5.',
+    },
   ],
   level5Feature: {
     id: 'primordial_crystal_level5',
-    name: 'Enhanced Magnetism',
-    description: 'Radius increases to 10 squares. Pull increases to 3 squares.',
+    name: 'Terra Resonance',
+    description: 'Each round, you gain a surge the first time an area of terrain gains a supernatural effect (excluding auras) while you have line of effect to the crystal. You can choose to give the surge to an ally who also has line of effect to the crystal.',
+    levelRequired: 5,
   },
-  level9Feature: {
-    id: 'primordial_crystal_level9',
-    name: 'Elemental Nexus',
-    description: 'Size becomes 3. Elemental minions within range deal +4 damage instead of +2.',
-  },
+  level9Features: [
+    {
+      id: 'primordial_crystal_level9_size',
+      name: 'Size Increase',
+      description: 'The crystal is now size 3.',
+      levelRequired: 9,
+    },
+    {
+      id: 'primordial_crystal_level9_magnified',
+      name: 'Magnified Strike',
+      description: 'When you or an ally makes a ranged strike that draws a line through the crystal, the user gains a surge which they can use on the ability.',
+      levelRequired: 9,
+    },
+  ],
 };
 
 // -----------------------------------------------------------------------------

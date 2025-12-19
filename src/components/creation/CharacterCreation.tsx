@@ -600,6 +600,20 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ onComplete }) => 
         minionPortraits: {},
         fixturePortrait: null,
         inactiveMinions: [],
+        // Champion state (Summoner v1.0 SRD - unlocks at Level 8)
+        activeChampion: null,
+        championState: {
+          canSummon: true,
+          summonedThisEncounter: false,
+          championActionUsed: false,
+          requiresVictoryToResummon: false,
+        },
+        // Out-of-combat state (Summoner v1.0 SRD)
+        outOfCombatState: {
+          activeMinions: [],
+          usedAbilities: {},
+          shouldDismissOnCombatStart: true,
+        },
       };
 
       createNewHero(newHero);
