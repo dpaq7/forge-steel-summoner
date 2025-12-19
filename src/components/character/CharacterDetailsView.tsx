@@ -1,6 +1,7 @@
 import React from 'react';
 import { useSummonerContext } from '../../context/HeroContext';
 import { languages as allLanguages } from '../../data/reference-data';
+import { skills as allSkills } from '../../data/skills';
 import { formations } from '../../data/formations';
 import { Formation, HeroClass } from '../../types';
 import { isSummonerHero, SummonerHeroV2 } from '../../types/hero';
@@ -60,14 +61,19 @@ const CharacterDetailsView: React.FC = () => {
   const careerWealth = hero.career?.wealth || 0;
   const careerProjectPoints = hero.career?.projectPoints || 0;
   const careerIncitingIncident = hero.career?.incitingIncident || '';
+  // Career skill groups (for informational display in Career section)
+  const careerSkillGroups = hero.career?.skills || [];
 
-  // Collect all skills from culture and career
-  const cultureSkills = [
-    ...(cultureEnvironment?.skills || []),
-    ...(cultureUpbringing?.skills || []),
-  ];
-  const careerSkills = hero.career?.skills || [];
-  const allSkills = [...new Set([...cultureSkills, ...careerSkills])];
+  // Get skill name from ID
+  const getSkillName = (skillId: string): string => {
+    const skill = allSkills.find(s => s.id === skillId);
+    return skill?.name || skillId;
+  };
+
+  // Use hero.skills directly - these are the actual selected skills from character creation
+  // hero.skills contains skill IDs, so we convert them to display names
+  const heroSkills = hero.skills || [];
+  const skillNames = heroSkills.map(getSkillName);
 
   // Get language names from hero's language IDs
   const getLanguageName = (langId: string): string => {
@@ -164,7 +170,7 @@ const CharacterDetailsView: React.FC = () => {
               <h4>Environment: {cultureEnvironment.name}</h4>
               <p className="aspect-description">{getEnvironmentDesc(cultureEnvironment.name)}</p>
               {cultureEnvironment.skills && cultureEnvironment.skills.length > 0 && (
-                <p className="aspect-skills">Skills: {cultureEnvironment.skills.join(', ')}</p>
+                <p className="aspect-skills">Skill Categories: {cultureEnvironment.skills.join(', ')}</p>
               )}
             </div>
           )}
@@ -181,7 +187,7 @@ const CharacterDetailsView: React.FC = () => {
               <h4>Upbringing: {cultureUpbringing.name}</h4>
               <p className="aspect-description">{getUpbringingDesc(cultureUpbringing.name)}</p>
               {cultureUpbringing.skills && cultureUpbringing.skills.length > 0 && (
-                <p className="aspect-skills">Skills: {cultureUpbringing.skills.join(', ')}</p>
+                <p className="aspect-skills">Skill Categories: {cultureUpbringing.skills.join(', ')}</p>
               )}
             </div>
           )}
@@ -194,9 +200,9 @@ const CharacterDetailsView: React.FC = () => {
         {careerDescription && <p className="description">{careerDescription}</p>}
 
         <div className="career-details">
-          {careerSkills.length > 0 && (
+          {careerSkillGroups.length > 0 && (
             <div className="career-stat">
-              <strong>Skills:</strong> {careerSkills.join(', ')}
+              <strong>Skill Categories:</strong> {careerSkillGroups.join(', ')}
             </div>
           )}
           <div className="career-stat">
@@ -235,9 +241,13 @@ const CharacterDetailsView: React.FC = () => {
           <div className="skills-block">
             <h4>Skills</h4>
             <ul className="skills-list">
-              {allSkills.map((skill, idx) => (
-                <li key={idx}>{skill}</li>
-              ))}
+              {skillNames.length > 0 ? (
+                skillNames.map((skill, idx) => (
+                  <li key={idx}>{skill}</li>
+                ))
+              ) : (
+                <li className="no-skills">No skills selected</li>
+              )}
             </ul>
           </div>
 
