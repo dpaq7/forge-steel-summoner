@@ -5,9 +5,13 @@ import type { ConditionEndType } from '@/types/common';
 
 export type ConditionId =
   | 'bleeding'
+  | 'burning'
+  | 'charmed'
   | 'dazed'
   | 'frightened'
   | 'grabbed'
+  | 'invisible'
+  | 'petrified'
   | 'prone'
   | 'restrained'
   | 'slowed'
@@ -38,6 +42,26 @@ export const CONDITIONS: Record<ConditionId, ConditionDefinition> = {
     affectsActions: true,
     actionTriggers: ['main', 'triggered', 'might_roll', 'agility_roll'],
   },
+  burning: {
+    id: 'burning',
+    name: 'Burning',
+    icon: '🔥',
+    description: 'You are on fire and taking ongoing damage.',
+    primaryEffect: 'Take fire damage at the start of each of your turns. The damage amount is determined by the source.',
+    saveEnds: true,
+    saveRequired: 'd10 roll of 6+ at end of turn',
+    affectsActions: false,
+  },
+  charmed: {
+    id: 'charmed',
+    name: 'Charmed',
+    icon: '💕',
+    description: 'You are magically influenced to view another creature favorably.',
+    primaryEffect: 'Cannot attack or target the charmer with harmful abilities. The charmer has an edge on social interactions with you.',
+    saveEnds: true,
+    saveRequired: 'd10 roll of 6+ at end of turn',
+    affectsActions: false,
+  },
   dazed: {
     id: 'dazed',
     name: 'Dazed',
@@ -56,6 +80,26 @@ export const CONDITIONS: Record<ConditionId, ConditionDefinition> = {
     primaryEffect: 'Bane on ability rolls against the fear source. Cannot willingly move closer to the source.',
     saveEnds: true,
     saveRequired: 'd10 roll of 6+ at end of turn',
+    affectsActions: false,
+  },
+  invisible: {
+    id: 'invisible',
+    name: 'Invisible',
+    icon: '👻',
+    description: 'You cannot be seen by normal means.',
+    primaryEffect: 'You have concealment against all creatures. Creatures have a bane on attacks against you. You have an edge on attacks against creatures that cannot see you.',
+    saveEnds: false,
+    saveRequired: 'Effect ends based on ability duration or when you attack',
+    affectsActions: false,
+  },
+  petrified: {
+    id: 'petrified',
+    name: 'Petrified',
+    icon: '🪨',
+    description: 'You have been turned to stone.',
+    primaryEffect: 'You are incapacitated and cannot move, speak, or take any actions. You have immunity to all damage. You do not age while petrified.',
+    saveEnds: true,
+    saveRequired: 'Specific magic or effect to reverse',
     affectsActions: false,
   },
   grabbed: {

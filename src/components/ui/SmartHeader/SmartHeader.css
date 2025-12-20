@@ -478,6 +478,30 @@
   background: rgba(76, 175, 80, 0.1);
 }
 
+/* === LEVEL UP BUTTON === */
+.levelup-btn {
+  background: linear-gradient(135deg, var(--xp) 0%, #e6a300 100%);
+  border: none;
+  color: var(--bg-darkest);
+  font-weight: 600;
+  animation: levelup-attention 2s ease-in-out infinite;
+}
+
+.levelup-btn:hover {
+  background: linear-gradient(135deg, #f5d78e 0%, var(--xp) 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 16px rgba(240, 198, 116, 0.5);
+}
+
+@keyframes levelup-attention {
+  0%, 100% {
+    box-shadow: 0 2px 8px rgba(240, 198, 116, 0.3);
+  }
+  50% {
+    box-shadow: 0 2px 16px rgba(240, 198, 116, 0.6);
+  }
+}
+
 /* === DRAW STEEL BUTTON === */
 .header-action-btn.combat-btn {
   min-width: fit-content;

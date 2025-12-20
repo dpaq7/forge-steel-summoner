@@ -1,111 +1,112 @@
 import { MinionTemplate, FixtureTemplate, Portfolio } from '../../types';
 
 // =============================================================================
-// DEMON PORTFOLIO - SRD Section 5.1
-// Circle of Blight (Demonologist)
+// DEMON PORTFOLIO - MCDM Summoner v1.0
+// Circle of Blight
 // =============================================================================
 
 // -----------------------------------------------------------------------------
 // SIGNATURE MINIONS (1 Essence each)
 // -----------------------------------------------------------------------------
 
-const abyssalBabbler: MinionTemplate = {
-  id: 'demon_abyssal_babbler',
-  name: 'Abyssal Babbler',
+const ensnarer: MinionTemplate = {
+  id: 'demon_ensnarer',
+  name: 'Ensnarer',
   essenceCost: 1,
-  minionsPerSummon: 1, // Signature: 1 minion per essence spent
-  size: '1S',
+  minionsPerSummon: 1,
+  size: '1M',
   speed: 5,
   stamina: 2,
   stability: 0,
   freeStrike: 2,
   characteristics: {
-    might: -2,
-    agility: 1,
+    might: 2,
+    agility: 0,
     reason: -1,
-    intuition: 2,
-    presence: 1,
+    intuition: -1,
+    presence: -1,
   },
-  role: 'hexer',
+  role: 'brute',
   keywords: ['Abyssal', 'Demon'],
   immunities: [],
-  weaknesses: [],
+  weaknesses: [{ type: 'holy', value: 1 }],
   movementModes: [],
-  freeStrikeDamageType: 'psychic',
+  freeStrikeDamageType: 'untyped',
   traits: [
     {
-      name: 'Shriek',
-      description: 'Enemies within 2 squares of an abyssal babbler cannot Hide.',
+      name: 'Extended Barbed Strike',
+      description:
+        "The ensnarer's melee free strikes have a distance of 3 and inflict pull 1. The pull distance increases by 1 for each additional ensnarer striking the same target. Choose the ensnarer that the target is being pulled to before applying forced movement.",
     },
     {
-      name: 'Maddening Voices',
-      description: 'Enemies within 2 squares of an abyssal babbler cannot benefit from flanking.',
+      name: 'Soulsight',
+      description: "Each creature adjacent to the ensnarer can't be hidden from them.",
     },
   ],
 };
 
-const moteOfBlight: MinionTemplate = {
-  id: 'demon_mote_of_blight',
-  name: 'Mote of Blight',
+const rasquine: MinionTemplate = {
+  id: 'demon_rasquine',
+  name: 'Rasquine',
   essenceCost: 1,
-  minionsPerSummon: 1, // Signature: 1 minion per essence spent
-  size: '1M',
-  speed: 5,
+  minionsPerSummon: 1,
+  size: '1S',
+  speed: 4,
   stamina: 2,
   stability: 0,
   freeStrike: 2,
   characteristics: {
     might: -1,
-    agility: 1,
-    reason: -2,
-    intuition: 0,
-    presence: 0,
+    agility: 0,
+    reason: -1,
+    intuition: -1,
+    presence: 2,
   },
-  role: 'artillery',
+  role: 'ambusher',
   keywords: ['Abyssal', 'Demon'],
   immunities: [],
-  weaknesses: [],
-  movementModes: [],
-  freeStrikeDamageType: 'corruption',
+  weaknesses: [{ type: 'holy', value: 1 }],
+  movementModes: ['Teleport'],
+  freeStrikeDamageType: 'untyped',
   traits: [
     {
-      name: 'Ranged Free Strikes',
-      description: 'A mote of blight can make free strikes at range 10.',
+      name: 'Skulker',
+      description: 'Once per turn, the rasquine can hide as a free maneuver after teleporting.',
     },
     {
-      name: 'Aura of Blight',
-      description: 'At the start of each of your turns, each creature adjacent to a mote of blight takes 1 corruption damage.',
+      name: 'Soulsight',
+      description: "Each creature adjacent to the rasquine can't be hidden from them.",
     },
   ],
 };
 
-const spineGoblin: MinionTemplate = {
-  id: 'demon_spine_goblin',
-  name: 'Spine Goblin',
+const razor: MinionTemplate = {
+  id: 'demon_razor',
+  name: 'Razor',
   essenceCost: 1,
-  minionsPerSummon: 1, // Signature: 1 minion per essence spent
+  minionsPerSummon: 1,
   size: '1M',
-  speed: 7,
+  speed: 6,
   stamina: 2,
   stability: 0,
-  freeStrike: 2,
+  freeStrike: 1,
   characteristics: {
     might: 0,
     agility: 2,
     reason: -1,
-    intuition: 0,
+    intuition: -1,
     presence: -1,
   },
   role: 'harrier',
   keywords: ['Abyssal', 'Demon'],
   immunities: [],
-  weaknesses: [],
+  weaknesses: [{ type: 'holy', value: 1 }],
   movementModes: [],
   freeStrikeDamageType: 'untyped',
   traits: [
     {
-      name: 'Spiny Death',
-      description: 'When a spine goblin is reduced to 0 Stamina, each adjacent enemy takes 2 damage.',
+      name: 'Soulsight',
+      description: "Each creature adjacent to the razor can't be hidden from them.",
     },
   ],
 };
@@ -114,434 +115,325 @@ const spineGoblin: MinionTemplate = {
 // 3-ESSENCE MINIONS (Summon 2)
 // -----------------------------------------------------------------------------
 
-const barbedFiend: MinionTemplate = {
-  id: 'demon_barbed_fiend',
-  name: 'Barbed Fiend',
+const archerSpittlich: MinionTemplate = {
+  id: 'demon_archer_spittlich',
+  name: 'Archer Spittlich',
   essenceCost: 3,
   minionsPerSummon: 2,
-  size: '1M',
+  size: '1S',
   speed: 5,
-  stamina: 7,
-  stability: 1,
-  freeStrike: 4,
+  stamina: 5,
+  stability: 2,
+  freeStrike: 5,
   characteristics: {
-    might: 2,
-    agility: 0,
+    might: 0,
+    agility: 2,
     reason: -1,
-    intuition: 1,
-    presence: 0,
-  },
-  role: 'defender',
-  keywords: ['Abyssal', 'Demon'],
-  immunities: [],
-  weaknesses: [],
-  movementModes: [],
-  freeStrikeDamageType: 'untyped',
-  traits: [
-    {
-      name: 'Barbed Hide',
-      description: 'When a creature makes a melee attack against a barbed fiend, they take 2 damage.',
-    },
-  ],
-  signatureAbility: {
-    id: 'barbed_fiend_grapple',
-    name: 'Grapple Strike',
-    actionType: 'action',
-    keywords: ['Melee', 'Strike'],
-    distance: 'Reach 1',
-    target: 'One creature',
-    powerRoll: {
-      characteristic: 'might',
-      tier1: '2d10 + R damage',
-      tier2: '2d10 + R damage; grabbed',
-      tier3: '2d10 + R damage; grabbed and the target takes 3 damage at the start of each of their turns while grabbed',
-    },
-    effect: '',
-  },
-};
-
-const bileSpewer: MinionTemplate = {
-  id: 'demon_bile_spewer',
-  name: 'Bile Spewer',
-  essenceCost: 3,
-  minionsPerSummon: 2,
-  size: '2',
-  speed: 4,
-  stamina: 8,
-  stability: 1,
-  freeStrike: 4,
-  characteristics: {
-    might: 1,
-    agility: -1,
-    reason: -2,
-    intuition: 1,
+    intuition: -1,
     presence: 0,
   },
   role: 'artillery',
   keywords: ['Abyssal', 'Demon'],
-  immunities: [{ type: 'acid', value: undefined }],
-  weaknesses: [],
+  immunities: [],
+  weaknesses: [{ type: 'holy', value: 1 }],
   movementModes: [],
-  freeStrikeDamageType: 'acid',
+  freeStrikeDamageType: 'poison',
   traits: [
     {
-      name: 'Ranged Free Strikes',
-      description: 'A bile spewer can make free strikes at range 12.',
+      name: 'Splash Strike',
+      description:
+        "The spittlich's ranged free strikes have a distance of 10 and deal 2 poison damage to an enemy adjacent to the target. Creatures that take poison damage from this spittlich can't shift until the start of the spittlich's next turn.",
     },
     {
-      name: 'Bile Pool',
-      description: 'When a bile spewer is reduced to 0 Stamina, it leaves a 2x2 hazard zone that deals 3 acid damage to creatures who enter or start their turn there.',
+      name: 'Soulsight',
+      description: "Each creature adjacent to the spittlich can't be hidden from them.",
     },
   ],
-  signatureAbility: {
-    id: 'bile_spewer_spray',
-    name: 'Bile Spray',
-    actionType: 'action',
-    keywords: ['Ranged', 'Strike'],
-    distance: 'Ranged 12',
-    target: 'All creatures in a 2-cube',
-    powerRoll: {
-      characteristic: 'might',
-      tier1: '2d10 + R acid damage',
-      tier2: '2d10 + R acid damage; slowed (EoT)',
-      tier3: '2d10 + R acid damage; slowed (save ends)',
-    },
-    effect: '',
-  },
 };
 
-const shadowLurker: MinionTemplate = {
-  id: 'demon_shadow_lurker',
-  name: 'Shadow Lurker',
+const fangedMusilex: MinionTemplate = {
+  id: 'demon_fanged_musilex',
+  name: 'Fanged Musilex',
   essenceCost: 3,
   minionsPerSummon: 2,
-  size: '1M',
+  size: '1L',
   speed: 6,
-  stamina: 5,
-  stability: 0,
-  freeStrike: 4,
+  stamina: 6,
+  stability: 1,
+  freeStrike: 5,
   characteristics: {
-    might: 1,
-    agility: 2,
-    reason: 0,
-    intuition: 2,
-    presence: 1,
+    might: 2,
+    agility: 1,
+    reason: -1,
+    intuition: -1,
+    presence: 0,
   },
-  role: 'ambusher',
+  role: 'brute',
   keywords: ['Abyssal', 'Demon'],
   immunities: [],
-  weaknesses: [],
+  weaknesses: [{ type: 'holy', value: 1 }],
   movementModes: [],
-  freeStrikeDamageType: 'cold',
+  freeStrikeDamageType: 'untyped',
   traits: [
     {
-      name: 'Shadow Phasing',
-      description: 'A shadow lurker is invisible while in darkness or dim light.',
+      name: 'Mawful Strike',
+      description:
+        "The musilex's melee free strikes have a distance of 2 + R and inflict pull 2. The pull distance increases by 2 for each additional musilex striking the same target. Choose the musilex that the target is being pulled to before applying forced movement. If the target is pulled adjacent to the musilex, the musilex either deals an additional 2 damage or grabs them.",
+    },
+    {
+      name: 'Soulsight',
+      description: "Each creature adjacent to the musilex can't be hidden from them.",
     },
   ],
-  signatureAbility: {
-    id: 'shadow_lurker_strike',
-    name: 'Shadow Strike',
-    actionType: 'action',
-    keywords: ['Melee', 'Strike'],
-    distance: 'Reach 1',
-    target: 'One creature',
-    powerRoll: {
-      characteristic: 'agility',
-      tier1: '2d10 + R cold damage',
-      tier2: '2d10 + R cold damage. Teleport 3.',
-      tier3: '2d10 + R cold damage. Teleport 5 and become invisible until end of next turn.',
-    },
-    effect: '',
+};
+
+const twistedBengrul: MinionTemplate = {
+  id: 'demon_twisted_bengrul',
+  name: 'Twisted Bengrul',
+  essenceCost: 3,
+  minionsPerSummon: 2,
+  size: '1L',
+  speed: 5,
+  stamina: 5,
+  stability: 1,
+  freeStrike: 4,
+  characteristics: {
+    might: 2,
+    agility: 1,
+    reason: -1,
+    intuition: -1,
+    presence: 0,
   },
+  role: 'hexer',
+  keywords: ['Abyssal', 'Demon'],
+  immunities: [],
+  weaknesses: [{ type: 'holy', value: 1 }],
+  movementModes: [],
+  freeStrikeDamageType: 'psychic',
+  traits: [
+    {
+      name: 'Soulsight',
+      description: "Each creature adjacent to the bengrul can't be hidden from them.",
+    },
+  ],
 };
 
 // -----------------------------------------------------------------------------
 // 5-ESSENCE MINIONS (Summon 3)
 // -----------------------------------------------------------------------------
 
-const chaosElemental: MinionTemplate = {
-  id: 'demon_chaos_elemental',
-  name: 'Chaos Elemental',
+const gushingSpewler: MinionTemplate = {
+  id: 'demon_gushing_spewler',
+  name: 'Gushing Spewler',
+  essenceCost: 5,
+  minionsPerSummon: 3,
+  size: '1M',
+  speed: 5,
+  stamina: [4, 4, 4],
+  stability: 0,
+  freeStrike: 3,
+  characteristics: {
+    might: -2,
+    agility: 0,
+    reason: -1,
+    intuition: 3,
+    presence: 3,
+  },
+  role: 'controller',
+  keywords: ['Abyssal', 'Demon'],
+  immunities: [],
+  weaknesses: [{ type: 'holy', value: 1 }],
+  movementModes: [],
+  freeStrikeDamageType: 'acid',
+  traits: [
+    {
+      name: 'Gushing Strike',
+      description:
+        "The spewler's ranged free strikes have a distance of 10 and slides the target R + 2 squares.",
+    },
+    {
+      name: 'Soulsight',
+      description: "Each creature adjacent to the spewler can't be hidden from them.",
+    },
+  ],
+};
+
+const hulkingChimor: MinionTemplate = {
+  id: 'demon_hulking_chimor',
+  name: 'Hulking Chimor',
   essenceCost: 5,
   minionsPerSummon: 3,
   size: '2',
-  speed: 6,
-  stamina: [6, 6, 6],
-  stability: 1,
-  freeStrike: 4,
-  characteristics: {
-    might: 1,
-    agility: 1,
-    reason: -1,
-    intuition: 2,
-    presence: 2,
-  },
-  role: 'controller',
-  keywords: ['Abyssal', 'Demon', 'Elemental'],
-  immunities: [],
-  weaknesses: [],
-  movementModes: [],
-  freeStrikeDamageType: 'varies',
-  traits: [
-    {
-      name: 'Wild Magic',
-      description: 'Roll d4 when attacking: 1=fire, 2=cold, 3=lightning, 4=acid. Use that damage type.',
-    },
-  ],
-  signatureAbility: {
-    id: 'chaos_elemental_pulse',
-    name: 'Chaos Pulse',
-    actionType: 'action',
-    keywords: ['Magic', 'Ranged', 'Strike'],
-    distance: 'Ranged 10',
-    target: 'All creatures in burst 2',
-    powerRoll: {
-      characteristic: 'presence',
-      tier1: '2d10 + R damage (random type)',
-      tier2: '2d10 + R damage; roll random condition (slow/prone/dazed)',
-      tier3: '2d10 + R damage; two random conditions',
-    },
-    effect: 'Roll d4 to determine damage type.',
-  },
-};
-
-const demonHound: MinionTemplate = {
-  id: 'demon_demon_hound',
-  name: 'Demon Hound',
-  essenceCost: 5,
-  minionsPerSummon: 3,
-  size: '1L',
-  speed: 10,
-  stamina: [6, 6, 6],
-  stability: 1,
-  freeStrike: 5,
-  characteristics: {
-    might: 2,
-    agility: 2,
-    reason: -2,
-    intuition: 2,
-    presence: 0,
-  },
-  role: 'harrier',
-  keywords: ['Abyssal', 'Demon'],
-  immunities: [{ type: 'fire', value: undefined }],
-  weaknesses: [],
-  movementModes: [],
-  freeStrikeDamageType: 'fire',
-  traits: [
-    {
-      name: 'Pack Hunter',
-      description: 'A demon hound deals +2 damage while adjacent to another demon hound.',
-    },
-  ],
-  signatureAbility: {
-    id: 'demon_hound_bite',
-    name: 'Knockdown Bite',
-    actionType: 'action',
-    keywords: ['Melee', 'Strike'],
-    distance: 'Reach 1',
-    target: 'One creature',
-    powerRoll: {
-      characteristic: 'might',
-      tier1: '2d10 + R fire damage',
-      tier2: '2d10 + R fire damage; prone',
-      tier3: '2d10 + R fire damage; prone and restrained (EoT)',
-    },
-    effect: '',
-  },
-};
-
-const pitHorror: MinionTemplate = {
-  id: 'demon_pit_horror',
-  name: 'Pit Horror',
-  essenceCost: 5,
-  minionsPerSummon: 3,
-  size: '1L',
-  speed: 6,
+  speed: 5,
   stamina: [7, 7, 7],
-  stability: 2,
-  freeStrike: 5,
-  characteristics: {
-    might: 3,
-    agility: 0,
-    reason: -1,
-    intuition: 1,
-    presence: 2,
-  },
-  role: 'brute',
-  keywords: ['Abyssal', 'Demon'],
-  immunities: [],
-  weaknesses: [],
-  movementModes: [],
-  freeStrikeDamageType: 'corruption',
-  traits: [
-    {
-      name: 'Terrifying Presence',
-      description: 'Enemies within 3 squares of a pit horror are frightened of it.',
-    },
-  ],
-  signatureAbility: {
-    id: 'pit_horror_rend',
-    name: 'Rend',
-    actionType: 'action',
-    keywords: ['Melee', 'Strike'],
-    distance: 'Reach 2',
-    target: 'One creature',
-    powerRoll: {
-      characteristic: 'might',
-      tier1: '2d10 + R corruption damage',
-      tier2: '2d10 + R corruption damage; bleeding (EoT)',
-      tier3: '2d10 + R corruption damage; bleeding (save ends)',
-    },
-    effect: '',
-  },
-};
-
-// -----------------------------------------------------------------------------
-// 7-ESSENCE MINIONS (Summon 1 or 2)
-// -----------------------------------------------------------------------------
-
-const greaterDemon: MinionTemplate = {
-  id: 'demon_greater_demon',
-  name: 'Greater Demon',
-  essenceCost: 7,
-  minionsPerSummon: 1,
-  size: '3',
-  speed: 5,
-  stamina: 45,
-  stability: 4,
-  freeStrike: 8,
-  characteristics: {
-    might: 4,
-    agility: 0,
-    reason: 0,
-    intuition: 2,
-    presence: 3,
-  },
-  role: 'brute',
-  keywords: ['Abyssal', 'Demon'],
-  immunities: [{ type: 'fire', value: undefined }],
-  weaknesses: [],
-  movementModes: [],
-  freeStrikeDamageType: 'fire',
-  traits: [
-    {
-      name: 'Aura of Corruption',
-      description: 'Enemies within 3 squares of a greater demon have -2 to all damage rolls.',
-    },
-  ],
-  signatureAbility: {
-    id: 'greater_demon_slam',
-    name: 'Massive Slam',
-    actionType: 'action',
-    keywords: ['Melee', 'Strike'],
-    distance: 'Reach 2',
-    target: 'All enemies in 2-cube',
-    powerRoll: {
-      characteristic: 'might',
-      tier1: '2d10 + R fire damage',
-      tier2: '2d10 + R fire damage; prone',
-      tier3: '2d10 + R fire damage; prone and pushed 3',
-    },
-    effect: '',
-  },
-};
-
-const shadowDemon: MinionTemplate = {
-  id: 'demon_shadow_demon',
-  name: 'Shadow Demon',
-  essenceCost: 7,
-  minionsPerSummon: 2,
-  size: '1L',
-  speed: 8,
-  stamina: [18, 18],
-  stability: 0,
-  freeStrike: 6,
-  characteristics: {
-    might: 1,
-    agility: 3,
-    reason: 1,
-    intuition: 3,
-    presence: 2,
-  },
-  role: 'ambusher',
-  keywords: ['Abyssal', 'Demon'],
-  immunities: [],
-  weaknesses: [{ type: 'radiant', value: 5 }],
-  movementModes: ['Fly'],
-  freeStrikeDamageType: 'cold',
-  traits: [
-    {
-      name: 'Incorporeal',
-      description: 'A shadow demon can move through solid objects and other creatures. It cannot end its turn inside a solid object.',
-    },
-    {
-      name: 'Shadow Pass',
-      description: 'When a shadow demon moves through another creature, that creature takes 3 cold damage.',
-    },
-  ],
-  signatureAbility: {
-    id: 'shadow_demon_darkness',
-    name: 'Darkness Strike',
-    actionType: 'action',
-    keywords: ['Melee', 'Strike'],
-    distance: 'Reach 1',
-    target: 'One creature',
-    powerRoll: {
-      characteristic: 'agility',
-      tier1: '2d10 + R cold damage',
-      tier2: '2d10 + R cold damage; blinded (EoT)',
-      tier3: '2d10 + R cold damage; blinded (save ends)',
-    },
-    effect: '',
-  },
-};
-
-const abyssalKnight: MinionTemplate = {
-  id: 'demon_abyssal_knight',
-  name: 'Abyssal Knight',
-  essenceCost: 7,
-  minionsPerSummon: 2,
-  size: '1L',
-  speed: 5,
-  stamina: [20, 20],
   stability: 3,
-  freeStrike: 7,
+  freeStrike: 3,
   characteristics: {
     might: 3,
-    agility: 1,
-    reason: 1,
-    intuition: 2,
-    presence: 2,
+    agility: 0,
+    reason: 2,
+    intuition: 1,
+    presence: 1,
   },
   role: 'defender',
   keywords: ['Abyssal', 'Demon'],
   immunities: [],
-  weaknesses: [],
+  weaknesses: [{ type: 'holy', value: 1 }],
   movementModes: [],
-  freeStrikeDamageType: 'fire',
+  freeStrikeDamageType: 'untyped',
   traits: [
     {
-      name: 'Infernal Armor',
-      description: 'An abyssal knight has damage immunity 3.',
+      name: 'Mercurial Strike',
+      description:
+        "The chimor's melee free strikes inflict M < WEAK weakened (EoT). The potency is increased by the current round number.",
+    },
+    {
+      name: 'Soulsight',
+      description: "Each creature adjacent to the chimor can't be hidden from them.",
     },
   ],
-  signatureAbility: {
-    id: 'abyssal_knight_challenge',
-    name: "Knight's Challenge",
-    actionType: 'action',
-    keywords: ['Melee', 'Strike'],
-    distance: 'Reach 2',
-    target: 'One creature',
-    powerRoll: {
-      characteristic: 'might',
-      tier1: '2d10 + R fire damage',
-      tier2: '2d10 + R fire damage; taunted (EoT)',
-      tier3: '2d10 + R fire damage; taunted (save ends) and takes 5 damage when attacking other creatures',
-    },
-    effect: '',
+};
+
+const violent: MinionTemplate = {
+  id: 'demon_violent',
+  name: 'Violent',
+  essenceCost: 5,
+  minionsPerSummon: 3,
+  size: '1M',
+  speed: 7,
+  stamina: [5, 5, 5],
+  stability: 1,
+  freeStrike: 4,
+  characteristics: {
+    might: 2,
+    agility: 3,
+    reason: 0,
+    intuition: -1,
+    presence: -1,
   },
+  role: 'ambusher',
+  keywords: ['Abyssal', 'Demon'],
+  immunities: [],
+  weaknesses: [{ type: 'holy', value: 1 }],
+  movementModes: ['Climb'],
+  freeStrikeDamageType: 'corruption',
+  traits: [
+    {
+      name: 'Transforming Strike',
+      description:
+        "The violent's melee free strikes deal an additional 2 damage to each adjacent enemy from whom they were hidden. The violent loses their disguise after striking.",
+    },
+    {
+      name: 'Skulker',
+      description: 'Once per turn, the violent can hide as a free maneuver after moving.',
+    },
+  ],
+};
+
+// -----------------------------------------------------------------------------
+// 7-ESSENCE MINIONS (Summon 2)
+// -----------------------------------------------------------------------------
+
+const fadedBlightling: MinionTemplate = {
+  id: 'demon_faded_blightling',
+  name: 'Faded Blightling',
+  essenceCost: 7,
+  minionsPerSummon: 2,
+  size: '1L',
+  speed: 5,
+  stamina: [17, 17],
+  stability: 0,
+  freeStrike: 7,
+  characteristics: {
+    might: 0,
+    agility: 0,
+    reason: -1,
+    intuition: 4,
+    presence: 3,
+  },
+  role: 'support',
+  keywords: ['Abyssal', 'Demon'],
+  immunities: [],
+  weaknesses: [{ type: 'holy', value: 1 }],
+  movementModes: ['Fly'],
+  freeStrikeDamageType: 'corruption',
+  traits: [
+    {
+      name: 'Wilted Wings',
+      description: 'The blightling must land on the ground at the end of their turn or fall prone.',
+    },
+    {
+      name: 'Soulsight',
+      description: "Each creature adjacent to the blightling can't be hidden from them.",
+    },
+  ],
+};
+
+const gorrre: MinionTemplate = {
+  id: 'demon_gorrre',
+  name: 'Gorrre',
+  essenceCost: 7,
+  minionsPerSummon: 2,
+  size: '2',
+  speed: 5,
+  stamina: [17, 17],
+  stability: 2,
+  freeStrike: 8,
+  characteristics: {
+    might: 4,
+    agility: 3,
+    reason: 0,
+    intuition: -1,
+    presence: 0,
+  },
+  role: 'brute',
+  keywords: ['Abyssal', 'Demon'],
+  immunities: [],
+  weaknesses: [{ type: 'holy', value: 1 }],
+  movementModes: [],
+  freeStrikeDamageType: 'untyped',
+  traits: [
+    {
+      name: 'Gorrring Strike',
+      description:
+        'The gorrre must charge before making a strike. The target is M < STRONG knocked prone if the gorrre moved through an enemy or object other than the target during the charge.',
+    },
+    {
+      name: 'Soulsight',
+      description: "Each creature adjacent to the gorrre can't be hidden from them.",
+    },
+  ],
+};
+
+const vicisittante: MinionTemplate = {
+  id: 'demon_vicisittante',
+  name: 'Vicisittante',
+  essenceCost: 7,
+  minionsPerSummon: 2,
+  size: '2',
+  speed: 10,
+  stamina: [17, 17],
+  stability: 0,
+  freeStrike: 7,
+  characteristics: {
+    might: 3,
+    agility: 4,
+    reason: 0,
+    intuition: 0,
+    presence: -1,
+  },
+  role: 'harrier',
+  keywords: ['Abyssal', 'Demon'],
+  immunities: [],
+  weaknesses: [{ type: 'holy', value: 1 }],
+  movementModes: [],
+  freeStrikeDamageType: 'psychic',
+  traits: [
+    {
+      name: 'Soulsight',
+      description: "Each creature adjacent to the vicisittante can't be hidden from them.",
+    },
+  ],
 };
 
 // -----------------------------------------------------------------------------
@@ -553,19 +445,20 @@ const theBoil: FixtureTemplate = {
   name: 'The Boil',
   portfolioType: 'demon',
   role: 'Hazard Support',
-  flavorText: 'The boil arises from the chaotic depths of the Abyssal Waste, concentrated into a heaving mass by the pressure of a coherent reality. As it slushes and threatens to burst, the noises drive nearby demons into a frenzy.',
-  baseStamina: 20, // actual stamina = 20 + level
-  size: 2, // becomes 3 at level 9
+  flavorText:
+    'The boil arises from the chaotic depths of the Abyssal Waste, concentrated into a heaving mass by the pressure of a coherent reality. As it slushes and threatens to burst, the noises drive nearby demons into a frenzy.',
+  baseStamina: 20,
+  size: 2,
   traits: [
     {
       name: 'Hunger Thrush',
       description:
-        'Each enemy that starts their turn within 3 squares of the boil is I<AVERAGE taunted (EoT) by the boil, or I<WEAK taunted (EoT) by the boil and can\'t move further from it.',
+        "Each enemy that starts their turn within 3 squares of the boil is I < AVERAGE taunted (EoT) by the boil, or I < WEAK taunted (EoT) by the boil and can't move further from it.",
     },
     {
       name: 'Oh, It Pops',
       description:
-        'When the boil is destroyed, each enemy within 3 squares of the boil takes acid damage equal to your level and is A<STRONG weakened (save ends).',
+        'When the boil is destroyed, each enemy within 3 squares of the boil takes acid damage equal to your level and is A < STRONG weakened (save ends).',
     },
   ],
   level5Feature: {
@@ -593,26 +486,32 @@ const theBoil: FixtureTemplate = {
 };
 
 // -----------------------------------------------------------------------------
+// CHAMPION: Aspect (9 Essence)
+// -----------------------------------------------------------------------------
+
+// Champion data available in compendium but not yet implemented
+
+// -----------------------------------------------------------------------------
 // COMPLETE PORTFOLIO
 // -----------------------------------------------------------------------------
 
 export const demonPortfolio: Portfolio = {
   type: 'demon',
-  signatureMinions: [abyssalBabbler, moteOfBlight, spineGoblin],
+  signatureMinions: [ensnarer, rasquine, razor],
   unlockedMinions: [
     // 3-Essence
-    barbedFiend,
-    bileSpewer,
-    shadowLurker,
+    archerSpittlich,
+    fangedMusilex,
+    twistedBengrul,
     // 5-Essence
-    chaosElemental,
-    demonHound,
-    pitHorror,
+    gushingSpewler,
+    hulkingChimor,
+    violent,
     // 7-Essence
-    greaterDemon,
-    shadowDemon,
-    abyssalKnight,
+    fadedBlightling,
+    gorrre,
+    vicisittante,
   ],
   fixture: theBoil,
-  champion: null, // Avatar of Blight - Level 8+
+  champion: null, // Aspect - Level 8+
 };

@@ -26,7 +26,7 @@ export const ELEMENTALIST_LEVEL_FEATURES: ElementalistLevelFeature[] = [
     level: 1,
     name: 'Essence Surge',
     description:
-      'The first time each round you take non-holy elemental damage, you gain Essence (amount based on level).',
+      'The first time each round you or a creature within 10 squares takes damage that is not untyped or holy, you gain Essence (amount based on level).',
     category: 'resource',
   },
   {

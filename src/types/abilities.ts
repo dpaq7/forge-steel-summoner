@@ -7,13 +7,42 @@ export type ActionType =
   | 'maneuver'
   | 'freeManeuver'
   | 'triggered'
-  | 'freeTriggered';
+  | 'freeTriggered'
+  | 'move'
+  | 'noAction';
 
 export interface PowerRoll {
   characteristic: Characteristic;
+  // Alternative characteristics that can be used (e.g., "Power Roll + Might or Agility")
+  alternativeCharacteristics?: Characteristic[];
   tier1: string; // "R damage"
   tier2: string; // "2 + R damage"
   tier3: string; // "4 + R damage"
+}
+
+// All heroic resource types used for ability costs
+export type HeroicResourceName =
+  | 'Wrath'      // Censor
+  | 'Piety'      // Conduit
+  | 'Essence'    // Elementalist, Summoner
+  | 'Ferocity'   // Fury
+  | 'Discipline' // Null
+  | 'Insight'    // Shadow
+  | 'Focus'      // Tactician
+  | 'Clarity'    // Talent
+  | 'Drama';     // Troubadour
+
+// Flexible ability cost that supports all resource types
+export interface AbilityCost {
+  resource: HeroicResourceName;
+  amount: number;
+  isVariable?: boolean; // For "1+" style costs where you can spend more
+}
+
+// Additional effect with its own cost (for abilities with multiple optional effects)
+export interface AdditionalEffect {
+  cost?: string;      // "Spend 1 Essence", "Spend 2+ Piety" - kept as string for flexibility
+  description: string;
 }
 
 export interface Ability {
@@ -23,6 +52,10 @@ export interface Ability {
 
   // Action economy
   actionType: ActionType;
+
+  // Resource cost - flexible system supporting all heroic resources
+  cost?: AbilityCost;
+  /** @deprecated Use `cost` instead. Kept for backward compatibility. */
   essenceCost?: number;
 
   // Keywords
@@ -38,8 +71,12 @@ export interface Ability {
   // Effect text
   effect: string;
 
+  // Additional effects with their own costs
+  additionalEffects?: AdditionalEffect[];
+
   // Special costs/triggers
   trigger?: string; // For triggered actions
+  /** @deprecated Use `additionalEffects` instead. Kept for backward compatibility. */
   spendEssence?: string; // "Spend 1 Essence: ..."
 }
 

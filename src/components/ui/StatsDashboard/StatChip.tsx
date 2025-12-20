@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { motion } from 'motion/react';
-import { Minus, Plus, Pin } from 'lucide-react';
+import { Minus, Plus, Pin, ArrowUp } from 'lucide-react';
 import {
   Tooltip,
   TooltipTrigger,
@@ -16,10 +16,13 @@ export const StatChip: React.FC<StatChipProps> = ({
   value,
   maxValue,
   displayValue,
+  secondaryText,
   color,
   isPinned,
   onTogglePin,
   onChange,
+  onAction,
+  actionTooltip,
   disabled = false,
   minValue = 0,
   showProgress = false,
@@ -82,7 +85,12 @@ export const StatChip: React.FC<StatChipProps> = ({
             whileTap={{ scale: 0.98 }}
           >
             <Icon className="chip-icon" style={{ color }} />
-            <span className="chip-value">{display}</span>
+            <div className="chip-content">
+              <span className="chip-value">{display}</span>
+              {secondaryText && (
+                <span className="chip-secondary">{secondaryText}</span>
+              )}
+            </div>
 
             {isPinned && <Pin className="chip-pin-indicator" />}
 
@@ -101,6 +109,30 @@ export const StatChip: React.FC<StatChipProps> = ({
           {isPinned ? `Unpin ${label}` : `Pin ${label} for details`}
         </TooltipContent>
       </Tooltip>
+
+      {/* Action Button (e.g., Level Up) */}
+      {onAction && (
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <motion.button
+              className="chip-action"
+              onClick={(e) => {
+                e.stopPropagation();
+                onAction();
+              }}
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.95 }}
+              initial={{ scale: 0.8, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+            >
+              <ArrowUp className="w-3 h-3" />
+            </motion.button>
+          </TooltipTrigger>
+          <TooltipContent side="top">
+            {actionTooltip || 'Action'}
+          </TooltipContent>
+        </Tooltip>
+      )}
 
       {/* Increase Button */}
       {hasControls && (

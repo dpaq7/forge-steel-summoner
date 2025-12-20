@@ -11,7 +11,10 @@ import {
   Upload,
   Maximize2,
   Minimize2,
+  ArrowUp,
 } from 'lucide-react';
+
+import { canLevelUp, MAX_LEVEL } from '@/utils/levelProgression';
 
 import { Button } from '@/components/ui/shadcn/button';
 import { Badge } from '@/components/ui/shadcn/badge';
@@ -131,6 +134,12 @@ export const SmartHeader: React.FC<SmartHeaderProps> = ({
   const classDisplayName = hero?.heroClass
     ? hero.heroClass.charAt(0).toUpperCase() + hero.heroClass.slice(1)
     : '';
+
+  // Check if level up is available
+  const heroLevel = hero?.level ?? 1;
+  const heroXp = hero?.xp ?? 0;
+  const isLevelUpAvailable = canLevelUp(heroLevel, heroXp);
+  const isMaxLevel = heroLevel >= MAX_LEVEL;
 
   // Clone children and inject props (for CharacterStatsPanel)
   // Note: onMinimize is NOT passed - minimize button is in the header bar
@@ -284,6 +293,26 @@ export const SmartHeader: React.FC<SmartHeaderProps> = ({
                       </TooltipTrigger>
                       <TooltipContent side="bottom">
                         {isInCombat ? 'End the current combat' : 'Begin combat encounter'}
+                      </TooltipContent>
+                    </Tooltip>
+                  )}
+
+                  {/* Level Up Button - shown when level up is available */}
+                  {hero && isLevelUpAvailable && !isInCombat && (
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Button
+                          variant="default"
+                          size="sm"
+                          onClick={onLevelUp}
+                          className="header-action-btn levelup-btn"
+                        >
+                          <ArrowUp className="w-4 h-4" />
+                          <span>Level Up!</span>
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent side="bottom">
+                        Level up to Level {heroLevel + 1}
                       </TooltipContent>
                     </Tooltip>
                   )}

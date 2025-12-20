@@ -43,7 +43,7 @@ export const resourceGainRules: Record<HeroClass, ResourceGainRule> = {
   elementalist: {
     startOfTurn: { amount: 2, dice: null },
     triggers: [
-      { condition: 'First time/round you take non-holy damage', amount: 1 },
+      { condition: 'First time/round you or a creature within 10 squares takes damage that is not untyped or holy', amount: 1 },
     ],
   },
   fury: {
@@ -75,8 +75,8 @@ export const resourceGainRules: Record<HeroClass, ResourceGainRule> = {
   tactician: {
     startOfTurn: { amount: 2, dice: null },
     triggers: [
-      { condition: 'First time/round an ally deals damage to marked target', amount: 1 },
-      { condition: 'When an ally scores a critical hit', amount: 1 },
+      { condition: 'First time/round you or an ally damages a creature marked by you', amount: 1 },
+      { condition: 'First time/round an ally within 10 squares uses a heroic ability', amount: 1 },
     ],
   },
   talent: {

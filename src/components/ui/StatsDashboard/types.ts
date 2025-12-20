@@ -247,10 +247,13 @@ export interface StatChipProps {
   value: number;
   maxValue?: number;
   displayValue?: string; // Custom display (e.g., "+2" for characteristics)
+  secondaryText?: string; // Secondary display text below main value (e.g., "XP: 18/30")
   color: string;
   isPinned: boolean;
   onTogglePin: () => void;
   onChange?: (delta: number) => void; // For +/- controls
+  onAction?: () => void; // Optional action button (e.g., level up)
+  actionTooltip?: string; // Tooltip for action button
   disabled?: boolean;
   minValue?: number;
   showProgress?: boolean;

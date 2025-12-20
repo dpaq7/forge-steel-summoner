@@ -183,6 +183,7 @@ export const StatsDashboard: React.FC<StatsDashboardProps> = (props) => {
             onResourceChange={onResourceChange}
             onSurgesChange={onSurgesChange}
             onVictoriesChange={onVictoriesChange}
+            onLevelUp={onLevelUp}
             turnNumber={turnNumber}
             completedPhases={completedPhases}
           />

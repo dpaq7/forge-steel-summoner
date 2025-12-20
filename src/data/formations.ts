@@ -45,10 +45,9 @@ export const formations: Record<Formation, FormationData> = {
     id: 'horde',
     name: 'Horde',
     description:
-      'You overwhelm your enemies with sheer numbers, commanding a vast army of minions.',
+      'You overwhelm your enemies with sheer numbers, commanding a swarm of deadly minions.',
     benefits: [
-      'Maximum minions increased by 4 (base 12 at L1, 16 at L4, 20 at L7, 24 at L10)',
-      'Start of turn free summon count increased by 1 (4 base at L1, 5 at L7)',
+      'All your minions deal +1 damage',
     ],
     quickCommands: quickCommands,
   },
@@ -56,9 +55,9 @@ export const formations: Record<Formation, FormationData> = {
     id: 'platoon',
     name: 'Platoon',
     description:
-      'Your squad damage abilities deal +R damage to one target.',
+      'Your minions move as a coordinated unit, flanking and repositioning with deadly precision.',
     benefits: [
-      'Squad damage abilities deal +Reason damage to one target',
+      'All your minions have +2 speed',
     ],
     quickCommands: quickCommands,
   },
@@ -77,11 +76,9 @@ export const formations: Record<Formation, FormationData> = {
     id: 'leader',
     name: 'Leader',
     description:
-      'You fight alongside your minions, protecting them and being protected in turn.',
+      'You fight alongside your minions, protecting them from destruction.',
     benefits: [
-      'Ignore overflow damage from squad wipe',
-      'Can take damage for minion in range',
-      'Allows Light Armor/Weapon usage',
+      'You can take excess damage instead of minions dying',
     ],
     quickCommands: quickCommands,
   },

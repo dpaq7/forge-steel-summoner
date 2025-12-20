@@ -203,7 +203,7 @@ export const TacticianWidget: React.FC<TacticianWidgetProps> = ({ hero }) => {
               First time/round an ally deals damage to marked target: <strong>+1 Focus</strong>
             </li>
             <li className="class-widget__gain-item">
-              When an ally scores a critical hit: <strong>+1 Focus</strong>
+              When an ally uses a heroic ability: <strong>+1 Focus</strong>
             </li>
           </ul>
         </div>

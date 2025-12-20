@@ -148,7 +148,9 @@ export const ShadowWidget: React.FC<ShadowWidgetProps> = ({ hero }) => {
             <h4 className="class-widget__mechanic-title">Hesitation Is Weakness</h4>
           </div>
           <p className="class-widget__mechanic-description">
-            <strong>Triggered Action:</strong> When you score 2+ surges on a power roll, make a free strike against the same target.
+            <strong>Cost:</strong> 1 Insight<br/>
+            <strong>Trigger:</strong> Another hero ends their turn (not via this ability)<br/>
+            <strong>Effect:</strong> Take your turn immediately after that hero's turn ends.
           </p>
         </div>
 

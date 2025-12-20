@@ -87,23 +87,21 @@ export const calculateSignatureMinionsPerTurn = (
 };
 
 /**
- * Calculate essence gained per turn based on level
- * Summoner v1.0 SRD:
- * - Base: +2 essence per turn
- * - Level 7+ (Font of Creation): +3 essence per turn
+ * Calculate essence gained per turn
+ * Summoner SRD: Always +2 essence per turn (no level upgrades)
+ * Note: Unlike Elementalist, Summoner does NOT get level-based upgrades to essence gain
  */
-export const calculateEssencePerTurn = (level: number): number => {
-  return level >= 7 ? 3 : 2;
+export const calculateEssencePerTurn = (_level: number): number => {
+  return 2; // SRD: Always +2, no level upgrades
 };
 
 /**
  * Calculate essence gained from minion death
- * Summoner v1.0 SRD:
- * - Base: +1 essence (first minion death per round within Summoner's Range)
- * - Level 4+ (Essence Salvage): +2 essence
+ * Summoner SRD: +1 essence when any minion dies within Summoner's Range
+ * Note: No level upgrades - always +1 (limit once per round)
  */
-export const calculateMinionDeathEssence = (level: number): number => {
-  return level >= 4 ? 2 : 1;
+export const calculateMinionDeathEssence = (_level: number): number => {
+  return 1; // SRD: Always +1, once per round
 };
 
 /**
