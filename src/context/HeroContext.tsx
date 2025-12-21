@@ -1,6 +1,7 @@
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback, ReactNode } from 'react';
 import { SummonerHero } from '../types';
 import { Hero, SummonerHeroV2 } from '../types/hero';
+import { HeroAncestry } from '../types/ancestry';
 import { saveCharacter, loadCharacter, getActiveCharacterId, setActiveCharacterId } from '../utils/storage';
 
 // HeroContext supports all 10 Draw Steel hero classes
@@ -11,6 +12,8 @@ interface HeroContextType {
   saveCurrentHero: () => void;
   loadHero: (id: string) => void;
   createNewHero: (hero: Hero) => void;
+  // Ancestry selection helpers
+  updateAncestrySelection: (ancestryId: string, selectedTraitIds: string[]) => void;
 }
 
 const HeroContext = createContext<HeroContextType | undefined>(undefined);
@@ -104,6 +107,15 @@ export const HeroProvider: React.FC<HeroProviderProps> = ({ children }) => {
     saveCharacter(newHero);
   };
 
+  // Helper to update ancestry selection (ancestry ID and purchased traits)
+  const updateAncestrySelection = useCallback((ancestryId: string, selectedTraitIds: string[]) => {
+    const ancestrySelection: HeroAncestry = {
+      ancestryId,
+      selectedTraitIds,
+    };
+    updateHero({ ancestrySelection });
+  }, []);
+
   const value: HeroContextType = {
     hero,
     setHero,
@@ -111,6 +123,7 @@ export const HeroProvider: React.FC<HeroProviderProps> = ({ children }) => {
     saveCurrentHero,
     loadHero,
     createNewHero,
+    updateAncestrySelection,
   };
 
   return <HeroContext.Provider value={value}>{children}</HeroContext.Provider>;

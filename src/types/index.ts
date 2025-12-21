@@ -2,6 +2,7 @@
 
 export * from './common';
 export * from './abilities';
+export * from './ancestry';
 export * from './minion';
 export * from './combat';
 export * from './summoner';
@@ -55,3 +56,5 @@ export {
   isTroubadourHero,
   HeroicResourceForClass,
 } from './hero';
+
+// Re-export HeroAncestry from ancestry.ts (already exported via wildcard above)

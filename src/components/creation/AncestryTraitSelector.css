@@ -1,0 +1,525 @@
+/* ============================================
+   ANCESTRY TRAIT SELECTOR - Point Buy UI
+   Golden accent for ancestry elements
+   ============================================ */
+
+.ancestry-traits {
+  width: 100%;
+  padding: 1rem;
+  transition: background-color 0.3s ease;
+}
+
+.ancestry-traits--error {
+  text-align: center;
+  padding: 2rem;
+  color: var(--text-muted);
+}
+
+/* Flash effect for Quick Build */
+.ancestry-traits--flash {
+  animation: quickBuildFlash 0.6s ease-out;
+}
+
+@keyframes quickBuildFlash {
+  0% { background-color: rgba(240, 198, 116, 0.2); }
+  100% { background-color: transparent; }
+}
+
+/* ============================================
+   HEADER WITH POINTS TRACKER
+   ============================================ */
+
+.ancestry-traits__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.ancestry-traits__title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #f0c674;
+  margin: 0;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.ancestry-traits__points-container {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.35rem;
+}
+
+.ancestry-traits__points {
+  display: flex;
+  align-items: baseline;
+  gap: 0.15rem;
+  padding: 0.4rem 0.75rem;
+  background: var(--bg-darkest);
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(240, 198, 116, 0.3);
+}
+
+.ancestry-traits__points-spent {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #f0c674;
+}
+
+.ancestry-traits__points-separator {
+  color: var(--text-muted);
+}
+
+.ancestry-traits__points-total {
+  font-size: 1rem;
+  color: var(--text-secondary);
+}
+
+.ancestry-traits__points-label {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  margin-left: 0.25rem;
+  text-transform: uppercase;
+}
+
+/* Progress bar */
+.ancestry-traits__progress {
+  width: 100%;
+  min-width: 100px;
+  height: 4px;
+  background: var(--bg-dark);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.ancestry-traits__progress-bar {
+  height: 100%;
+  background: linear-gradient(90deg, #f0c674, #e0b654);
+  border-radius: 2px;
+  transition: width 0.3s ease;
+}
+
+.ancestry-traits__progress-bar--full {
+  background: linear-gradient(90deg, #4de8b2, #3ad4a1);
+}
+
+/* ============================================
+   QUICK ACTIONS
+   ============================================ */
+
+.ancestry-traits__actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.ancestry-traits__action-btn {
+  padding: 0.5rem 1rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  background: rgba(240, 198, 116, 0.15);
+  border: 1px solid rgba(240, 198, 116, 0.3);
+  border-radius: var(--radius-sm);
+  color: #f0c674;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.ancestry-traits__action-btn:hover:not(:disabled) {
+  background: rgba(240, 198, 116, 0.25);
+  transform: translateY(-1px);
+}
+
+.ancestry-traits__action-btn--active {
+  background: rgba(240, 198, 116, 0.3);
+  border-color: #f0c674;
+}
+
+.ancestry-traits__action-btn--secondary {
+  background: transparent;
+  border-color: var(--border-solid);
+  color: var(--text-secondary);
+}
+
+.ancestry-traits__action-btn--secondary:hover:not(:disabled) {
+  background: var(--bg-dark);
+}
+
+.ancestry-traits__action-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ============================================
+   SIGNATURE TRAIT (ALWAYS FREE)
+   ============================================ */
+
+.ancestry-traits__signature {
+  margin-bottom: 1.5rem;
+  padding: 0.75rem;
+  background: rgba(240, 198, 116, 0.08);
+  border-radius: var(--radius-md);
+  border-left: 3px solid #f0c674;
+}
+
+.ancestry-traits__signature-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.ancestry-traits__signature-label {
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #f0c674;
+}
+
+.ancestry-traits__signature-free {
+  font-size: 0.65rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  padding: 0.15rem 0.4rem;
+  background: rgba(77, 232, 178, 0.2);
+  color: var(--accent-primary);
+  border-radius: var(--radius-sm);
+}
+
+.ancestry-traits__signature-content strong {
+  display: block;
+  font-size: 0.95rem;
+  color: var(--text-primary);
+  margin-bottom: 0.25rem;
+}
+
+.ancestry-traits__signature-content p {
+  margin: 0;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  line-height: 1.4;
+}
+
+/* ============================================
+   TRAIT LIST & COST GROUPS
+   ============================================ */
+
+.ancestry-traits__list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.ancestry-traits__cost-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.ancestry-traits__list-title {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--border-solid);
+}
+
+.ancestry-traits__list-title--1pt .ancestry-traits__cost-icon {
+  color: #f0c674;
+}
+
+.ancestry-traits__list-title--2pt .ancestry-traits__cost-icon {
+  color: #f06292;
+}
+
+.ancestry-traits__cost-icon {
+  font-size: 0.7rem;
+  letter-spacing: -0.2em;
+}
+
+.ancestry-traits__count {
+  margin-left: auto;
+  font-size: 0.75rem;
+  font-weight: 400;
+  color: var(--text-muted);
+}
+
+.ancestry-traits__trait-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+/* ============================================
+   INDIVIDUAL TRAIT BUTTON
+   ============================================ */
+
+.ancestry-traits__trait {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  padding: 0.75rem;
+  background: var(--bg-darkest);
+  border: 1px solid var(--border-solid);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.2s ease;
+  width: 100%;
+}
+
+.ancestry-traits__trait:hover:not(:disabled) {
+  border-color: var(--accent-primary);
+  background: rgba(77, 232, 178, 0.05);
+}
+
+.ancestry-traits__trait--selected {
+  border-color: var(--accent-primary);
+  background: rgba(77, 232, 178, 0.1);
+}
+
+.ancestry-traits__trait--recommended:not(.ancestry-traits__trait--selected):not(.ancestry-traits__trait--disabled) {
+  border-color: rgba(240, 198, 116, 0.4);
+}
+
+.ancestry-traits__trait--disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.ancestry-traits__trait--disabled:hover {
+  border-color: var(--border-solid);
+  background: var(--bg-darkest);
+}
+
+/* Trait header */
+.ancestry-traits__trait-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 0.5rem;
+}
+
+.ancestry-traits__trait-name {
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.ancestry-traits__trait--selected .ancestry-traits__trait-name {
+  color: var(--accent-primary);
+}
+
+.ancestry-traits__trait-rec-badge {
+  font-size: 0.6rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  padding: 0.1rem 0.35rem;
+  background: rgba(240, 198, 116, 0.2);
+  color: #f0c674;
+  border-radius: 3px;
+  letter-spacing: 0.02em;
+}
+
+/* Cost badges */
+.ancestry-traits__trait-cost {
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.15rem 0.4rem;
+  border-radius: var(--radius-sm);
+  background: var(--bg-dark);
+  color: var(--text-muted);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.ancestry-traits__trait-cost--1 {
+  background: rgba(240, 198, 116, 0.15);
+  color: #f0c674;
+}
+
+.ancestry-traits__trait-cost--2 {
+  background: rgba(233, 30, 99, 0.15);
+  color: #f06292;
+}
+
+/* Trait description */
+.ancestry-traits__trait-description {
+  margin: 0;
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  line-height: 1.4;
+}
+
+/* Checkmark for selected traits */
+.ancestry-traits__trait-check {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  font-size: 0.85rem;
+  color: var(--accent-primary);
+  font-weight: 700;
+}
+
+/* ============================================
+   SELECTED TRAITS SUMMARY
+   ============================================ */
+
+.ancestry-traits__summary {
+  margin-top: 1.5rem;
+  padding: 1rem;
+  background: rgba(77, 232, 178, 0.08);
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(77, 232, 178, 0.2);
+}
+
+.ancestry-traits__summary-title {
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--accent-primary);
+  margin: 0 0 0.75rem 0;
+}
+
+.ancestry-traits__summary-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.ancestry-traits__summary-item {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.35rem 0.5rem;
+  background: var(--bg-darkest);
+  border-radius: var(--radius-sm);
+  font-size: 0.8rem;
+}
+
+.ancestry-traits__summary-name {
+  color: var(--text-primary);
+  font-weight: 500;
+}
+
+.ancestry-traits__summary-cost {
+  color: var(--text-muted);
+  font-size: 0.7rem;
+}
+
+.ancestry-traits__summary-remove {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 0 0.2rem;
+  font-size: 1rem;
+  line-height: 1;
+  transition: color 0.15s ease;
+}
+
+.ancestry-traits__summary-remove:hover {
+  color: #e57373;
+}
+
+.ancestry-traits__summary-remaining {
+  margin: 0.75rem 0 0 0;
+  font-size: 0.75rem;
+  color: #f0c674;
+  font-style: italic;
+}
+
+/* ============================================
+   QUICK BUILD HINT
+   ============================================ */
+
+.ancestry-traits__quickbuild-hint {
+  margin-top: 1rem;
+  padding: 0.6rem 0.75rem;
+  background: var(--bg-dark);
+  border-radius: var(--radius-sm);
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  border-left: 2px solid #f0c674;
+}
+
+.ancestry-traits__quickbuild-hint strong {
+  color: #f0c674;
+}
+
+/* ============================================
+   NOTES AND EMPTY STATE
+   ============================================ */
+
+.ancestry-traits__note {
+  margin-top: 1rem;
+  padding: 0.5rem 0.75rem;
+  background: rgba(240, 198, 116, 0.08);
+  border-radius: var(--radius-sm);
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.ancestry-traits__empty {
+  text-align: center;
+  padding: 2rem;
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+/* ============================================
+   RESPONSIVE
+   ============================================ */
+
+@media (max-width: 480px) {
+  .ancestry-traits {
+    padding: 0.75rem;
+  }
+
+  .ancestry-traits__header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .ancestry-traits__points-container {
+    width: 100%;
+    align-items: stretch;
+  }
+
+  .ancestry-traits__points {
+    justify-content: center;
+  }
+
+  .ancestry-traits__actions {
+    flex-wrap: wrap;
+  }
+
+  .ancestry-traits__action-btn {
+    flex: 1;
+    min-width: 120px;
+    text-align: center;
+  }
+
+  .ancestry-traits__summary-list {
+    flex-direction: column;
+  }
+
+  .ancestry-traits__summary-item {
+    justify-content: space-between;
+  }
+}

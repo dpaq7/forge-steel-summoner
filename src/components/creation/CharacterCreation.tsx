@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useMemo, useRef, useCallback } from 'react';
 import { useSummonerContext } from '../../context/HeroContext';
-import { SummonerHero, SummonerCircle, Formation, Ancestry, Culture, Career, Kit, MinionTemplate, QuickCommand } from '../../types';
+import { SummonerHero, SummonerCircle, Formation, Ancestry, Culture, Career, Kit, MinionTemplate, QuickCommand, HeroAncestry } from '../../types';
 import { HeroClass, Hero, SummonerHeroV2, TalentHero, CensorHero, ConduitHero, ElementalistHero, FuryHero, NullHero, ShadowHero, TacticianHero, TroubadourHero } from '../../types/hero';
+import { getAncestryById, isAncestryComplete } from '../../data/ancestries';
 import { ancestries, cultures, careers, kits, getSelectableLanguages, languages as allLanguages } from '../../data/reference-data';
 import { portfolios } from '../../data/portfolios';
 import { formations } from '../../data/formations';
@@ -16,6 +17,8 @@ import ClassSelector from './ClassSelector';
 import SubclassSelector from './SubclassSelector';
 import FuryAspectSelector from './FuryAspectSelector';
 import CreationNavigation from './CreationNavigation';
+import AncestrySelector from './AncestrySelector';
+import AncestryTraitSelector from './AncestryTraitSelector';
 import { useSkillAvailability, getSourceLabel, SkillAvailabilityProvider } from '../../context/SkillAvailabilityContext';
 import { TroubadourClass, FuryAspect, StormwightKit, ConduitDomain } from '../../types/hero';
 import { getPrimordialStormForKit } from '../../data/fury/stormwight-kits';
@@ -30,10 +33,11 @@ import {
   calculateEssencePerTurn,
 } from '../../utils/calculations';
 
-type Step = 'name' | 'class' | 'subclass' | 'furyAspect' | 'stormwightKit' | 'ancestry' | 'culture' | 'cultureSkills' | 'career' | 'careerSkills' | 'languages' | 'circle' | 'signatureMinions' | 'formation' | 'nullTradition' | 'psionicAugmentation' | 'kit' | 'characteristics';
+type Step = 'name' | 'class' | 'subclass' | 'furyAspect' | 'stormwightKit' | 'ancestry' | 'ancestryTraits' | 'culture' | 'cultureSkills' | 'career' | 'careerSkills' | 'languages' | 'circle' | 'signatureMinions' | 'formation' | 'nullTradition' | 'psionicAugmentation' | 'kit' | 'characteristics';
 
 // Base steps that all classes share
-const BASE_STEPS: Step[] = ['name', 'class', 'ancestry', 'culture', 'cultureSkills', 'career', 'careerSkills', 'languages', 'kit', 'characteristics'];
+// Note: ancestryTraits is conditionally shown only if the selected ancestry has trait data
+const BASE_STEPS: Step[] = ['name', 'class', 'ancestry', 'ancestryTraits', 'culture', 'cultureSkills', 'career', 'careerSkills', 'languages', 'kit', 'characteristics'];
 
 // Summoner-specific steps (inserted after languages)
 const SUMMONER_STEPS: Step[] = ['circle', 'signatureMinions', 'formation'];
@@ -118,6 +122,9 @@ const CharacterCreationInner: React.FC<CharacterCreationProps> = ({ onComplete }
   const [name, setName] = useState('');
   const [selectedClass, setSelectedClass] = useState<HeroClass | null>(null);
   const [selectedAncestry, setSelectedAncestry] = useState<Ancestry | null>(null);
+  // New ancestry point-buy system
+  const [selectedAncestryId, setSelectedAncestryId] = useState<string | null>(null);
+  const [selectedAncestryTraitIds, setSelectedAncestryTraitIds] = useState<string[]>([]);
   const [selectedCulture, setSelectedCulture] = useState<Culture | null>(null);
   const [selectedCareer, setSelectedCareer] = useState<Career | null>(null);
   const [selectedCircle, setSelectedCircle] = useState<SummonerCircle | null>(null);
@@ -332,6 +339,37 @@ const CharacterCreationInner: React.FC<CharacterCreationProps> = ({ onComplete }
     }
   }, [selectedFuryAspect]);
 
+  // Reset ancestry trait selections when ancestry changes
+  useEffect(() => {
+    setSelectedAncestryTraitIds([]);
+    // Also sync with legacy ancestry system for backward compat during creation
+    if (selectedAncestryId) {
+      const ancestryData = getAncestryById(selectedAncestryId);
+      if (ancestryData) {
+        // Create a minimal Ancestry object for backward compat
+        setSelectedAncestry({
+          id: ancestryData.id,
+          name: ancestryData.name,
+          description: ancestryData.description,
+          size: ancestryData.size as any,
+          speed: ancestryData.speed,
+          signatureFeature: {
+            id: 'signature',
+            name: ancestryData.signatureTrait.name,
+            description: ancestryData.signatureTrait.description,
+          },
+          purchasedTraits: ancestryData.purchasedTraits.map(t => ({
+            id: t.id,
+            name: t.name,
+            description: t.description,
+            cost: t.cost,
+          })),
+          ancestryPoints: ancestryData.ancestryPoints,
+        });
+      }
+    }
+  }, [selectedAncestryId]);
+
   // Toggle language selection
   const toggleLanguage = (languageId: string) => {
     const required = getRequiredLanguageCount();
@@ -458,7 +496,11 @@ const CharacterCreationInner: React.FC<CharacterCreationProps> = ({ onComplete }
         if (selectedFuryAspect === 'stormwight' && !selectedStormwightKit) return false;
         return true;
       case 'ancestry':
-        return selectedAncestry !== null;
+        return selectedAncestryId !== null;
+      case 'ancestryTraits':
+        // Can proceed even with no traits selected (player might want to defer)
+        // But if ancestry has no trait data, this step should be skipped
+        return selectedAncestryId !== null;
       case 'culture':
         return selectedCulture !== null;
       case 'cultureSkills':
@@ -494,7 +536,20 @@ const CharacterCreationInner: React.FC<CharacterCreationProps> = ({ onComplete }
   const handleNext = () => {
     const currentIndex = currentSteps.indexOf(step);
     if (currentIndex < currentSteps.length - 1) {
-      setStep(currentSteps[currentIndex + 1]);
+      let nextStep = currentSteps[currentIndex + 1];
+
+      // Skip ancestryTraits step if the selected ancestry has no trait data
+      if (nextStep === 'ancestryTraits' && selectedAncestryId) {
+        if (!isAncestryComplete(selectedAncestryId)) {
+          // Find the step after ancestryTraits
+          const traitsIndex = currentSteps.indexOf('ancestryTraits');
+          if (traitsIndex >= 0 && traitsIndex < currentSteps.length - 1) {
+            nextStep = currentSteps[traitsIndex + 1];
+          }
+        }
+      }
+
+      setStep(nextStep);
       // Scroll to top after a brief delay to allow render
       requestAnimationFrame(() => {
         scrollToTop();
@@ -507,7 +562,20 @@ const CharacterCreationInner: React.FC<CharacterCreationProps> = ({ onComplete }
   const handleBack = () => {
     const currentIndex = currentSteps.indexOf(step);
     if (currentIndex > 0) {
-      setStep(currentSteps[currentIndex - 1]);
+      let prevStep = currentSteps[currentIndex - 1];
+
+      // Skip ancestryTraits step if the selected ancestry has no trait data
+      if (prevStep === 'ancestryTraits' && selectedAncestryId) {
+        if (!isAncestryComplete(selectedAncestryId)) {
+          // Find the step before ancestryTraits
+          const traitsIndex = currentSteps.indexOf('ancestryTraits');
+          if (traitsIndex > 0) {
+            prevStep = currentSteps[traitsIndex - 1];
+          }
+        }
+      }
+
+      setStep(prevStep);
       // Scroll to top after a brief delay to allow render
       requestAnimationFrame(() => {
         scrollToTop();
@@ -563,12 +631,21 @@ const CharacterCreationInner: React.FC<CharacterCreationProps> = ({ onComplete }
     const maxRecoveries = classDef.startingRecoveries;
     const recoveryValue = Math.floor(maxStamina / 3);
 
+    // Build ancestry selection for the new point-buy system
+    const ancestrySelection: HeroAncestry | undefined = selectedAncestryId
+      ? {
+          ancestryId: selectedAncestryId,
+          selectedTraitIds: selectedAncestryTraitIds,
+        }
+      : undefined;
+
     // Build base hero properties shared by all classes
     const baseHeroData = {
       id: generateId(),
       name,
       level,
       ancestry: selectedAncestry,
+      ancestrySelection, // New: point-buy ancestry trait selection
       culture: selectedCulture,
       career: selectedCareer,
       characteristics,
@@ -1075,22 +1152,28 @@ const CharacterCreationInner: React.FC<CharacterCreationProps> = ({ onComplete }
 
       case 'ancestry':
         return (
-          <div className="creation-step">
-            <h2>Choose Your Ancestry</h2>
-            <div className="options-grid">
-              {ancestries.map((ancestry) => (
-                <div
-                  key={ancestry.id}
-                  className={`option-card ${selectedAncestry?.id === ancestry.id ? 'selected' : ''}`}
-                  onClick={() => setSelectedAncestry(ancestry)}
-                >
-                  <h3>{ancestry.name}</h3>
-                  <p className="description">{ancestry.description}</p>
-                  <p><strong>{ancestry.signatureFeature.name}:</strong> {ancestry.signatureFeature.description}</p>
-                  <p className="meta">Size: {ancestry.size} | Speed: {ancestry.speed} | Points: {ancestry.ancestryPoints}</p>
-                </div>
-              ))}
-            </div>
+          <AncestrySelector
+            selectedAncestryId={selectedAncestryId}
+            onSelect={(ancestryId) => {
+              setSelectedAncestryId(ancestryId);
+            }}
+          />
+        );
+
+      case 'ancestryTraits':
+        if (!selectedAncestryId) return null;
+        return (
+          <div className="creation-step ancestry-traits-step">
+            <h2>Choose Your Ancestry Traits</h2>
+            <p className="step-description">
+              Spend your ancestry points on purchased traits. You can also use the Quick Build
+              option for recommended selections.
+            </p>
+            <AncestryTraitSelector
+              ancestryId={selectedAncestryId}
+              selectedTraitIds={selectedAncestryTraitIds}
+              onTraitsChange={setSelectedAncestryTraitIds}
+            />
           </div>
         );
 

@@ -3,6 +3,7 @@ import { useSummonerContext } from '../../context/HeroContext';
 import { languages as allLanguages } from '../../data/reference-data';
 import { skills as allSkills } from '../../data/skills';
 import { formations } from '../../data/formations';
+import { getAncestryById, getAncestryTraitsByIds } from '../../data/ancestries';
 import { Formation, HeroClass } from '../../types';
 import { isSummonerHero, SummonerHeroV2 } from '../../types/hero';
 import { classDefinitions } from '../../data/classes/class-definitions';
@@ -38,13 +39,32 @@ const CharacterDetailsView: React.FC = () => {
   };
 
   // Handle both old and new data structures for ancestry
-  const ancestryName = hero.ancestry?.name || 'Unknown';
-  const ancestryDescription = hero.ancestry?.description || '';
-  const ancestrySize = hero.ancestry?.size || '1M';
-  const ancestrySpeed = hero.ancestry?.speed || 5;
-  const ancestryPoints = hero.ancestry?.ancestryPoints || 0;
-  const signatureFeature = hero.ancestry?.signatureFeature;
-  const purchasedTraits = hero.ancestry?.purchasedTraits || [];
+  // New system: use ancestrySelection to look up from data module
+  // Old system: use embedded ancestry object
+  const ancestryFromData = hero.ancestrySelection
+    ? getAncestryById(hero.ancestrySelection.ancestryId)
+    : null;
+
+  // Use data module ancestry if available, otherwise fall back to embedded
+  const ancestryName = ancestryFromData?.name || hero.ancestry?.name || 'Unknown';
+  const ancestryDescription = ancestryFromData?.description || hero.ancestry?.description || '';
+  const ancestrySize = ancestryFromData?.size || hero.ancestry?.size || '1M';
+  const ancestrySpeed = ancestryFromData?.speed || hero.ancestry?.speed || 5;
+  const ancestryPoints = ancestryFromData?.ancestryPoints || hero.ancestry?.ancestryPoints || 0;
+
+  // Get signature trait from data module or embedded
+  const signatureTrait = ancestryFromData?.signatureTrait || hero.ancestry?.signatureFeature;
+
+  // Get selected purchased traits
+  // New system: look up selected traits from data module
+  // Old system: show all available traits from embedded data
+  const selectedTraits = hero.ancestrySelection && ancestryFromData
+    ? getAncestryTraitsByIds(ancestryFromData.id, hero.ancestrySelection.selectedTraitIds)
+    : [];
+
+  // For backward compatibility, still show embedded purchasedTraits if no selection made
+  const embeddedTraits = hero.ancestry?.purchasedTraits || [];
+  const hasNewSelection = hero.ancestrySelection && selectedTraits.length > 0;
 
   // Handle both old and new data structures for culture
   const cultureName = hero.culture?.name || 'Unknown';
@@ -130,24 +150,41 @@ const CharacterDetailsView: React.FC = () => {
         <div className="ancestry-stats">
           <span className="stat">Size: {ancestrySize}</span>
           <span className="stat">Base Speed: {ancestrySpeed}</span>
-          <span className="stat">Ancestry Points: {ancestryPoints}</span>
+          {!hasNewSelection && <span className="stat">Ancestry Points: {ancestryPoints}</span>}
         </div>
 
-        {signatureFeature && (
+        {signatureTrait && (
           <div className="feature-block signature">
-            <h4>Signature Feature</h4>
+            <h4>Signature Trait</h4>
             <div className="feature">
-              <strong>{signatureFeature.name}</strong>
-              <p>{signatureFeature.description}</p>
+              <strong>{signatureTrait.name}</strong>
+              <p>{signatureTrait.description}</p>
             </div>
           </div>
         )}
 
-        {purchasedTraits.length > 0 && (
+        {/* New system: Show selected purchased traits */}
+        {hasNewSelection && selectedTraits.length > 0 && (
+          <div className="feature-block purchased">
+            <h4>Purchased Traits</h4>
+            <div className="traits-list">
+              {selectedTraits.map((trait) => (
+                <div key={trait.id} className="trait">
+                  <strong>{trait.name}</strong>
+                  <span className="cost">({trait.cost} pt{trait.cost > 1 ? 's' : ''})</span>
+                  <p>{trait.description}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Old system: Show all available traits (for characters without ancestrySelection) */}
+        {!hasNewSelection && embeddedTraits.length > 0 && (
           <div className="feature-block purchased">
             <h4>Available Purchased Traits</h4>
             <div className="traits-list">
-              {purchasedTraits.map((trait) => (
+              {embeddedTraits.map((trait) => (
                 <div key={trait.id} className="trait">
                   <strong>{trait.name}</strong>
                   {trait.cost && <span className="cost">({trait.cost} pts)</span>}

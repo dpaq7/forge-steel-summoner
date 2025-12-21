@@ -1,7 +1,9 @@
 import { SummonerHero } from '../types';
 import { Hero, SummonerHeroV2, HeroClass, isSummonerHero } from '../types/hero';
+import { HeroAncestry } from '../types/ancestry';
 import { portfolios } from '../data/portfolios';
 import { circleToPortfolio } from '../types/summoner';
+import { getAncestryByName, getAncestryById } from '../data/ancestries';
 import { calculateMaxStamina, calculateRecoveryValue, calculateMaxRecoveries } from './calculations';
 
 // New storage keys for Mettle
@@ -346,6 +348,48 @@ const migrateFuryData = (hero: Record<string, unknown>): Record<string, unknown>
 };
 
 /**
+ * Migrate ancestry selection for existing characters
+ * - Adds ancestrySelection if missing
+ * - Tries to match embedded ancestry.name to data module
+ * - Defaults to 'human' with no purchased traits if no match
+ */
+const migrateAncestrySelection = (hero: Record<string, unknown>): Record<string, unknown> => {
+  // Already has ancestrySelection, no migration needed
+  if (hero.ancestrySelection) return hero;
+
+  const migrated = { ...hero };
+
+  // Try to determine ancestry ID from embedded ancestry data
+  let ancestryId = 'human'; // Default
+  const embeddedAncestry = hero.ancestry as { id?: string; name?: string } | undefined;
+
+  if (embeddedAncestry) {
+    // Try to match by ID first
+    if (embeddedAncestry.id && getAncestryById(embeddedAncestry.id)) {
+      ancestryId = embeddedAncestry.id;
+    }
+    // Try to match by name if ID doesn't work
+    else if (embeddedAncestry.name) {
+      const matchedAncestry = getAncestryByName(embeddedAncestry.name);
+      if (matchedAncestry) {
+        ancestryId = matchedAncestry.id;
+      }
+    }
+  }
+
+  // Create default ancestrySelection with no purchased traits
+  // Players will need to select traits manually for existing characters
+  const ancestrySelection: HeroAncestry = {
+    ancestryId,
+    selectedTraitIds: [],
+  };
+
+  migrated.ancestrySelection = ancestrySelection;
+
+  return migrated;
+};
+
+/**
  * Migrate older character data to include new fields and refresh portfolio data
  * This handles both legacy SummonerHero and already-migrated Hero data
  */
@@ -360,6 +404,9 @@ const migrateCharacter = (character: Partial<SummonerHero> | Partial<Hero>): Her
   migrated = migrateShadowData(migrated);
   migrated = migrateNullData(migrated);
   migrated = migrateFuryData(migrated);
+
+  // Apply ancestry selection migration
+  migrated = migrateAncestrySelection(migrated);
 
   // Check if this is already a new Hero type (has heroClass field)
   if ('heroClass' in migrated && migrated.heroClass) {

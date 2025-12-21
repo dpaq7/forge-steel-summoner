@@ -3,6 +3,7 @@
 
 import { Ancestry, Career, Culture, Kit, Item, Characteristics, ActiveCondition } from './common';
 import { Ability, Feature } from './abilities';
+import { HeroAncestry } from './ancestry';
 import { Portfolio, Squad, Fixture, Champion } from './minion';
 import { ChampionState, OutOfCombatState } from './combat';
 import { ProgressionChoices } from './progression';
@@ -243,6 +244,7 @@ export interface HeroBase {
 
   // Background
   ancestry: Ancestry;
+  ancestrySelection?: HeroAncestry; // New: point-buy ancestry trait selection
   culture: Culture;
   career: Career;
 
