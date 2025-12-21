@@ -7,7 +7,9 @@ import {
   calculateFuryStamina,
 } from '../../data/fury/progression';
 import { furyAbilities, getAspectAbilitiesByCost } from '../../data/fury/abilities';
+import { classPerkAtLevel } from '../../data/perks';
 import { LevelFeature, ProgressionChoices, WardType } from '../../types/progression';
+import { SelectedPerk } from '../../types/perk';
 import { Characteristic } from '../../types/common';
 import { isSummonerHero, isFuryHero, SummonerHeroV2, FuryHero } from '../../types/hero';
 import { Ability } from '../../types';
@@ -21,7 +23,8 @@ import {
   Button,
   ScrollArea,
 } from '@/components/ui/shadcn';
-import { Sparkles, Check } from 'lucide-react';
+import { Sparkles, Check, Award } from 'lucide-react';
+import PerkSelector from '../creation/PerkSelector';
 import './LevelUp.css';
 
 interface LevelUpProps {
@@ -35,6 +38,8 @@ const LevelUp: React.FC<LevelUpProps> = ({ onClose }) => {
   };
   const { hero, updateHero } = useSummonerContext();
   const [choices, setChoices] = useState<Record<string, string>>({});
+  const [currentStep, setCurrentStep] = useState<'overview' | 'perk'>('overview');
+  const [selectedPerk, setSelectedPerk] = useState<SelectedPerk | null>(null);
 
   if (!hero) return null;
 
@@ -45,6 +50,16 @@ const LevelUp: React.FC<LevelUpProps> = ({ onClose }) => {
   const furyHero = isFury ? (hero as FuryHero) : null;
 
   const nextLevel = hero.level + 1;
+
+  // Check if this level grants a perk
+  const grantsPerks = classPerkAtLevel(hero.heroClass, nextLevel);
+  const existingPerkIds = (hero.selectedPerks || []).map(p => p.perkId);
+
+  // Handler for perk selection
+  const handlePerkSelected = (perk: SelectedPerk) => {
+    setSelectedPerk(perk);
+    setCurrentStep('overview');
+  };
 
   // Calculate stamina changes - CLASS-SPECIFIC
   const currentStamina = hero.stamina.max;
@@ -149,7 +164,9 @@ const LevelUp: React.FC<LevelUpProps> = ({ onClose }) => {
   };
 
   const hasAllRequiredChoices = () => {
-    return choiceFeatures.every(feature => choices[feature.id] !== undefined);
+    const hasClassChoices = choiceFeatures.every(feature => choices[feature.id] !== undefined);
+    const hasPerkChoice = !grantsPerks || selectedPerk !== null;
+    return hasClassChoices && hasPerkChoice;
   };
 
   const handleLevelUp = () => {
@@ -217,6 +234,12 @@ const LevelUp: React.FC<LevelUpProps> = ({ onClose }) => {
       level: nextLevel,
       progressionChoices: newProgressionChoices,
     };
+
+    // Add selected perk if one was chosen
+    if (selectedPerk) {
+      const updatedPerks = [...(hero.selectedPerks || []), selectedPerk];
+      updates.selectedPerks = updatedPerks;
+    }
 
     if (progression?.statChanges) {
       const sc = progression.statChanges;
@@ -337,7 +360,7 @@ const LevelUp: React.FC<LevelUpProps> = ({ onClose }) => {
           </DialogDescription>
         </DialogHeader>
 
-        <ScrollArea className="level-up-scroll max-h-[55vh] pr-4">
+        <ScrollArea className="level-up-scroll">
           <div className="level-up-content">
           {/* Stats Summary */}
           <div className="stats-summary">
@@ -426,6 +449,51 @@ const LevelUp: React.FC<LevelUpProps> = ({ onClose }) => {
             </div>
           )}
 
+          {/* Perk Selection Section */}
+          {grantsPerks && currentStep === 'overview' && (
+            <div className="perk-selection-section">
+              <h3>
+                <Award className="h-4 w-4 inline mr-2" />
+                Select a Perk
+              </h3>
+              {selectedPerk ? (
+                <div className="perk-selected">
+                  <div className="perk-selected-info">
+                    <span className="perk-selected-label">Selected:</span>
+                    <strong>{selectedPerk.perkId.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase())}</strong>
+                  </div>
+                  <button
+                    type="button"
+                    className="perk-change-btn"
+                    onClick={() => setCurrentStep('perk')}
+                  >
+                    Change
+                  </button>
+                </div>
+              ) : (
+                <button
+                  type="button"
+                  className="perk-select-btn"
+                  onClick={() => setCurrentStep('perk')}
+                >
+                  <Award className="h-4 w-4" />
+                  Choose Your Perk
+                </button>
+              )}
+            </div>
+          )}
+
+          {/* Perk Selector (full view) */}
+          {currentStep === 'perk' && (
+            <PerkSelector
+              heroClass={hero.heroClass}
+              level={nextLevel}
+              existingPerkIds={existingPerkIds}
+              onSelect={handlePerkSelected}
+              onBack={() => setCurrentStep('overview')}
+            />
+          )}
+
           {/* Choice Features */}
           {choiceFeatures.length > 0 && (
             <div className="choice-features-section">
@@ -477,7 +545,7 @@ const LevelUp: React.FC<LevelUpProps> = ({ onClose }) => {
           <Button
             variant="success"
             onClick={handleLevelUp}
-            disabled={choiceFeatures.length > 0 && !hasAllRequiredChoices()}
+            disabled={!hasAllRequiredChoices() || currentStep === 'perk'}
           >
             <Check className="h-4 w-4 mr-2" />
             Confirm Level Up

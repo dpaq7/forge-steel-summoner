@@ -1,0 +1,415 @@
+/* ============================================
+   PERK SELECTOR - Level-Up Perk Selection UI
+   Category-specific accent colors
+   ============================================ */
+
+/* CSS Custom Properties for perk category colors */
+.perk-selector {
+  --perk-crafting: #d4a373;
+  --perk-exploration: #90be6d;
+  --perk-interpersonal: #f9c74f;
+  --perk-intrigue: #9381ff;
+  --perk-lore: #5fa8d3;
+  --perk-supernatural: #e36397;
+}
+
+.perk-selector {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  padding: 1rem;
+  width: 100%;
+}
+
+/* ============================================
+   HEADER
+   ============================================ */
+
+.perk-selector__header {
+  text-align: center;
+}
+
+.perk-selector__title-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  margin-bottom: 0.5rem;
+}
+
+.perk-selector__back-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.4rem;
+  background: transparent;
+  border: 1px solid var(--border-solid);
+  border-radius: var(--radius-sm);
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.perk-selector__back-btn:hover {
+  border-color: var(--accent-dim);
+  color: var(--text-primary);
+}
+
+.perk-selector__title {
+  margin: 0;
+  color: var(--accent-primary);
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+.perk-selector__level {
+  margin: 0 0 0.5rem;
+  color: #f0c674;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.perk-selector__restriction {
+  font-size: 0.8rem;
+  margin: 0;
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius-sm);
+  background: rgba(255, 183, 77, 0.1);
+  color: var(--text-secondary);
+}
+
+.perk-selector__restriction strong {
+  color: #ffb74d;
+}
+
+.perk-selector__restriction--any {
+  background: rgba(77, 232, 178, 0.1);
+}
+
+.perk-selector__restriction--any strong {
+  color: var(--accent-primary);
+}
+
+/* ============================================
+   CONTROLS - Search & Category Filters
+   ============================================ */
+
+.perk-selector__controls {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.perk-selector__search {
+  width: 100%;
+  padding: 0.65rem 1rem;
+  background: var(--bg-darkest);
+  border: 1px solid var(--border-solid);
+  border-radius: var(--radius-md);
+  color: var(--text-primary);
+  font-size: 0.9rem;
+}
+
+.perk-selector__search:focus {
+  outline: none;
+  border-color: var(--accent-primary);
+}
+
+.perk-selector__search::placeholder {
+  color: var(--text-muted);
+}
+
+.perk-selector__categories {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.perk-selector__category-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.4rem 0.65rem;
+  background: var(--bg-darkest);
+  border: 1px solid var(--border-solid);
+  border-radius: var(--radius-sm);
+  color: var(--text-secondary);
+  font-size: 0.75rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.perk-selector__category-btn:hover {
+  border-color: var(--accent-dim);
+  color: var(--text-primary);
+}
+
+.perk-selector__category-btn--active {
+  background: var(--accent-primary);
+  border-color: var(--accent-primary);
+  color: var(--bg-darkest);
+}
+
+/* Category-specific hover/active colors */
+.perk-selector__category-btn--crafting:hover,
+.perk-selector__category-btn--crafting.perk-selector__category-btn--active {
+  background: var(--perk-crafting);
+  border-color: var(--perk-crafting);
+  color: var(--bg-darkest);
+}
+
+.perk-selector__category-btn--exploration:hover,
+.perk-selector__category-btn--exploration.perk-selector__category-btn--active {
+  background: var(--perk-exploration);
+  border-color: var(--perk-exploration);
+  color: var(--bg-darkest);
+}
+
+.perk-selector__category-btn--interpersonal:hover,
+.perk-selector__category-btn--interpersonal.perk-selector__category-btn--active {
+  background: var(--perk-interpersonal);
+  border-color: var(--perk-interpersonal);
+  color: var(--bg-darkest);
+}
+
+.perk-selector__category-btn--intrigue:hover,
+.perk-selector__category-btn--intrigue.perk-selector__category-btn--active {
+  background: var(--perk-intrigue);
+  border-color: var(--perk-intrigue);
+  color: var(--bg-darkest);
+}
+
+.perk-selector__category-btn--lore:hover,
+.perk-selector__category-btn--lore.perk-selector__category-btn--active {
+  background: var(--perk-lore);
+  border-color: var(--perk-lore);
+  color: var(--bg-darkest);
+}
+
+.perk-selector__category-btn--supernatural:hover,
+.perk-selector__category-btn--supernatural.perk-selector__category-btn--active {
+  background: var(--perk-supernatural);
+  border-color: var(--perk-supernatural);
+  color: var(--bg-darkest);
+}
+
+/* ============================================
+   PERKS GRID
+   ============================================ */
+
+.perk-selector__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 0.75rem;
+  max-height: 400px;
+  overflow-y: auto;
+  padding-right: 0.5rem;
+}
+
+.perk-selector__empty {
+  grid-column: 1 / -1;
+  text-align: center;
+  color: var(--text-muted);
+  padding: 2rem;
+  font-style: italic;
+}
+
+/* ============================================
+   PERK CARD
+   ============================================ */
+
+.perk-selector__card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 0.85rem;
+  background: var(--bg-medium);
+  border: 1px solid var(--border-solid);
+  border-left: 3px solid var(--accent-dim);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.2s ease;
+  width: 100%;
+}
+
+.perk-selector__card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+/* Category-specific left border colors */
+.perk-selector__card--crafting {
+  border-left-color: var(--perk-crafting);
+}
+.perk-selector__card--crafting:hover {
+  border-color: var(--perk-crafting);
+  border-left-color: var(--perk-crafting);
+}
+
+.perk-selector__card--exploration {
+  border-left-color: var(--perk-exploration);
+}
+.perk-selector__card--exploration:hover {
+  border-color: var(--perk-exploration);
+  border-left-color: var(--perk-exploration);
+}
+
+.perk-selector__card--interpersonal {
+  border-left-color: var(--perk-interpersonal);
+}
+.perk-selector__card--interpersonal:hover {
+  border-color: var(--perk-interpersonal);
+  border-left-color: var(--perk-interpersonal);
+}
+
+.perk-selector__card--intrigue {
+  border-left-color: var(--perk-intrigue);
+}
+.perk-selector__card--intrigue:hover {
+  border-color: var(--perk-intrigue);
+  border-left-color: var(--perk-intrigue);
+}
+
+.perk-selector__card--lore {
+  border-left-color: var(--perk-lore);
+}
+.perk-selector__card--lore:hover {
+  border-color: var(--perk-lore);
+  border-left-color: var(--perk-lore);
+}
+
+.perk-selector__card--supernatural {
+  border-left-color: var(--perk-supernatural);
+}
+.perk-selector__card--supernatural:hover {
+  border-color: var(--perk-supernatural);
+  border-left-color: var(--perk-supernatural);
+}
+
+/* Card header */
+.perk-selector__card-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.perk-selector__card-icon {
+  flex-shrink: 0;
+  color: var(--text-muted);
+}
+
+.perk-selector__card--crafting .perk-selector__card-icon { color: var(--perk-crafting); }
+.perk-selector__card--exploration .perk-selector__card-icon { color: var(--perk-exploration); }
+.perk-selector__card--interpersonal .perk-selector__card-icon { color: var(--perk-interpersonal); }
+.perk-selector__card--intrigue .perk-selector__card-icon { color: var(--perk-intrigue); }
+.perk-selector__card--lore .perk-selector__card-icon { color: var(--perk-lore); }
+.perk-selector__card--supernatural .perk-selector__card-icon { color: var(--perk-supernatural); }
+
+.perk-selector__card-name {
+  margin: 0;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  flex: 1;
+}
+
+.perk-selector__card-badge {
+  font-size: 0.6rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 0.15rem 0.4rem;
+  background: var(--bg-darkest);
+  border-radius: 2px;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+.perk-selector__card--crafting .perk-selector__card-badge { color: var(--perk-crafting); }
+.perk-selector__card--exploration .perk-selector__card-badge { color: var(--perk-exploration); }
+.perk-selector__card--interpersonal .perk-selector__card-badge { color: var(--perk-interpersonal); }
+.perk-selector__card--intrigue .perk-selector__card-badge { color: var(--perk-intrigue); }
+.perk-selector__card--lore .perk-selector__card-badge { color: var(--perk-lore); }
+.perk-selector__card--supernatural .perk-selector__card-badge { color: var(--perk-supernatural); }
+
+/* Card description */
+.perk-selector__card-description {
+  margin: 0;
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  line-height: 1.45;
+  flex: 1;
+}
+
+.perk-selector__card-prereq {
+  margin: 0;
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+/* Select overlay on hover */
+.perk-selector__card-select {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  position: absolute;
+  bottom: 0.5rem;
+  right: 0.5rem;
+  padding: 0.3rem 0.6rem;
+  background: var(--accent-primary);
+  border-radius: var(--radius-sm);
+  color: var(--bg-darkest);
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.perk-selector__card:hover .perk-selector__card-select {
+  display: flex;
+}
+
+/* ============================================
+   FOOTER
+   ============================================ */
+
+.perk-selector__footer {
+  display: flex;
+  justify-content: center;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--border-solid);
+}
+
+.perk-selector__hint {
+  margin: 0;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+/* ============================================
+   RESPONSIVE
+   ============================================ */
+
+@media (max-width: 600px) {
+  .perk-selector {
+    padding: 0.75rem;
+  }
+
+  .perk-selector__grid {
+    grid-template-columns: 1fr;
+    max-height: 350px;
+  }
+
+  .perk-selector__categories {
+    justify-content: center;
+  }
+
+  .perk-selector__category-btn {
+    font-size: 0.7rem;
+    padding: 0.35rem 0.5rem;
+  }
+}

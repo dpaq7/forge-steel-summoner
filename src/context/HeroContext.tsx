@@ -2,6 +2,7 @@ import React, { createContext, useContext, useState, useEffect, useCallback, Rea
 import { SummonerHero } from '../types';
 import { Hero, SummonerHeroV2 } from '../types/hero';
 import { HeroAncestry } from '../types/ancestry';
+import { SelectedPerk } from '../types/perk';
 import { saveCharacter, loadCharacter, getActiveCharacterId, setActiveCharacterId } from '../utils/storage';
 
 // HeroContext supports all 10 Draw Steel hero classes
@@ -14,6 +15,9 @@ interface HeroContextType {
   createNewHero: (hero: Hero) => void;
   // Ancestry selection helpers
   updateAncestrySelection: (ancestryId: string, selectedTraitIds: string[]) => void;
+  // Perk helpers
+  addPerk: (perk: SelectedPerk) => void;
+  removePerk: (perkId: string) => void;
 }
 
 const HeroContext = createContext<HeroContextType | undefined>(undefined);
@@ -116,6 +120,24 @@ export const HeroProvider: React.FC<HeroProviderProps> = ({ children }) => {
     updateHero({ ancestrySelection });
   }, []);
 
+  // Helper to add a perk
+  const addPerk = useCallback((perk: SelectedPerk) => {
+    setHeroInternal((prev) => {
+      if (!prev) return null;
+      const updatedPerks = [...(prev.selectedPerks || []), perk];
+      return { ...prev, selectedPerks: updatedPerks } as Hero;
+    });
+  }, []);
+
+  // Helper to remove a perk
+  const removePerk = useCallback((perkId: string) => {
+    setHeroInternal((prev) => {
+      if (!prev) return null;
+      const updatedPerks = (prev.selectedPerks || []).filter(p => p.perkId !== perkId);
+      return { ...prev, selectedPerks: updatedPerks } as Hero;
+    });
+  }, []);
+
   const value: HeroContextType = {
     hero,
     setHero,
@@ -124,6 +146,8 @@ export const HeroProvider: React.FC<HeroProviderProps> = ({ children }) => {
     loadHero,
     createNewHero,
     updateAncestrySelection,
+    addPerk,
+    removePerk,
   };
 
   return <HeroContext.Provider value={value}>{children}</HeroContext.Provider>;

@@ -380,6 +380,143 @@
 }
 
 /* ============================================
+   PERKS SECTION - Golden/Multi-Color Accent
+   ============================================ */
+
+/* Category-specific colors */
+.perks-section {
+  --perk-crafting: #d4a373;
+  --perk-exploration: #90be6d;
+  --perk-interpersonal: #f9c74f;
+  --perk-intrigue: #9381ff;
+  --perk-lore: #5fa8d3;
+  --perk-supernatural: #e36397;
+}
+
+.perks-section h2 {
+  color: #f0c674;
+}
+
+.perks-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 0 1rem;
+  margin-bottom: 1rem;
+}
+
+.perk-display-card {
+  background: var(--bg-darkest, #0a1212);
+  border: 1px solid var(--ds-border-color, #3a3a3a);
+  border-left: 3px solid #f0c674;
+  border-radius: 4px;
+  padding: 0.75rem 1rem;
+}
+
+/* Category-specific left border colors */
+.perk-display-card--crafting {
+  border-left-color: var(--perk-crafting);
+}
+.perk-display-card--exploration {
+  border-left-color: var(--perk-exploration);
+}
+.perk-display-card--interpersonal {
+  border-left-color: var(--perk-interpersonal);
+}
+.perk-display-card--intrigue {
+  border-left-color: var(--perk-intrigue);
+}
+.perk-display-card--lore {
+  border-left-color: var(--perk-lore);
+}
+.perk-display-card--supernatural {
+  border-left-color: var(--perk-supernatural);
+}
+
+.perk-display-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.perk-display-icon {
+  flex-shrink: 0;
+  color: var(--text-muted, #707068);
+}
+
+.perk-display-card--crafting .perk-display-icon { color: var(--perk-crafting); }
+.perk-display-card--exploration .perk-display-icon { color: var(--perk-exploration); }
+.perk-display-card--interpersonal .perk-display-icon { color: var(--perk-interpersonal); }
+.perk-display-card--intrigue .perk-display-icon { color: var(--perk-intrigue); }
+.perk-display-card--lore .perk-display-icon { color: var(--perk-lore); }
+.perk-display-card--supernatural .perk-display-icon { color: var(--perk-supernatural); }
+
+.perk-display-name {
+  margin: 0;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text-primary, #f5f5f0);
+  flex: 1;
+}
+
+.perk-level-badge {
+  font-size: 0.65rem;
+  padding: 0.15rem 0.4rem;
+  background: var(--bg-medium, #1a2525);
+  border-radius: 2px;
+  color: var(--text-muted, #707068);
+}
+
+.perk-display-description {
+  margin: 0 0 0.5rem;
+  font-size: 0.85rem;
+  color: var(--text-secondary, #b8b8b0);
+  line-height: 1.4;
+}
+
+.perk-category-tag {
+  display: inline-block;
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 0.1rem 0.35rem;
+  border-radius: 2px;
+  background: rgba(240, 198, 116, 0.2);
+  color: #f0c674;
+}
+
+.perk-display-card--crafting .perk-category-tag {
+  background: rgba(212, 163, 115, 0.2);
+  color: var(--perk-crafting);
+}
+.perk-display-card--exploration .perk-category-tag {
+  background: rgba(144, 190, 109, 0.2);
+  color: var(--perk-exploration);
+}
+.perk-display-card--interpersonal .perk-category-tag {
+  background: rgba(249, 199, 79, 0.2);
+  color: var(--perk-interpersonal);
+}
+.perk-display-card--intrigue .perk-category-tag {
+  background: rgba(147, 129, 255, 0.2);
+  color: var(--perk-intrigue);
+}
+.perk-display-card--lore .perk-category-tag {
+  background: rgba(95, 168, 211, 0.2);
+  color: var(--perk-lore);
+}
+.perk-display-card--supernatural .perk-category-tag {
+  background: rgba(227, 99, 151, 0.2);
+  color: var(--perk-supernatural);
+}
+
+.perks-section:hover {
+  border-color: rgba(240, 198, 116, 0.4);
+  box-shadow: 0 0 15px rgba(240, 198, 116, 0.1);
+}
+
+/* ============================================
    KIT SECTION - Blue Accent
    ============================================ */
 

@@ -9,6 +9,7 @@ import { ChampionState, OutOfCombatState } from './combat';
 import { ProgressionChoices } from './progression';
 import { ActiveProject, InventoryItem } from './projects';
 import { EquippedItem } from './equipment';
+import { SelectedPerk } from './perk';
 
 // All 10 Draw Steel hero classes
 export type HeroClass =
@@ -288,6 +289,9 @@ export interface HeroBase {
   // Progression tracking
   progressionChoices: ProgressionChoices;
   activeProjects: ActiveProject[];
+
+  // Perks selected during character creation and level-up
+  selectedPerks?: SelectedPerk[];
 }
 
 // =================================================================

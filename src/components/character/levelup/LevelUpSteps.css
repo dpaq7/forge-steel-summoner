@@ -1,0 +1,718 @@
+/* ============================================
+   LEVEL UP STEP - SHARED STYLES
+   ============================================ */
+
+.levelup-step {
+  display: flex;
+  flex-direction: column;
+  min-height: 300px;
+}
+
+.step-title {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0 0 0.5rem;
+  color: var(--accent-bright);
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.step-description {
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+  margin: 0 0 1.5rem;
+}
+
+/* ============================================
+   LEVEL BADGE
+   ============================================ */
+
+.level-badge-large {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  margin-bottom: 1.25rem;
+  padding: 0.875rem 1.5rem;
+  background: var(--bg-darkest);
+  border: 2px solid var(--accent-dim);
+  border-radius: 8px;
+  align-self: center;
+}
+
+.level-badge-large .level-from {
+  color: var(--text-muted);
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+.level-badge-large .level-arrow-icon {
+  color: var(--accent-bright);
+  width: 20px;
+  height: 20px;
+}
+
+.level-badge-large .level-to {
+  color: var(--accent-bright);
+  font-size: 1.5rem;
+  font-weight: 700;
+  text-shadow: 0 0 12px rgba(77, 232, 178, 0.5);
+}
+
+.level-badge-large.success {
+  border-color: var(--color-success, #4caf50);
+  background: rgba(76, 175, 80, 0.1);
+}
+
+.level-badge-large.success .level-to {
+  color: var(--color-success, #4caf50);
+  text-shadow: 0 0 12px rgba(76, 175, 80, 0.5);
+}
+
+.level-badge-large .badge-icon {
+  color: var(--color-success, #4caf50);
+  width: 24px;
+  height: 24px;
+}
+
+/* ============================================
+   OVERVIEW SECTIONS
+   ============================================ */
+
+.overview-section {
+  margin-bottom: 1.5rem;
+}
+
+.overview-section h3 {
+  margin: 0 0 0.75rem;
+  color: var(--text-primary);
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 600;
+}
+
+/* Stats Summary */
+.stats-summary-section {
+  background: var(--bg-darkest);
+  border: 1px solid var(--border-dark);
+  border-radius: 8px;
+  padding: 1rem 1.25rem;
+}
+
+.stats-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem 1.5rem;
+}
+
+.stat-change-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.stat-label {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  min-width: 80px;
+}
+
+.stat-values {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-family: monospace;
+  font-size: 0.95rem;
+}
+
+.old-value {
+  color: var(--text-muted);
+}
+
+.arrow-icon {
+  color: var(--text-muted);
+}
+
+.new-value {
+  color: var(--text-primary);
+  font-weight: 700;
+}
+
+.new-value.highlight {
+  color: var(--accent-bright);
+}
+
+.delta {
+  color: var(--color-success, #4caf50);
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+/* Gains List */
+.gains-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.gain-item {
+  display: flex;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  background: var(--bg-darkest);
+  border: 1px solid var(--border-dark);
+  border-radius: 6px;
+  border-left: 3px solid var(--color-success, #4caf50);
+}
+
+.gain-icon {
+  font-size: 1rem;
+  color: var(--color-success, #4caf50);
+  flex-shrink: 0;
+}
+
+.gain-content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.gain-name {
+  color: var(--text-primary);
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.gain-description {
+  color: var(--text-secondary);
+  font-size: 0.8rem;
+  line-height: 1.4;
+}
+
+/* Choices Preview */
+.choices-preview {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.choice-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.65rem 1rem;
+  background: var(--bg-medium);
+  border: 1px solid var(--border-dark);
+  border-radius: 6px;
+}
+
+.choice-icon {
+  font-size: 1.1rem;
+}
+
+.choice-text {
+  color: var(--text-primary);
+  font-size: 0.9rem;
+}
+
+/* ============================================
+   STEP ACTIONS
+   ============================================ */
+
+.step-actions {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: auto;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--border-dark);
+}
+
+.step-actions.centered {
+  justify-content: center;
+}
+
+/* ============================================
+   PERK STEP STYLES
+   ============================================ */
+
+.perk-step {
+  gap: 1rem;
+}
+
+/* Search */
+.perk-search {
+  position: relative;
+  margin-bottom: 0.5rem;
+}
+
+.perk-search .search-icon {
+  position: absolute;
+  left: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-muted);
+}
+
+.perk-search-input {
+  width: 100%;
+  padding: 0.6rem 0.75rem 0.6rem 2.25rem;
+  background: var(--bg-darkest);
+  border: 1px solid var(--border-dark);
+  border-radius: 6px;
+  color: var(--text-primary);
+  font-size: 0.9rem;
+}
+
+.perk-search-input:focus {
+  outline: none;
+  border-color: var(--accent-dim);
+}
+
+.perk-search-input::placeholder {
+  color: var(--text-muted);
+}
+
+/* Category tabs */
+.category-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-bottom: 1rem;
+}
+
+.category-tab {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.4rem 0.75rem;
+  background: var(--bg-medium);
+  border: 1px solid var(--border-dark);
+  border-radius: 4px;
+  color: var(--text-secondary);
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.category-tab:hover {
+  border-color: var(--accent-dim);
+  color: var(--text-primary);
+}
+
+.category-tab.active {
+  background: var(--accent-dim);
+  border-color: var(--accent-bright);
+  color: var(--accent-bright);
+}
+
+.category-tab .tab-icon {
+  flex-shrink: 0;
+}
+
+/* Options grid */
+.options-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+@media (max-width: 700px) {
+  .options-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.option-card {
+  background: var(--bg-medium);
+  border: 2px solid var(--border-dark);
+  border-radius: 8px;
+  padding: 1rem;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.option-card:hover {
+  border-color: var(--accent-dim);
+  transform: translateY(-1px);
+}
+
+.option-card.selected {
+  border-color: var(--accent-bright);
+  background: rgba(77, 232, 178, 0.08);
+  box-shadow: 0 0 15px rgba(77, 232, 178, 0.15);
+}
+
+.option-name {
+  margin: 0 0 0.4rem;
+  color: var(--text-primary);
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.option-card.selected .option-name {
+  color: var(--accent-bright);
+}
+
+.option-description {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: 0.8rem;
+  line-height: 1.4;
+}
+
+/* Perk-specific card styles */
+.perk-card {
+  border-left: 3px solid var(--perk-color, var(--accent-dim));
+}
+
+.perk-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.perk-icon {
+  color: var(--perk-color, var(--accent-dim));
+}
+
+.selected-check {
+  margin-left: auto;
+  color: var(--accent-bright);
+}
+
+.perk-category-badge {
+  display: inline-block;
+  margin-top: 0.6rem;
+  padding: 0.15rem 0.5rem;
+  background: var(--perk-color, var(--accent-dim));
+  border-radius: 3px;
+  color: var(--bg-darkest);
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+.no-perks-message {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 2rem;
+  color: var(--text-muted);
+}
+
+/* ============================================
+   CHOICE STEP STYLES
+   ============================================ */
+
+.choice-step {
+  gap: 1rem;
+}
+
+.choice-features-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.choice-feature {
+  background: var(--bg-darkest);
+  border: 1px solid var(--border-dark);
+  border-radius: 8px;
+  padding: 1rem 1.25rem;
+}
+
+.choice-feature-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.choice-feature h3 {
+  margin: 0;
+  color: var(--text-primary);
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.choice-category-badge {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  padding: 0.2rem 0.5rem;
+  background: var(--bg-medium);
+  border-radius: 3px;
+  color: var(--text-muted);
+}
+
+.feature-description {
+  margin: 0 0 1rem;
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+  line-height: 1.5;
+}
+
+.feature-choices {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.choice-option {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  background: var(--bg-medium);
+  border: 2px solid var(--border-dark);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.choice-option:hover {
+  border-color: var(--accent-dim);
+}
+
+.choice-option.selected {
+  border-color: var(--accent-bright);
+  background: rgba(77, 232, 178, 0.08);
+}
+
+.choice-radio {
+  flex-shrink: 0;
+  margin-top: 0.15rem;
+}
+
+.radio-unchecked {
+  width: 16px;
+  height: 16px;
+  border: 2px solid var(--border-solid);
+  border-radius: 50%;
+  transition: all 0.15s ease;
+}
+
+.choice-option:hover .radio-unchecked {
+  border-color: var(--accent-dim);
+}
+
+.radio-checked {
+  width: 16px;
+  height: 16px;
+  background: var(--accent-bright);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--bg-darkest);
+}
+
+.choice-content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.choice-name {
+  color: var(--text-primary);
+  font-size: 0.9rem;
+}
+
+.choice-option.selected .choice-name {
+  color: var(--accent-bright);
+}
+
+.choice-description {
+  color: var(--text-secondary);
+  font-size: 0.8rem;
+  line-height: 1.4;
+}
+
+/* ============================================
+   CONFIRMATION STEP STYLES
+   ============================================ */
+
+.confirmation-step {
+  align-items: center;
+  text-align: center;
+}
+
+.confirmation-step .step-description {
+  text-align: center;
+}
+
+.confirmation-section {
+  width: 100%;
+  max-width: 500px;
+  margin-bottom: 1.25rem;
+  text-align: left;
+}
+
+.confirmation-section h3 {
+  margin: 0 0 0.75rem;
+  color: var(--text-primary);
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 600;
+}
+
+/* Stat change pills */
+.stat-changes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.stat-change-pill {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  background: var(--bg-darkest);
+  border: 1px solid var(--border-dark);
+  border-radius: 6px;
+}
+
+.stat-change-pill .stat-name {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+}
+
+.stat-change-pill .stat-value {
+  font-size: 0.9rem;
+  font-weight: 600;
+  font-family: monospace;
+  color: var(--text-primary);
+}
+
+.stat-change-pill .stat-value.success {
+  color: var(--color-success, #4caf50);
+}
+
+/* Choices summary */
+.choices-summary {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.choice-summary-card {
+  padding: 0.875rem 1rem;
+  background: var(--bg-medium);
+  border: 1px solid var(--accent-dim);
+  border-radius: 6px;
+}
+
+.choice-summary-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.25rem;
+}
+
+.choice-summary-card .choice-type {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  color: var(--accent-bright);
+  letter-spacing: 0.05em;
+}
+
+.choice-summary-card .choice-check {
+  color: var(--color-success, #4caf50);
+}
+
+.choice-summary-card .choice-name {
+  margin: 0;
+  font-size: 0.95rem;
+  color: var(--text-primary);
+}
+
+.choice-summary-card .choice-description {
+  margin: 0.25rem 0 0;
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  line-height: 1.4;
+}
+
+/* Automatic features summary */
+.automatic-summary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.automatic-summary-item {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.4rem 0.75rem;
+  background: var(--bg-darkest);
+  border: 1px solid var(--border-dark);
+  border-radius: 4px;
+  font-size: 0.8rem;
+}
+
+.automatic-summary-item .feature-icon {
+  color: var(--color-success, #4caf50);
+}
+
+.automatic-summary-item .feature-name {
+  color: var(--text-primary);
+}
+
+/* ============================================
+   RESPONSIVE
+   ============================================ */
+
+@media (max-width: 600px) {
+  .levelup-step {
+    min-height: 250px;
+  }
+
+  .step-title {
+    font-size: 1.25rem;
+  }
+
+  .level-badge-large {
+    padding: 0.75rem 1rem;
+  }
+
+  .level-badge-large .level-from {
+    font-size: 1rem;
+  }
+
+  .level-badge-large .level-to {
+    font-size: 1.25rem;
+  }
+
+  .stats-grid {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .stat-label {
+    min-width: 70px;
+  }
+
+  .category-tabs {
+    justify-content: center;
+  }
+
+  .confirmation-section {
+    max-width: 100%;
+  }
+}

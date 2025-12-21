@@ -161,11 +161,18 @@
 }
 
 /* === SCROLL VARIANT === */
+/* Uses flex layout so header/footer stay fixed and content scrolls */
 .dialog-content-scroll .dialog-inner {
   max-height: calc(85vh - 4rem);
-  overflow-y: auto;
-  scrollbar-width: thin;
-  scrollbar-color: var(--accent-dim) var(--bg-darkest);
+  display: flex;
+  flex-direction: column;
+  /* Don't set overflow here - let the scrollable content area handle it */
+}
+
+/* Header and footer don't shrink */
+.dialog-content-scroll .dialog-header,
+.dialog-content-scroll .dialog-footer {
+  flex-shrink: 0;
 }
 
 /* === DEFAULT VARIANT (non-fantasy) === */

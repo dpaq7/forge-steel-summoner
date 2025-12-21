@@ -16,9 +16,41 @@
   margin-bottom: 0.5rem;
 }
 
-/* ScrollArea sizing */
+/* ScrollArea sizing - critical for proper scroll behavior */
 .level-up-scroll {
+  flex: 1 1 auto;
+  min-height: 0;         /* CRITICAL: allows flex child to shrink and enable scroll */
+  max-height: 55vh;
   padding-right: 1rem;
+}
+
+/* Ensure the Radix ScrollArea viewport inherits constraints */
+.level-up-scroll [data-radix-scroll-area-viewport] {
+  max-height: inherit;
+}
+
+/* Custom scrollbar styling for the level-up dialog */
+.level-up-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: var(--accent-dim) var(--bg-darkest);
+}
+
+.level-up-scroll::-webkit-scrollbar {
+  width: 8px;
+}
+
+.level-up-scroll::-webkit-scrollbar-track {
+  background: var(--bg-darkest);
+  border-radius: 4px;
+}
+
+.level-up-scroll::-webkit-scrollbar-thumb {
+  background: var(--border-solid);
+  border-radius: 4px;
+}
+
+.level-up-scroll::-webkit-scrollbar-thumb:hover {
+  background: var(--accent-dim);
 }
 
 /* ============================================
@@ -62,6 +94,7 @@
 
 .level-up-content {
   padding: 1.5rem;
+  padding-bottom: 2.5rem;  /* Extra space to ensure last item fully visible */
 }
 
 .level-up-content h3 {
@@ -268,6 +301,88 @@
 }
 
 /* ============================================
+   PERK SELECTION SECTION
+   ============================================ */
+
+.perk-selection-section {
+  margin-bottom: 1.5rem;
+}
+
+.perk-selection-section h3 {
+  display: flex;
+  align-items: center;
+}
+
+.perk-select-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  width: 100%;
+  padding: 1rem 1.5rem;
+  background: rgba(240, 198, 116, 0.1);
+  border: 2px dashed rgba(240, 198, 116, 0.4);
+  border-radius: 8px;
+  color: #f0c674;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.perk-select-btn:hover {
+  background: rgba(240, 198, 116, 0.2);
+  border-color: #f0c674;
+  transform: translateY(-1px);
+}
+
+.perk-selected {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.875rem 1rem;
+  background: rgba(77, 232, 178, 0.1);
+  border: 1px solid rgba(77, 232, 178, 0.3);
+  border-left: 3px solid var(--accent-primary, #4de8b2);
+  border-radius: 8px;
+}
+
+.perk-selected-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.perk-selected-label {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-muted, #707068);
+}
+
+.perk-selected-info strong {
+  color: var(--accent-primary, #4de8b2);
+  font-size: 0.95rem;
+  text-transform: capitalize;
+}
+
+.perk-change-btn {
+  padding: 0.4rem 0.75rem;
+  background: transparent;
+  border: 1px solid var(--border-dark, #2a3a3a);
+  border-radius: 4px;
+  color: var(--text-muted, #707068);
+  font-size: 0.75rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.perk-change-btn:hover {
+  border-color: var(--accent-dim, #3d8b7a);
+  color: var(--text-primary, #f5f5f0);
+}
+
+/* ============================================
    CHOICE FEATURES
    ============================================ */
 
@@ -437,6 +552,7 @@
 
   .level-up-content {
     padding: 1rem;
+    padding-bottom: 2rem;  /* Extra space for last item on mobile */
   }
 
   .stats-grid {

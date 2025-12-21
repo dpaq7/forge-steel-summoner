@@ -4,10 +4,30 @@ import { languages as allLanguages } from '../../data/reference-data';
 import { skills as allSkills } from '../../data/skills';
 import { formations } from '../../data/formations';
 import { getAncestryById, getAncestryTraitsByIds } from '../../data/ancestries';
+import { getPerkById, PERK_CATEGORY_INFO } from '../../data/perks';
 import { Formation, HeroClass } from '../../types';
 import { isSummonerHero, SummonerHeroV2 } from '../../types/hero';
 import { classDefinitions } from '../../data/classes/class-definitions';
+import {
+  Hammer,
+  Compass,
+  Users,
+  Search,
+  BookOpen,
+  Sparkles,
+  type LucideIcon,
+} from 'lucide-react';
 import './CharacterDetailsView.css';
+
+// Map category to Lucide icon for perks display
+const perkCategoryIcons: Record<string, LucideIcon> = {
+  crafting: Hammer,
+  exploration: Compass,
+  interpersonal: Users,
+  intrigue: Search,
+  lore: BookOpen,
+  supernatural: Sparkles,
+};
 
 const CharacterDetailsView: React.FC = () => {
   const { hero, updateHero } = useSummonerContext();
@@ -298,6 +318,35 @@ const CharacterDetailsView: React.FC = () => {
           </div>
         </div>
       </section>
+
+      {/* Perks Section */}
+      {hero.selectedPerks && hero.selectedPerks.length > 0 && (
+        <section className="details-section perks-section">
+          <h2>Perks</h2>
+          <div className="perks-list">
+            {hero.selectedPerks.map((sp, idx) => {
+              const perk = getPerkById(sp.perkId);
+              if (!perk) return null;
+              const catInfo = PERK_CATEGORY_INFO[perk.category];
+              const Icon = perkCategoryIcons[perk.category];
+              return (
+                <div
+                  key={idx}
+                  className={`perk-display-card perk-display-card--${perk.category}`}
+                >
+                  <div className="perk-display-header">
+                    {Icon && <Icon size={16} className="perk-display-icon" />}
+                    <h4 className="perk-display-name">{perk.name}</h4>
+                    <span className="perk-level-badge">Lv {sp.selectedAtLevel}</span>
+                  </div>
+                  <p className="perk-display-description">{perk.description}</p>
+                  <span className="perk-category-tag">{catInfo.name}</span>
+                </div>
+              );
+            })}
+          </div>
+        </section>
+      )}
 
       {/* Kit Section */}
       <section className="details-section kit-section">

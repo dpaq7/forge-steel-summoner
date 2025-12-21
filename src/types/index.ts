@@ -9,6 +9,7 @@ export * from './summoner';
 export * from './progression';
 export * from './projects';
 export * from './items';
+export * from './perk';
 
 // Export hero types, excluding duplicates already exported from summoner.ts
 export {

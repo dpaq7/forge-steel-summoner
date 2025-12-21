@@ -408,6 +408,11 @@ const migrateCharacter = (character: Partial<SummonerHero> | Partial<Hero>): Her
   // Apply ancestry selection migration
   migrated = migrateAncestrySelection(migrated);
 
+  // Initialize selectedPerks if missing
+  if (!migrated.selectedPerks) {
+    migrated.selectedPerks = [];
+  }
+
   // Check if this is already a new Hero type (has heroClass field)
   if ('heroClass' in migrated && migrated.heroClass) {
     // Already migrated, just ensure all fields are present

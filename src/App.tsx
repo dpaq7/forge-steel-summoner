@@ -6,7 +6,7 @@ import { CHARACTERISTICS } from './components/ui/StatsDashboard/types';
 import CharacterCreation from './components/creation/CharacterCreation';
 import CharacterManager from './components/character/CharacterManager';
 import CharacterDetailsView from './components/character/CharacterDetailsView';
-import LevelUp from './components/character/LevelUp';
+import LevelUpWizard from './components/character/LevelUpWizard';
 import CombatView from './components/combat/CombatView';
 import AbilitiesView from './components/abilities/AbilitiesView';
 import ProjectsView from './components/projects/ProjectsView';
@@ -579,7 +579,7 @@ function App() {
       )}
 
       {showLevelUp && (
-        <LevelUp onClose={() => setShowLevelUp(false)} />
+        <LevelUpWizard onClose={() => setShowLevelUp(false)} />
       )}
 
       {/* Respite Confirmation Modal */}
