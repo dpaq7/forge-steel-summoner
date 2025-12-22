@@ -3,12 +3,14 @@
 > A comprehensive character manager for [Draw Steel](https://mcdm.gg/DrawSteel) TTRPG by MCDM Productions.
 
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
-[![Version](https://img.shields.io/badge/version-0.4.9-green.svg)]()
+[![Version](https://img.shields.io/badge/version-0.5.0_Beta-brightgreen.svg)]()
+[![Tests](https://img.shields.io/badge/tests-76_passing-success.svg)]()
 [![React](https://img.shields.io/badge/React-19.2-61DAFB?logo=react&logoColor=white)](https://react.dev/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.9-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 [![Tauri](https://img.shields.io/badge/Tauri-2.9-FFC131?logo=tauri&logoColor=white)](https://tauri.app/)
 [![Vite](https://img.shields.io/badge/Vite-7.2-646CFF?logo=vite&logoColor=white)](https://vitejs.dev/)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind-4.1-06B6D4?logo=tailwindcss&logoColor=white)](https://tailwindcss.com/)
+[![Vitest](https://img.shields.io/badge/Vitest-3.2-6E9F18?logo=vitest&logoColor=white)](https://vitest.dev/)
 
 ## Features
 
@@ -54,6 +56,12 @@
 |------------|---------|---------|
 | [Tauri](https://tauri.app/) | 2.9 | Native desktop wrapper |
 | [Rust](https://www.rust-lang.org/) | 1.77+ | Tauri backend runtime |
+
+### Testing
+| Technology | Version | Purpose |
+|------------|---------|---------|
+| [Vitest](https://vitest.dev/) | 3.2 | Unit testing framework |
+| [React Testing Library](https://testing-library.com/) | 16.3 | Component testing |
 
 ### Development Tools
 | Technology | Version | Purpose |
@@ -130,8 +138,14 @@ npm run preview      # Preview production build
 npm run tauri:dev    # Run Tauri in development
 npm run tauri:build  # Build native desktop app
 
+# Testing
+npm run test         # Run tests in watch mode
+npm run test:run     # Run tests once
+npm run test:coverage # Run tests with coverage report
+
 # Code Quality
 npm run lint         # Run ESLint
+npm run type-check   # TypeScript type checking
 ```
 
 ## Installation
@@ -171,19 +185,30 @@ npm run tauri build -- --target universal-apple-darwin
 
 ## Version History
 
-- **v0.4.9** - Fix skills display in Character tab (use actual selected skills, not skill categories)
-- **v0.4.8** - Character creator UX improvements: dual navigation buttons, scroll-to-top, unified skill selection styling
-- **v0.4.7** - Summoner combat improvements, Crimson Veil theme color update
-- **v0.4.6** - Summoner fixture mechanics, minion card UI/UX improvements
-- **v0.4.5** - Combat tracker enhancements, condition management improvements
-- **v0.4.4** - Condition end type toggles (EoT/Roll/Manual), 5 color theme system, unified pinnable stats dashboard
-- **v0.4.1** - iCloud sync fix for Tauri build artifacts
-- **v0.4.0** - Complete shadcn/ui migration with fantasy theming, accessible components
-- **v0.3.5** - Class progression system, stamina/dying fixes, UI improvements
-- **v0.3.4** - Class ability widgets, legal attribution modal, theme fixes
-- **v0.3.3** - Standardize hero class system, rename context to HeroContext
-- **v0.3.0** - Mettle: Full Draw Steel support for all 10 classes
-- **v0.2.x** - Forge Steel Summoner: Summoner-focused character manager
+### v0.5.0 Beta (Current)
+Ship-ready release with test infrastructure and major refactoring:
+- **Test Infrastructure**: Vitest + React Testing Library with 76 passing tests
+- **Error Boundaries**: Crash protection for critical components
+- **Debounced Auto-save**: Optimized character persistence (500ms delay)
+- **Production Logger**: Environment-aware logging with scoped contexts
+- **Custom Hooks**: Extracted reusable logic (useDiceRolling, useTurnTracking, useConditionManagement, useCharacterManagement)
+- **Step Components**: Modular character creation flow
+- **All Class Panels Complete**: Functional mechanics for all 10 classes (Judgment Actions, Prayer, Strain, Mark Effects, etc.)
+
+### Previous Releases
+- **v0.4.93** - Add Rapid-Fire kit, remove unofficial kits
+- **v0.4.92** - Ancestry point-buy trait selection system
+- **v0.4.91** - Data structure updates and UI improvements
+- **v0.4.9** - Fix skills display in Character tab
+- **v0.4.8** - Character creator UX improvements
+- **v0.4.7** - Summoner combat improvements, Crimson Veil theme
+- **v0.4.6** - Summoner fixture mechanics, minion card improvements
+- **v0.4.5** - Combat tracker enhancements
+- **v0.4.4** - Condition end types, 5 color themes, pinnable stats
+- **v0.4.0** - Complete shadcn/ui migration with fantasy theming
+- **v0.3.x** - Class progression, ability widgets, hero class system
+- **v0.3.0** - Full Draw Steel support for all 10 classes
+- **v0.2.x** - Forge Steel Summoner
 - **v0.1.x** - Initial development
 
 ## Attribution
