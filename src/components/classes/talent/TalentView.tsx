@@ -103,10 +103,26 @@ export const TalentView: React.FC<BaseClassViewProps> = ({
         </div>
       )}
 
-      {/* Psionic Abilities - TODO */}
+      {/* Strain Mechanics */}
       <div className="class-feature-section">
-        <h4 className="class-feature-title">Manifestations</h4>
-        <p className="placeholder">Manifestations panel coming soon</p>
+        <h4 className="class-feature-title">Strain Mechanics</h4>
+        <div className="triggered-actions-list">
+          <div className="triggered-action">
+            <span className="action-trigger">Negative Clarity:</span>
+            <span className="action-effect">Can spend below 0 (to -{Math.abs(minimum)})</span>
+          </div>
+          <div className="triggered-action">
+            <span className="action-trigger">End of turn while strained:</span>
+            <span className="action-effect">Take damage = negative Clarity</span>
+          </div>
+          <div className="triggered-action">
+            <span className="action-trigger">Strained abilities:</span>
+            <span className="action-effect">Enhanced effects when Clarity &lt; 0</span>
+          </div>
+        </div>
+        <p className="class-feature-note">
+          Start of turn: gain 1d3 Clarity. First force move per round: +1 Clarity. Min Clarity = -(1 + Reason).
+        </p>
       </div>
     </BaseClassView>
   );

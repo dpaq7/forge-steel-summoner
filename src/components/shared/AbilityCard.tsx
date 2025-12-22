@@ -70,22 +70,27 @@ const AbilityCard: React.FC<AbilityCardProps> = ({
 
   const cycleModifier = (e: React.MouseEvent) => {
     e.stopPropagation();
-    const modifiers: RollModifier[] = ['normal', 'edge', 'bane'];
+    // Cycle: Normal → Edge → 2× Edge → Bane → 2× Bane → Normal
+    const modifiers: RollModifier[] = ['normal', 'edge', 'doubleEdge', 'bane', 'doubleBane'];
     const currentIndex = modifiers.indexOf(rollModifier);
     const nextIndex = (currentIndex + 1) % modifiers.length;
     setRollModifier(modifiers[nextIndex]);
   };
 
   const getModifierClass = () => {
-    if (rollModifier === 'edge') return 'edge';
-    if (rollModifier === 'bane') return 'bane';
+    if (rollModifier === 'edge' || rollModifier === 'doubleEdge') return 'edge';
+    if (rollModifier === 'bane' || rollModifier === 'doubleBane') return 'bane';
     return '';
   };
 
   const getModifierLabel = () => {
-    if (rollModifier === 'edge') return 'Edge';
-    if (rollModifier === 'bane') return 'Bane';
-    return 'Normal';
+    switch (rollModifier) {
+      case 'edge': return 'Edge';
+      case 'doubleEdge': return '2× Edge';
+      case 'bane': return 'Bane';
+      case 'doubleBane': return '2× Bane';
+      default: return 'Normal';
+    }
   };
 
   const getTierResult = () => {
@@ -210,6 +215,11 @@ const AbilityCard: React.FC<AbilityCardProps> = ({
                   </div>
                   <div className="result-tier-label" style={{ color: getTierColor(rollResult.tier) }}>
                     Tier {rollResult.tier}
+                    {rollResult.tierAdjustment !== 0 && (
+                      <span className={rollResult.tierAdjustment > 0 ? 'tier-bonus' : 'tier-penalty'}>
+                        {' '}({rollResult.tierAdjustment > 0 ? '↑' : '↓'} from {rollResult.baseTier})
+                      </span>
+                    )}
                   </div>
                   <div className="result-effect">{getTierResult()}</div>
                 </div>

@@ -103,10 +103,18 @@ export const ShadowView: React.FC<BaseClassViewProps> = ({
         </div>
       )}
 
-      {/* Shadow Techniques - TODO */}
+      {/* Hesitation Is Weakness */}
       <div className="class-feature-section">
-        <h4 className="class-feature-title">Shadow Techniques</h4>
-        <p className="placeholder">Shadow techniques panel coming soon</p>
+        <h4 className="class-feature-title">Hesitation Is Weakness (1 Insight)</h4>
+        <div className="triggered-actions-list">
+          <div className="triggered-action">
+            <span className="action-trigger">After ally ends turn:</span>
+            <span className="action-effect">Take your turn immediately</span>
+          </div>
+        </div>
+        <p className="class-feature-note">
+          Start of turn: gain 1d3 Insight. First surge damage per round: +1 Insight. Edge/double edge: -1/-2 Insight cost.
+        </p>
       </div>
     </BaseClassView>
   );

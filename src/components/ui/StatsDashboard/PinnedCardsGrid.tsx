@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { motion } from 'motion/react';
-import { PinOff } from 'lucide-react';
 
 import { StaminaCard } from './cards/StaminaCard';
 import { RecoveriesCard } from './cards/RecoveriesCard';
@@ -25,7 +24,6 @@ interface PinnedCardsGridProps {
   isInCombat: boolean;
   resourceConfig: HeroicResourceConfig;
   onUnpin: (type: StatCardType) => void;
-  onUnpinAll: () => void;
   onStaminaChange: (value: number) => void;
   onRecoveriesChange: (value: number) => void;
   onCatchBreath: (healAmount: number) => void;
@@ -68,7 +66,6 @@ export const PinnedCardsGrid: React.FC<PinnedCardsGridProps> = ({
   isInCombat,
   resourceConfig,
   onUnpin,
-  onUnpinAll,
   onStaminaChange,
   onRecoveriesChange,
   onCatchBreath,
@@ -110,17 +107,6 @@ export const PinnedCardsGrid: React.FC<PinnedCardsGridProps> = ({
       exit={{ height: 0, opacity: 0 }}
       transition={{ duration: 0.25 }}
     >
-      {/* Header */}
-      {pinnedCards.length > 1 && (
-        <div className="pinned-cards-header">
-          <span className="pinned-count">{pinnedCards.length} pinned</span>
-          <button className="unpin-all-btn" onClick={onUnpinAll}>
-            <PinOff className="w-3 h-3" />
-            Unpin All
-          </button>
-        </div>
-      )}
-
       {/* Cards Grid */}
       <div className="pinned-cards-grid">
         {pinnedCards.map((type) => (

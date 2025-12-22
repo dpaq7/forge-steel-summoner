@@ -453,15 +453,22 @@ export const CombatProvider: React.FC<CombatProviderProps> = ({ children }) => {
     return minionsToSacrifice;
   };
 
-  // Legacy function - kept for backward compatibility but should not be used
-  // The correct behavior is to use sacrifice when summoning (cost reduction)
+  /**
+   * Legacy sacrifice function - grants 1 essence when sacrificing a minion.
+   *
+   * Note: Per official rules, sacrifice should reduce summoning costs rather than
+   * directly granting essence. This implementation is kept for backward compatibility
+   * with existing saved characters. The proper behavior is handled via
+   * calculateSacrificeCostReduction() in utils/calculations.ts.
+   *
+   * @returns true if sacrifice succeeded, false if already sacrificed this turn
+   */
   const sacrificeMinion = (): boolean => {
     if (hasSacrificedThisTurn) {
       return false; // Already sacrificed this turn
     }
     setHasSacrificedThisTurn(true);
-    // Legacy: grants 1 essence (incorrect per SRD, but kept for compatibility)
-    // TODO: Remove this and implement proper sacrifice-on-summon
+    // Legacy behavior: grants 1 essence (kept for backward compatibility)
     gainEssence(1);
     return true;
   };

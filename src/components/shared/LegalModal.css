@@ -43,19 +43,11 @@
   color: var(--text-primary, #e8e6e0);
 }
 
-.legal-modal-close {
-  background: none;
-  border: none;
-  color: var(--text-muted, #708880);
-  font-size: 1.5rem;
-  cursor: pointer;
-  padding: 0;
-  line-height: 1;
-  transition: color 0.2s ease;
-}
-
-.legal-modal-close:hover {
-  color: var(--text-primary, #e8e6e0);
+/* Override dialog-close positioning for inline header use */
+.legal-modal-header .dialog-close {
+  position: relative;
+  top: auto;
+  right: auto;
 }
 
 .legal-modal-content {
@@ -95,6 +87,20 @@
 .legal-tagline {
   font-style: italic;
   color: var(--text-muted, #708880) !important;
+}
+
+.legal-stage {
+  display: inline-block;
+  margin-left: 0.5rem;
+  padding: 0.125rem 0.5rem;
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--bg-darkest, #050d0b);
+  background: var(--accent-bright, #00e6c3);
+  border-radius: var(--radius-sm, 4px);
+  vertical-align: middle;
 }
 
 .legal-required {

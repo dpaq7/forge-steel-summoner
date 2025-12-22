@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useSummonerContext } from '../../context/HeroContext';
 import { useRollHistory } from '../../context/RollHistoryContext';
 import { standardManeuvers, standardTriggeredActions, moveActions, quickCommands } from '../../data/action-economy';
-import { Ability } from '../../types';
+import { Ability, Characteristic } from '../../types';
 import { isSummonerHero } from '../../types/hero';
 import { PowerRollResult } from '../../utils/dice';
 import { ActionType, ActionTag } from '../../types/action';
@@ -90,6 +90,67 @@ const AbilitiesView: React.FC = () => {
     />
   );
 
+  // Parse power roll characteristic from kit signature ability text
+  // e.g., "Might or Agility" -> { characteristic: 'might', alternativeCharacteristics: ['agility'] }
+  const parseKitPowerRoll = (powerRollText: string): { characteristic: Characteristic; alternativeCharacteristics?: Characteristic[] } | null => {
+    const charMap: Record<string, Characteristic> = {
+      'might': 'might',
+      'agility': 'agility',
+      'reason': 'reason',
+      'intuition': 'intuition',
+      'presence': 'presence',
+    };
+
+    const text = powerRollText.toLowerCase();
+    const chars: Characteristic[] = [];
+
+    for (const [name, char] of Object.entries(charMap)) {
+      if (text.includes(name)) {
+        chars.push(char);
+      }
+    }
+
+    if (chars.length === 0) return null;
+
+    return {
+      characteristic: chars[0],
+      alternativeCharacteristics: chars.length > 1 ? chars.slice(1) : undefined,
+    };
+  };
+
+  // Convert kit signature ability to Ability format for AbilityCard
+  const kitSignatureAbility: Ability | null = useMemo(() => {
+    const sig = hero.kit?.signatureAbility;
+    if (!sig) return null;
+
+    const powerRollInfo = parseKitPowerRoll(sig.powerRoll);
+
+    // Build effect text with tier results and optional effect
+    let effectText = sig.effect || '';
+
+    return {
+      id: `kit-sig-${hero.kit.id}`,
+      name: sig.name,
+      flavorText: sig.description,
+      actionType: 'action' as const,
+      keywords: sig.keywords,
+      distance: sig.distance,
+      target: sig.target,
+      powerRoll: powerRollInfo ? {
+        characteristic: powerRollInfo.characteristic,
+        alternativeCharacteristics: powerRollInfo.alternativeCharacteristics,
+        tier1: sig.tier1,
+        tier2: sig.tier2,
+        tier3: sig.tier3,
+      } : undefined,
+      effect: effectText,
+    };
+  }, [hero.kit]);
+
+  const handleKitAbilityRoll = (ability: Ability, result: PowerRollResult) => {
+    addRoll(result, `${hero.kit?.name}: ${ability.name}`, 'ability');
+  };
+
   return (
     <div className="abilities-view-combined">
       {/* Class Abilities Section */}
@@ -120,6 +181,39 @@ const AbilitiesView: React.FC = () => {
           ))}
         </div>
       </section>
+
+      {/* Kit Signature Ability Section */}
+      {kitSignatureAbility && (
+        <section className="kit-signature-section">
+          <div className="section-header-row">
+            <h2>Kit: {hero.kit.name}</h2>
+            <div className="kit-bonuses-inline">
+              {hero.kit.meleeDamageBonus && (
+                <span className="kit-bonus melee">Melee {hero.kit.meleeDamageBonus}</span>
+              )}
+              {hero.kit.rangedDamageBonus && (
+                <span className="kit-bonus ranged">Ranged {hero.kit.rangedDamageBonus}</span>
+              )}
+              {(hero.kit.meleeDistanceBonus ?? 0) > 0 && (
+                <span className="kit-bonus distance">+{hero.kit.meleeDistanceBonus} Reach</span>
+              )}
+              {(hero.kit.rangedDistanceBonus ?? 0) > 0 && (
+                <span className="kit-bonus distance">+{hero.kit.rangedDistanceBonus} Range</span>
+              )}
+              {(hero.kit.disengageBonus ?? 0) > 0 && (
+                <span className="kit-bonus disengage">+{hero.kit.disengageBonus} Disengage</span>
+              )}
+            </div>
+          </div>
+          <div className="kit-signature-ability-card">
+            <AbilityCard
+              ability={kitSignatureAbility}
+              characteristics={hero.characteristics}
+              onRoll={handleKitAbilityRoll}
+            />
+          </div>
+        </section>
+      )}
 
       {/* Action Reference Sections (Collapsible) */}
       <section className="action-reference-section">

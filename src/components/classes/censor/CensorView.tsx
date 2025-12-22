@@ -77,10 +77,30 @@ export const CensorView: React.FC<BaseClassViewProps> = ({
         </div>
       </div>
 
-      {/* Pronouncements Panel - TODO */}
+      {/* Judgment Triggered Actions */}
       <div className="class-feature-section">
-        <h4 className="class-feature-title">Pronouncements</h4>
-        <p className="placeholder">Pronouncements panel coming soon</p>
+        <h4 className="class-feature-title">Judgment Actions (1 Wrath)</h4>
+        <div className="triggered-actions-list">
+          <div className="triggered-action">
+            <span className="action-trigger">Adjacent judged creature shifts:</span>
+            <span className="action-effect">Free strike + speed 0</span>
+          </div>
+          <div className="triggered-action">
+            <span className="action-trigger">Judged creature makes power roll:</span>
+            <span className="action-effect">Impose bane</span>
+          </div>
+          <div className="triggered-action">
+            <span className="action-trigger">Judged creature uses 1-target ability:</span>
+            <span className="action-effect">Reduce potency by 1</span>
+          </div>
+          <div className="triggered-action">
+            <span className="action-trigger">Damage judged creature with melee:</span>
+            <span className="action-effect">Taunted (EoNT)</span>
+          </div>
+        </div>
+        <p className="class-feature-note">
+          Free triggered action when judged creature uses main action: deal 2 × Presence holy damage
+        </p>
       </div>
     </BaseClassView>
   );

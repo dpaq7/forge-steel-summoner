@@ -8,8 +8,9 @@ import { SummonerHero, Formation, Kit, SummonerCircle } from '../types';
  */
 export const calculateMaxStamina = (hero: Partial<SummonerHero>): number => {
   const baseClassStamina = 15; // Summoner base (SRD: Level 1 = 15)
-  const kitStamina = hero.kit?.stamina || 0;
   const level = hero.level || 1;
+  const echelon = Math.ceil(level / 3);
+  const kitStamina = (hero.kit?.staminaPerEchelon || 0) * echelon;
   // Level 1 gets base stamina, level 2+ gets +6 per level
   const levelBonus = level >= 2 ? level * 6 : 0;
   return baseClassStamina + kitStamina + levelBonus;
@@ -184,24 +185,24 @@ export const calculateMaxRecoveries = (circle?: SummonerCircle): number => {
 };
 
 /**
- * Calculate speed from kit
+ * Calculate speed from kit (base speed 5 + kit bonus)
  */
 export const calculateSpeed = (kit: Kit | undefined): number => {
-  return kit?.speed || 5;
+  return 5 + (kit?.speedBonus || 0);
 };
 
 /**
  * Calculate stability from kit
  */
 export const calculateStability = (kit: Kit | undefined): number => {
-  return kit?.stability || 0;
+  return kit?.stabilityBonus || 0;
 };
 
 /**
- * Get kit stamina bonus
+ * Get kit stamina bonus per echelon
  */
-export const getKitStamina = (kit: Kit | undefined): number => {
-  return kit?.stamina || 0;
+export const getKitStaminaPerEchelon = (kit: Kit | undefined): number => {
+  return kit?.staminaPerEchelon || 0;
 };
 
 /**

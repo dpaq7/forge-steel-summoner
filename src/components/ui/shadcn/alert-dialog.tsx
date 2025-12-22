@@ -1,5 +1,6 @@
 import * as React from "react"
 import * as AlertDialogPrimitive from "@radix-ui/react-alert-dialog"
+import { X } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { buttonVariants } from "./button"
 
@@ -22,12 +23,13 @@ AlertDialogOverlay.displayName = AlertDialogPrimitive.Overlay.displayName
 export interface AlertDialogContentProps
   extends React.ComponentPropsWithoutRef<typeof AlertDialogPrimitive.Content> {
   variant?: "default" | "fantasy"
+  hideClose?: boolean
 }
 
 const AlertDialogContent = React.forwardRef<
   React.ElementRef<typeof AlertDialogPrimitive.Content>,
   AlertDialogContentProps
->(({ className, variant = "fantasy", children, ...props }, ref) => (
+>(({ className, variant = "fantasy", hideClose = false, children, ...props }, ref) => (
   <AlertDialogPortal>
     <AlertDialogOverlay />
     <AlertDialogPrimitive.Content
@@ -47,6 +49,14 @@ const AlertDialogContent = React.forwardRef<
 
       <div className="dialog-inner">
         {children}
+
+        {/* Close button inside dialog-inner so it's visible against the background */}
+        {!hideClose && (
+          <AlertDialogPrimitive.Cancel className="dialog-close" aria-label="Close">
+            <X className="dialog-close-icon" style={{ width: 16, height: 16 }} />
+            <span className="sr-only">Close</span>
+          </AlertDialogPrimitive.Cancel>
+        )}
       </div>
     </AlertDialogPrimitive.Content>
   </AlertDialogPortal>

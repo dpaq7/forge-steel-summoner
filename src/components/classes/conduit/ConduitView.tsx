@@ -89,10 +89,26 @@ export const ConduitView: React.FC<BaseClassViewProps> = ({
         </div>
       </div>
 
-      {/* Prayers Panel - TODO */}
+      {/* Prayer Mechanic */}
       <div className="class-feature-section">
-        <h4 className="class-feature-title">Prayers</h4>
-        <p className="placeholder">Prayers panel coming soon</p>
+        <h4 className="class-feature-title">Prayer (Before Piety Roll)</h4>
+        <div className="triggered-actions-list">
+          <div className="triggered-action">
+            <span className="action-trigger">Roll 1:</span>
+            <span className="action-effect">+1 Piety, take Intuition psychic damage</span>
+          </div>
+          <div className="triggered-action">
+            <span className="action-trigger">Roll 2:</span>
+            <span className="action-effect">+1 extra Piety (total 1d3 + 1)</span>
+          </div>
+          <div className="triggered-action">
+            <span className="action-trigger">Roll 3:</span>
+            <span className="action-effect">+2 Piety, activate domain effect</span>
+          </div>
+        </div>
+        <p className="class-feature-note">
+          Start of turn: gain 1d3 Piety. First time ally regains Stamina or enemy takes 10+ damage: +2 Piety (domain trigger).
+        </p>
       </div>
     </BaseClassView>
   );

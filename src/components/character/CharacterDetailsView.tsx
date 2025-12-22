@@ -351,24 +351,59 @@ const CharacterDetailsView: React.FC = () => {
       {/* Kit Section */}
       <section className="details-section kit-section">
         <h2>Kit: {hero.kit.name}</h2>
+        {hero.kit.description && <p className="kit-description">{hero.kit.description}</p>}
 
         <div className="kit-stats">
           <div className="kit-stat">
             <strong>Stamina</strong>
-            <span className="stat-value">+{hero.kit.stamina}</span>
+            <span className="stat-value">+{hero.kit.staminaPerEchelon ?? 0}/echelon</span>
           </div>
           <div className="kit-stat">
             <strong>Speed</strong>
-            <span className="stat-value">{hero.kit.speed}</span>
+            <span className="stat-value">+{hero.kit.speedBonus ?? 0}</span>
           </div>
           <div className="kit-stat">
             <strong>Stability</strong>
-            <span className="stat-value">{hero.kit.stability}</span>
+            <span className="stat-value">+{hero.kit.stabilityBonus ?? 0}</span>
           </div>
           <div className="kit-stat">
             <strong>Armor</strong>
             <span className="stat-value">{hero.kit.armor || 'None'}</span>
           </div>
+        </div>
+
+        {/* Damage Bonuses */}
+        <div className="kit-bonuses">
+          {hero.kit.meleeDamageBonus && (
+            <div className="kit-stat">
+              <strong>Melee Damage</strong>
+              <span className="stat-value">{hero.kit.meleeDamageBonus}</span>
+            </div>
+          )}
+          {hero.kit.rangedDamageBonus && (
+            <div className="kit-stat">
+              <strong>Ranged Damage</strong>
+              <span className="stat-value">{hero.kit.rangedDamageBonus}</span>
+            </div>
+          )}
+          {(hero.kit.meleeDistanceBonus ?? 0) > 0 && (
+            <div className="kit-stat">
+              <strong>Melee Distance</strong>
+              <span className="stat-value">+{hero.kit.meleeDistanceBonus}</span>
+            </div>
+          )}
+          {(hero.kit.rangedDistanceBonus ?? 0) > 0 && (
+            <div className="kit-stat">
+              <strong>Ranged Distance</strong>
+              <span className="stat-value">+{hero.kit.rangedDistanceBonus}</span>
+            </div>
+          )}
+          {(hero.kit.disengageBonus ?? 0) > 0 && (
+            <div className="kit-stat">
+              <strong>Disengage</strong>
+              <span className="stat-value">+{hero.kit.disengageBonus}</span>
+            </div>
+          )}
         </div>
 
         <div className="kit-equipment">
@@ -378,19 +413,34 @@ const CharacterDetailsView: React.FC = () => {
               <p>{hero.kit.weapons.join(', ')}</p>
             </div>
           )}
-          {hero.kit.implements && hero.kit.implements.length > 0 && (
-            <div className="equipment-block">
-              <h4>Implements:</h4>
-              <p>{hero.kit.implements.join(', ')}</p>
-            </div>
-          )}
-          {hero.kit.items && hero.kit.items.length > 0 && (
-            <div className="equipment-block">
-              <h4>Starting Items:</h4>
-              <p>{hero.kit.items.join(', ')}</p>
-            </div>
-          )}
         </div>
+
+        {/* Signature Ability */}
+        {hero.kit.signatureAbility && (
+          <div className="kit-signature-ability">
+            <h4>Signature Ability: {hero.kit.signatureAbility.name}</h4>
+            <p className="ability-description">{hero.kit.signatureAbility.description}</p>
+            <div className="ability-details">
+              <span className="ability-keywords">{hero.kit.signatureAbility.keywords.join(', ')}</span>
+              <span className="ability-type">{hero.kit.signatureAbility.type}</span>
+              <span className="ability-distance">{hero.kit.signatureAbility.distance}</span>
+              <span className="ability-target">{hero.kit.signatureAbility.target}</span>
+            </div>
+            <div className="ability-power-roll">
+              <strong>Power Roll:</strong> {hero.kit.signatureAbility.powerRoll}
+            </div>
+            <div className="ability-tiers">
+              <div className="tier"><strong>≤11:</strong> {hero.kit.signatureAbility.tier1}</div>
+              <div className="tier"><strong>12-16:</strong> {hero.kit.signatureAbility.tier2}</div>
+              <div className="tier"><strong>17+:</strong> {hero.kit.signatureAbility.tier3}</div>
+            </div>
+            {hero.kit.signatureAbility.effect && (
+              <div className="ability-effect">
+                <strong>Effect:</strong> {hero.kit.signatureAbility.effect}
+              </div>
+            )}
+          </div>
+        )}
       </section>
 
       {/* Summoner Circle Section - Only for Summoners */}

@@ -1,6 +1,25 @@
 import React, { useCallback } from 'react';
-import { APP_VERSION_DISPLAY } from '@/constants/version';
+import { APP_VERSION_DISPLAY, APP_STAGE } from '@/constants/version';
 import './LegalModal.css';
+
+// Inline X icon to avoid Lucide rendering issues
+const CloseIcon = () => (
+  <svg
+    width="16"
+    height="16"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="#5882a7"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    className="dialog-close-icon"
+    style={{ display: 'block', minWidth: 16, minHeight: 16 }}
+  >
+    <line x1="18" y1="6" x2="6" y2="18" />
+    <line x1="6" y1="6" x2="18" y2="18" />
+  </svg>
+);
 
 interface LegalModalProps {
   isOpen: boolean;
@@ -40,18 +59,22 @@ export const LegalModal: React.FC<LegalModalProps> = ({ isOpen, onClose }) => {
         <header className="legal-modal-header">
           <h2 id="legal-modal-title">About Mettle</h2>
           <button
-            className="legal-modal-close"
+            className="dialog-close"
             onClick={onClose}
             aria-label="Close"
           >
-            ×
+            <CloseIcon />
+            <span className="sr-only">Close</span>
           </button>
         </header>
 
         <div className="legal-modal-content">
           <section className="legal-section">
             <h3>Version</h3>
-            <p>Mettle {APP_VERSION_DISPLAY}</p>
+            <p>
+              <strong>Mettle {APP_VERSION_DISPLAY}</strong>
+              <span className="legal-stage">{APP_STAGE}</span>
+            </p>
             <p className="legal-tagline">A character manager for Draw Steel</p>
           </section>
 

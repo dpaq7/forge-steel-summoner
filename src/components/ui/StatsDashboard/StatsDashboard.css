@@ -588,6 +588,7 @@
   color: var(--text-muted);
 }
 
+/* Unpin All button in pinned cards header (legacy) */
 .unpin-all-btn {
   display: flex;
   align-items: center;
@@ -606,6 +607,34 @@
   background: var(--bg-medium);
   border-color: var(--accent-dim);
   color: var(--text-secondary);
+}
+
+/* Unpin All chip button in stat chips row */
+.unpin-all-chip {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.25rem 0.5rem;
+  height: 28px;
+  background: var(--chip-bg);
+  border: 1px solid var(--chip-border);
+  border-radius: var(--radius-md);
+  font-size: 0.65rem;
+  font-weight: 500;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  flex-shrink: 0;
+}
+
+.unpin-all-chip:hover {
+  background: var(--bg-medium);
+  border-color: var(--accent-dim);
+  color: var(--text-secondary);
+}
+
+.unpin-all-chip svg {
+  flex-shrink: 0;
 }
 
 /* Cards Grid */

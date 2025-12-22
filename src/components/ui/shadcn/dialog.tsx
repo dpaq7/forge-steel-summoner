@@ -1,7 +1,25 @@
 import * as React from "react"
 import * as DialogPrimitive from "@radix-ui/react-dialog"
-import { X } from "lucide-react"
 import { cn } from "@/lib/utils"
+
+// Inline X icon to avoid any icon library rendering issues
+const CloseIcon = () => (
+  <svg
+    width="16"
+    height="16"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="#5882a7"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    className="dialog-close-icon"
+    style={{ display: 'block', minWidth: 16, minHeight: 16 }}
+  >
+    <line x1="18" y1="6" x2="6" y2="18" />
+    <line x1="6" y1="6" x2="18" y2="18" />
+  </svg>
+)
 
 const Dialog = DialogPrimitive.Root
 const DialogTrigger = DialogPrimitive.Trigger
@@ -55,7 +73,7 @@ const DialogContent = React.forwardRef<
         {/* Close button inside dialog-inner so it's visible against the background */}
         {!hideClose && (
           <DialogPrimitive.Close className="dialog-close">
-            <X className="dialog-close-icon" style={{ width: 16, height: 16 }} />
+            <CloseIcon />
             <span className="sr-only">Close</span>
           </DialogPrimitive.Close>
         )}

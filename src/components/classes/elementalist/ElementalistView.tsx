@@ -100,7 +100,7 @@ export const ElementalistView: React.FC<BaseClassViewProps> = ({
         </button>
       </div>
 
-      {/* Persistent Effects Panel - TODO */}
+      {/* Persistent Effects Panel */}
       <div className="class-feature-section">
         <h4 className="class-feature-title">Persistent Effects</h4>
         {elementalistHero.persistentAbilities?.length > 0 ? (
@@ -115,6 +115,9 @@ export const ElementalistView: React.FC<BaseClassViewProps> = ({
         ) : (
           <p className="placeholder">No persistent effects active</p>
         )}
+        <p className="class-feature-note">
+          Persistent abilities lock Essence. Turn-start gain reduced by locked amount. Breaks on 5 × Reason damage.
+        </p>
       </div>
     </BaseClassView>
   );

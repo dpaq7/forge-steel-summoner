@@ -1,9 +1,12 @@
-import React, { createContext, useContext, useState, useEffect, useCallback, ReactNode } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback, useRef, ReactNode } from 'react';
 import { SummonerHero } from '../types';
 import { Hero, SummonerHeroV2 } from '../types/hero';
 import { HeroAncestry } from '../types/ancestry';
 import { SelectedPerk } from '../types/perk';
 import { saveCharacter, loadCharacter, getActiveCharacterId, setActiveCharacterId } from '../utils/storage';
+
+// Debounce delay for auto-save (ms)
+const AUTO_SAVE_DELAY = 500;
 
 // HeroContext supports all 10 Draw Steel hero classes
 interface HeroContextType {
@@ -61,6 +64,8 @@ const migrateLegacyHero = (data: any): Hero => {
 
 export const HeroProvider: React.FC<HeroProviderProps> = ({ children }) => {
   const [hero, setHeroInternal] = useState<Hero | null>(null);
+  const saveTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const isInitialLoadRef = useRef(true);
 
   const setHero = (newHero: Hero | null) => {
     setHeroInternal(newHero);
@@ -77,13 +82,33 @@ export const HeroProvider: React.FC<HeroProviderProps> = ({ children }) => {
         setHeroInternal(migratedHero);
       }
     }
+    // Mark initial load as complete after a tick
+    setTimeout(() => {
+      isInitialLoadRef.current = false;
+    }, 0);
   }, []);
 
-  // Auto-save when hero changes
+  // Debounced auto-save when hero changes
   useEffect(() => {
-    if (hero) {
-      saveCharacter(hero);
+    // Skip save on initial load to avoid unnecessary writes
+    if (!hero || isInitialLoadRef.current) return;
+
+    // Clear any pending save
+    if (saveTimeoutRef.current) {
+      clearTimeout(saveTimeoutRef.current);
     }
+
+    // Schedule new save with debounce
+    saveTimeoutRef.current = setTimeout(() => {
+      saveCharacter(hero);
+    }, AUTO_SAVE_DELAY);
+
+    // Cleanup on unmount or before next effect run
+    return () => {
+      if (saveTimeoutRef.current) {
+        clearTimeout(saveTimeoutRef.current);
+      }
+    };
   }, [hero]);
 
   const updateHero = (updates: Partial<Hero>) => {

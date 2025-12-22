@@ -119,16 +119,40 @@ export interface Language {
   researchFocus?: string; // For dead languages - what research they unlock
 }
 
+export type DamageBonus = `+${number}/+${number}/+${number}`;
+
+export interface KitSignatureAbility {
+  name: string;
+  description: string;
+  keywords: string[];
+  type: string; // e.g., "Main action"
+  distance: string; // e.g., "Melee 1", "Ranged 15", "Melee 1 or ranged 10"
+  target: string; // e.g., "One creature", "Two creatures or objects"
+  powerRoll: string; // e.g., "Might or Agility", "Might, Reason, Intuition, or Presence"
+  tier1: string; // Effect for ≤11
+  tier2: string; // Effect for 12-16
+  tier3: string; // Effect for 17+
+  effect?: string; // Additional effect text
+}
+
 export interface Kit {
   id: string;
   name: string;
-  stamina: number;
-  speed: number;
-  stability: number;
-  armor: string;
-  weapons: string[];
-  implements: string[];
-  items: string[];
+  description: string;
+  // Equipment
+  armor: string; // e.g., "Heavy, shield", "Light", "None"
+  weapons: string[]; // e.g., ["Medium"], ["Light", "Medium"], ["Bow"]
+  // Bonuses (per echelon for stamina, flat for others)
+  staminaPerEchelon: number; // 0, 3, 6, 9, or 12
+  speedBonus: number; // 0, 1, 2, or 3
+  stabilityBonus: number; // 0, 1, or 2
+  meleeDamageBonus: DamageBonus | null; // e.g., "+2/+2/+2", "+0/+0/+4"
+  rangedDamageBonus: DamageBonus | null;
+  meleeDistanceBonus: number; // 0 or 1
+  rangedDistanceBonus: number; // 0, 5, 7, or 10
+  disengageBonus: number; // 0 or 1
+  // Signature ability
+  signatureAbility: KitSignatureAbility;
 }
 
 export interface Item {

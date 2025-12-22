@@ -16,6 +16,7 @@ import RollHistoryPanel from './components/shared/RollHistoryPanel';
 import LegalModal from './components/shared/LegalModal';
 import { ImportCharacterDialog } from './components/shared/ImportCharacterDialog';
 import { DeleteCharacterDialog } from './components/shared/DeleteCharacterDialog';
+import ErrorBoundary from './components/shared/ErrorBoundary';
 import {
   downloadCharacterJSON,
   duplicateCharacter,
@@ -384,7 +385,9 @@ function App() {
           }}
         />
         <main className="app-main">
-          <CharacterCreation onComplete={handleCreationComplete} />
+          <ErrorBoundary componentName="CharacterCreation">
+            <CharacterCreation onComplete={handleCreationComplete} />
+          </ErrorBoundary>
         </main>
         {showCharacterManager && (
           <CharacterManager
@@ -502,16 +505,22 @@ function App() {
         {/* Main Content */}
         <main className="app-main">
           <RadixTabsContent value="character">
-            <CharacterDetailsView />
+            <ErrorBoundary componentName="CharacterDetailsView">
+              <CharacterDetailsView />
+            </ErrorBoundary>
           </RadixTabsContent>
 
           <RadixTabsContent value="abilities">
-            <AbilitiesView />
+            <ErrorBoundary componentName="AbilitiesView">
+              <AbilitiesView />
+            </ErrorBoundary>
           </RadixTabsContent>
 
           {/* Summoner-specific: Minions tab */}
           <RadixTabsContent value="minions">
-            <CombatView />
+            <ErrorBoundary componentName="CombatView">
+              <CombatView />
+            </ErrorBoundary>
           </RadixTabsContent>
 
           <RadixTabsContent value="projects">

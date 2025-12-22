@@ -93,8 +93,8 @@
    ============================================ */
 
 .level-up-content {
-  padding: 1.5rem;
-  padding-bottom: 2.5rem;  /* Extra space to ensure last item fully visible */
+  padding: 1rem;
+  padding-bottom: 1.5rem;
 }
 
 .level-up-content h3 {

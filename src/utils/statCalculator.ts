@@ -99,10 +99,11 @@ export function calculateDerivedStats(hero: Hero): DerivedStats {
   const equipmentBonuses = calculateEquipmentBonuses(equippedItems, hero.level);
 
   // ===== STAMINA CALCULATION =====
-  // Formula: Class Starting + (Level-1) * Stamina Per Level + Kit + Equipment
+  // Formula: Class Starting + (Level-1) * Stamina Per Level + Kit (per echelon) + Equipment
   const classStartingStamina = classDef?.startingStamina ?? 18;
   const levelStaminaBonus = (hero.level - 1) * (classDef?.staminaPerLevel ?? 6);
-  const kitStamina = kit?.stamina ?? 0;
+  const echelon = Math.ceil(hero.level / 3);
+  const kitStamina = (kit?.staminaPerEchelon ?? 0) * echelon;
   const equipStamina = equipmentBonuses.stamina;
 
   const maxStamina = classStartingStamina + levelStaminaBonus + kitStamina + equipStamina;
@@ -129,19 +130,20 @@ export function calculateDerivedStats(hero: Hero): DerivedStats {
   const maxRecoveries = baseRecoveries + equipmentBonuses.recoveries;
 
   // ===== SPEED CALCULATION =====
-  // Formula: Base 5 + Kit Speed + Equipment
-  // Note: Kit speed is total (not additive), equipment adds on top
+  // Formula: Base 5 + Kit Speed Bonus + Equipment
   const baseSpeed = 5;
-  const kitSpeed = kit?.speed ?? 0;
+  const kitSpeedBonus = kit?.speedBonus ?? 0;
   const equipSpeed = equipmentBonuses.speed;
 
-  // Speed: use kit speed as total, add equipment bonus
-  const speed = kitSpeed + equipSpeed;
+  // Speed: base + kit bonus + equipment bonus
+  const speed = baseSpeed + kitSpeedBonus + equipSpeed;
 
   // Track speed sources
-  const speedSources: StatSource[] = [];
-  if (kitSpeed !== 0) {
-    speedSources.push({ source: `Kit: ${kit?.name ?? 'Kit'}`, value: kitSpeed, isEquipment: false });
+  const speedSources: StatSource[] = [
+    { source: 'Base Speed', value: baseSpeed, isEquipment: false },
+  ];
+  if (kitSpeedBonus !== 0) {
+    speedSources.push({ source: `Kit: ${kit?.name ?? 'Kit'}`, value: kitSpeedBonus, isEquipment: false });
   }
   if (equipSpeed !== 0) {
     speedSources.push({ source: 'Equipment', value: equipSpeed, isEquipment: true });
@@ -149,13 +151,13 @@ export function calculateDerivedStats(hero: Hero): DerivedStats {
 
   // ===== STABILITY CALCULATION =====
   // Formula: Kit + Equipment
-  const kitStability = kit?.stability ?? 0;
-  const stability = kitStability + equipmentBonuses.stability;
+  const kitStabilityBonus = kit?.stabilityBonus ?? 0;
+  const stability = kitStabilityBonus + equipmentBonuses.stability;
 
   // Track stability sources
   const stabilitySources: StatSource[] = [];
-  if (kitStability !== 0) {
-    stabilitySources.push({ source: `Kit: ${kit?.name ?? 'Kit'}`, value: kitStability, isEquipment: false });
+  if (kitStabilityBonus !== 0) {
+    stabilitySources.push({ source: `Kit: ${kit?.name ?? 'Kit'}`, value: kitStabilityBonus, isEquipment: false });
   }
   if (equipmentBonuses.stability !== 0) {
     stabilitySources.push({ source: 'Equipment', value: equipmentBonuses.stability, isEquipment: true });

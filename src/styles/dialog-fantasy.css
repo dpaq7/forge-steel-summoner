@@ -140,19 +140,41 @@
 /* Ensure the X icon SVG is visible */
 .dialog-close svg,
 .dialog-close-icon {
-  width: 16px;
-  height: 16px;
-  color: inherit;
-  stroke: currentColor;
-  stroke-width: 2;
-  fill: none;
-  display: block;
+  width: 16px !important;
+  height: 16px !important;
+  color: #5882a7 !important;
+  stroke: #5882a7 !important;
+  stroke-width: 2 !important;
+  fill: none !important;
+  display: block !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+/* Target the SVG paths/lines directly for Lucide icons */
+.dialog-close svg path,
+.dialog-close svg line {
+  stroke: #5882a7 !important;
+  stroke-width: 2 !important;
+  stroke-linecap: round !important;
+  stroke-linejoin: round !important;
 }
 
 .dialog-close:hover {
   background: var(--color-danger-dim);
   border-color: var(--color-danger);
   color: var(--color-danger);
+}
+
+.dialog-close:hover svg,
+.dialog-close:hover .dialog-close-icon {
+  color: var(--color-danger) !important;
+  stroke: var(--color-danger) !important;
+}
+
+.dialog-close:hover svg path,
+.dialog-close:hover svg line {
+  stroke: var(--color-danger) !important;
 }
 
 .dialog-close:focus {

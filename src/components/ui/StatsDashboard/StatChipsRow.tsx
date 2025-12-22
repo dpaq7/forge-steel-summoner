@@ -9,6 +9,7 @@ import {
   Swords,
   AlertTriangle,
   Dices,
+  PinOff,
 } from 'lucide-react';
 
 import { StatChip } from './StatChip';
@@ -30,6 +31,7 @@ interface StatChipsRowProps {
   resourceConfig: HeroicResourceConfig;
   pinnedCards: Set<StatCardType>;
   onTogglePin: (type: StatCardType) => void;
+  onUnpinAll: () => void;
   onStaminaChange: (value: number) => void;
   onRecoveriesChange: (value: number) => void;
   onResourceChange?: (value: number) => void;
@@ -47,6 +49,7 @@ export const StatChipsRow: React.FC<StatChipsRowProps> = ({
   resourceConfig,
   pinnedCards,
   onTogglePin,
+  onUnpinAll,
   onStaminaChange,
   onRecoveriesChange,
   onResourceChange,
@@ -238,6 +241,14 @@ export const StatChipsRow: React.FC<StatChipsRowProps> = ({
         onTogglePin={() => onTogglePin('dice')}
         // No onChange - dice is controlled in the card
       />
+
+      {/* Unpin All - only show when multiple cards are pinned */}
+      {pinnedCards.size > 1 && (
+        <button className="unpin-all-chip" onClick={onUnpinAll} title="Unpin all cards">
+          <PinOff className="w-3 h-3" />
+          <span>Unpin All</span>
+        </button>
+      )}
     </div>
   );
 };

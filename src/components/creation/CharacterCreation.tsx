@@ -624,7 +624,8 @@ const CharacterCreationInner: React.FC<CharacterCreationProps> = ({ onComplete }
 
     // Calculate stamina based on class
     const baseStamina = classDef.startingStamina;
-    const kitStaminaBonus = selectedKit.stamina || 0;
+    const echelon = 1; // Level 1 = echelon 1
+    const kitStaminaBonus = (selectedKit.staminaPerEchelon || 0) * echelon;
     const maxStamina = baseStamina + kitStaminaBonus;
 
     // Calculate recoveries based on class
@@ -1514,8 +1515,8 @@ const CharacterCreationInner: React.FC<CharacterCreationProps> = ({ onComplete }
                   onClick={() => setSelectedKit(kit)}
                 >
                   <h3>{kit.name}</h3>
-                  <p>Stamina Bonus: +{kit.stamina}</p>
-                  <p>Speed: {kit.speed} | Stability: {kit.stability}</p>
+                  <p>Stamina: +{kit.staminaPerEchelon}/echelon</p>
+                  <p>Speed: +{kit.speedBonus} | Stability: +{kit.stabilityBonus}</p>
                   <p>Armor: {kit.armor}</p>
                   <p>Weapons: {kit.weapons.join(', ')}</p>
                 </div>

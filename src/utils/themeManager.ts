@@ -2,6 +2,9 @@
 // Supports hero-specific overrides and class default themes
 
 import { HeroClass } from '../types/hero';
+import { createScopedLogger } from './logger';
+
+const log = createScopedLogger('ThemeManager');
 import { ThemeDefinition, ThemeId } from '../types/theme';
 import {
   allThemes,
@@ -100,7 +103,7 @@ export function setThemeOverride(heroId: string, themeId: string): void {
 
     localStorage.setItem(THEME_OVERRIDE_KEY, JSON.stringify(preferences));
   } catch (error) {
-    console.error('Failed to save theme preference:', error);
+    log.error('Failed to save theme preference', error);
   }
 }
 
@@ -117,7 +120,7 @@ export function clearThemeOverride(heroId: string): void {
 
     localStorage.setItem(THEME_OVERRIDE_KEY, JSON.stringify(preferences));
   } catch (error) {
-    console.error('Failed to clear theme preference:', error);
+    log.error('Failed to clear theme preference', error);
   }
 }
 
@@ -159,7 +162,7 @@ export function applyThemeById(themeId: string): void {
   if (theme) {
     applyTheme(theme);
   } else {
-    console.warn(`Theme not found: ${themeId}`);
+    log.warn(`Theme not found: ${themeId}`);
   }
 }
 
@@ -203,7 +206,7 @@ export function resetAllThemePreferences(): void {
     localStorage.removeItem(THEME_OVERRIDE_KEY);
     applyCreatorTheme();
   } catch (error) {
-    console.error('Failed to reset theme preferences:', error);
+    log.error('Failed to reset theme preferences', error);
   }
 }
 
@@ -218,7 +221,7 @@ export function validateAndRepairThemeData(): boolean {
     if (savedThemeId) {
       const theme = getThemeById(savedThemeId);
       if (!theme) {
-        console.warn(`Invalid saved theme ID: ${savedThemeId}, resetting...`);
+        log.warn(`Invalid saved theme ID: ${savedThemeId}, resetting...`);
         localStorage.removeItem(THEME_STORAGE_KEY);
       }
     }
@@ -229,7 +232,7 @@ export function validateAndRepairThemeData(): boolean {
       try {
         const overrides = JSON.parse(overridesJson);
         if (!Array.isArray(overrides)) {
-          console.warn('Theme overrides is not an array, resetting...');
+          log.warn('Theme overrides is not an array, resetting...');
           localStorage.removeItem(THEME_OVERRIDE_KEY);
         } else {
           // Filter out invalid entries
@@ -240,19 +243,19 @@ export function validateAndRepairThemeData(): boolean {
           });
 
           if (validOverrides.length !== overrides.length) {
-            console.warn('Some theme overrides were invalid, cleaning up...');
+            log.warn('Some theme overrides were invalid, cleaning up...');
             localStorage.setItem(THEME_OVERRIDE_KEY, JSON.stringify(validOverrides));
           }
         }
       } catch {
-        console.warn('Theme overrides JSON is corrupted, resetting...');
+        log.warn('Theme overrides JSON is corrupted, resetting...');
         localStorage.removeItem(THEME_OVERRIDE_KEY);
       }
     }
 
     return true;
   } catch (error) {
-    console.error('Failed to validate theme data:', error);
+    log.error('Failed to validate theme data', error);
     return false;
   }
 }

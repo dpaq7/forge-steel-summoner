@@ -442,3 +442,79 @@
 .ref-action-effect strong {
   color: #81c784;
 }
+
+/* ============================================
+   KIT SIGNATURE ABILITY SECTION
+   ============================================ */
+
+.kit-signature-section {
+  background: var(--bg-card);
+  border: 1px solid var(--border-dark);
+  border-radius: var(--radius-lg);
+  padding: 1.5rem;
+  border-left: 4px solid #64b5f6;
+}
+
+.kit-signature-section .section-header-row {
+  margin-bottom: 1rem;
+}
+
+.kit-signature-section h2 {
+  color: #64b5f6;
+}
+
+.kit-bonuses-inline {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.kit-bonus {
+  padding: 0.25rem 0.6rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.kit-bonus.melee {
+  background: rgba(239, 83, 80, 0.2);
+  color: #ef5350;
+  border: 1px solid rgba(239, 83, 80, 0.4);
+}
+
+.kit-bonus.ranged {
+  background: rgba(66, 165, 245, 0.2);
+  color: #42a5f5;
+  border: 1px solid rgba(66, 165, 245, 0.4);
+}
+
+.kit-bonus.distance {
+  background: rgba(171, 71, 188, 0.2);
+  color: #ab47bc;
+  border: 1px solid rgba(171, 71, 188, 0.4);
+}
+
+.kit-bonus.disengage {
+  background: rgba(129, 199, 132, 0.2);
+  color: #81c784;
+  border: 1px solid rgba(129, 199, 132, 0.4);
+}
+
+.kit-signature-ability-card {
+  margin-top: 0.5rem;
+}
+
+.kit-signature-ability-card .action-card {
+  border-color: rgba(100, 181, 246, 0.3);
+  background: rgba(100, 181, 246, 0.05);
+}
+
+@media (max-width: 600px) {
+  .kit-bonuses-inline {
+    margin-top: 0.5rem;
+    justify-content: flex-start;
+  }
+}

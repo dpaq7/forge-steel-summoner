@@ -63,7 +63,8 @@ const LevelUp: React.FC<LevelUpProps> = ({ onClose }) => {
 
   // Calculate stamina changes - CLASS-SPECIFIC
   const currentStamina = hero.stamina.max;
-  const kitStamina = hero.kit?.stamina || 0;
+  const echelon = Math.ceil(nextLevel / 3);
+  const kitStamina = (hero.kit?.staminaPerEchelon || 0) * echelon;
 
   let newMaxStamina: number;
   if (isFury) {

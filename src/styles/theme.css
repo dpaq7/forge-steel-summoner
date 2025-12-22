@@ -72,14 +72,14 @@
   /* Legacy variable for compatibility */
   --font-family: var(--font-body);
 
-  /* Font Sizes */
-  --font-size-xs: 0.7rem;
-  --font-size-sm: 0.85rem;
+  /* Font Sizes - Minimum readable size is 0.8rem (12.8px) */
+  --font-size-xs: 0.8rem;
+  --font-size-sm: 0.875rem;
   --font-size-md: 1rem;
-  --font-size-lg: 1.25rem;
-  --font-size-xl: 1.5rem;
-  --font-size-2xl: 2rem;
-  --font-size-3xl: 2.5rem;
+  --font-size-lg: 1.125rem;
+  --font-size-xl: 1.25rem;
+  --font-size-2xl: 1.5rem;
+  --font-size-3xl: 2rem;
 
   /* Font Weights */
   --font-weight-normal: 400;

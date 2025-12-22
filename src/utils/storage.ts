@@ -5,6 +5,9 @@ import { portfolios } from '../data/portfolios';
 import { circleToPortfolio } from '../types/summoner';
 import { getAncestryByName, getAncestryById } from '../data/ancestries';
 import { calculateMaxStamina, calculateRecoveryValue, calculateMaxRecoveries } from './calculations';
+import { createScopedLogger } from './logger';
+
+const log = createScopedLogger('Storage');
 
 // New storage keys for Mettle
 const STORAGE_KEY = 'mettle-heroes';
@@ -453,7 +456,7 @@ const migrateLegacyStorage = (): void => {
     }
 
   } catch (error) {
-    console.error('Error migrating legacy storage:', error);
+    log.error('Error migrating legacy storage', error);
   }
 };
 
@@ -489,7 +492,7 @@ export const getAllCharacters = (): StoredCharacter[] => {
 
     return stored ? JSON.parse(stored) : [];
   } catch (error) {
-    console.error('Error loading characters:', error);
+    log.error('Error loading characters', error);
     return [];
   }
 };
@@ -519,7 +522,7 @@ export const saveCharacter = (character: Hero): void => {
 
     localStorage.setItem(STORAGE_KEY, JSON.stringify(characters));
   } catch (error) {
-    console.error('Error saving character:', error);
+    log.error('Error saving character', error);
   }
 };
 
@@ -532,7 +535,7 @@ export const loadCharacter = (id: string): Hero | null => {
     const character = characters.find((c) => c.id === id);
     return character ? migrateCharacter(character.data) : null;
   } catch (error) {
-    console.error('Error loading character:', error);
+    log.error('Error loading character', error);
     return null;
   }
 };
@@ -551,7 +554,7 @@ export const deleteCharacter = (id: string): void => {
       setActiveCharacterId(null);
     }
   } catch (error) {
-    console.error('Error deleting character:', error);
+    log.error('Error deleting character', error);
   }
 };
 

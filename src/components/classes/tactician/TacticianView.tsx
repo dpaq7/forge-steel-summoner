@@ -102,10 +102,30 @@ export const TacticianView: React.FC<BaseClassViewProps> = ({
         )}
       </div>
 
-      {/* Commands Panel - TODO */}
+      {/* Mark Effects */}
       <div className="class-feature-section">
-        <h4 className="class-feature-title">Commands</h4>
-        <p className="placeholder">Commands panel coming soon</p>
+        <h4 className="class-feature-title">Mark Effects (1 Focus)</h4>
+        <div className="triggered-actions-list">
+          <div className="triggered-action">
+            <span className="action-trigger">Ally damages marked:</span>
+            <span className="action-effect">+Reason extra damage</span>
+          </div>
+          <div className="triggered-action">
+            <span className="action-trigger">Ally hits marked:</span>
+            <span className="action-effect">Ally gains temp Stamina</span>
+          </div>
+          <div className="triggered-action">
+            <span className="action-trigger">Ally hits marked:</span>
+            <span className="action-effect">Ally shifts up to 2 squares</span>
+          </div>
+          <div className="triggered-action">
+            <span className="action-trigger">You hit marked:</span>
+            <span className="action-effect">Target taunted by you (EoNT)</span>
+          </div>
+        </div>
+        <p className="class-feature-note">
+          Allies gain edge vs marked targets. Start of turn: +2 Focus. Marked damaged: +1 Focus. Ally heroic ability: +1 Focus.
+        </p>
       </div>
     </BaseClassView>
   );
