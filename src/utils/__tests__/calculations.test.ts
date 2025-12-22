@@ -24,32 +24,41 @@ import {
   canSummonOutOfCombat,
   generateId,
 } from '../calculations';
+import type { SummonerHero } from '../../types';
+
+// Helper to create partial hero for stamina tests
+const createHeroForStamina = (level: number, kitStamina?: number): Partial<SummonerHero> => ({
+  level,
+  ...(kitStamina !== undefined && {
+    kit: { staminaPerEchelon: kitStamina } as SummonerHero['kit'],
+  }),
+});
 
 describe('Stamina Calculations', () => {
   describe('calculateMaxStamina', () => {
     it('calculates base stamina for level 1 with no kit', () => {
-      const hero = { level: 1 };
+      const hero = createHeroForStamina(1);
       expect(calculateMaxStamina(hero)).toBe(15);
     });
 
     it('adds kit stamina per echelon', () => {
-      const hero = { level: 1, kit: { staminaPerEchelon: 3 } };
+      const hero = createHeroForStamina(1, 3);
       expect(calculateMaxStamina(hero)).toBe(18); // 15 + 3
     });
 
     it('calculates stamina bonus for level 2+', () => {
-      const hero = { level: 2 };
+      const hero = createHeroForStamina(2);
       expect(calculateMaxStamina(hero)).toBe(27); // 15 + (2 * 6)
     });
 
     it('calculates stamina for level 5 with kit', () => {
-      const hero = { level: 5, kit: { staminaPerEchelon: 3 } };
+      const hero = createHeroForStamina(5, 3);
       // Base 15 + kit (3 * 2 echelons) + level bonus (5 * 6)
       expect(calculateMaxStamina(hero)).toBe(15 + 6 + 30);
     });
 
     it('handles missing level by defaulting to 1', () => {
-      const hero = {};
+      const hero: Partial<SummonerHero> = {};
       expect(calculateMaxStamina(hero)).toBe(15);
     });
   });
@@ -64,7 +73,7 @@ describe('Stamina Calculations', () => {
 
   describe('calculateRecoveryValue', () => {
     it('returns 1/3 of max stamina rounded down', () => {
-      const hero = { level: 1 };
+      const hero = createHeroForStamina(1);
       // Max stamina = 15, recovery = 5
       expect(calculateRecoveryValue(hero)).toBe(5);
     });

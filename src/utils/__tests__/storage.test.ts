@@ -10,19 +10,60 @@ import {
   exportCharacterToJSON,
   importCharacterFromJSON,
 } from '../storage';
-import type { Hero, SummonerHeroV2 } from '../../types/hero';
+import type { SummonerHeroV2 } from '../../types/hero';
 
 // Helper to create a minimal valid hero for testing
+// Uses type assertion since we're creating test data with minimal required fields
 const createTestHero = (overrides: Partial<SummonerHeroV2> = {}): SummonerHeroV2 => ({
   id: 'test-hero-id',
   name: 'Test Hero',
   level: 1,
   heroClass: 'summoner',
   heroicResource: { type: 'essence', current: 0, maxPerTurn: 5 },
-  ancestry: { name: 'Human', description: '', size: '1M', speed: 5 },
-  culture: { name: 'Urban', description: '' },
-  career: { name: 'Soldier', description: '', skills: [], perkType: 'martial' },
-  kit: { name: 'Panther', staminaPerEchelon: 3, speedBonus: 1, stabilityBonus: 0 },
+  ancestry: {
+    id: 'human',
+    name: 'Human',
+    description: '',
+    size: '1M',
+    speed: 5,
+    signatureFeature: { id: 'sig', name: 'Signature', description: '' },
+    purchasedTraits: [],
+    ancestryPoints: 2,
+  },
+  culture: {
+    id: 'urban',
+    name: 'Urban',
+    description: '',
+    environment: { type: 'urban', name: 'Urban', skills: [] },
+    organization: { type: 'bureaucratic', name: 'Bureaucratic', skills: [] },
+    upbringing: { type: 'academic', name: 'Academic', skills: [] },
+    language: 'caelian',
+  },
+  career: {
+    id: 'soldier',
+    name: 'Soldier',
+    description: '',
+    skills: [],
+    perkType: 'crafting',
+    languages: [],
+    renown: 0,
+    wealth: 0,
+    projectPoints: 0,
+    incitingIncident: '',
+  },
+  kit: {
+    id: 'panther',
+    name: 'Panther',
+    description: '',
+    armor: 'Light',
+    weapons: ['Unarmed'],
+    staminaPerEchelon: 3,
+    speedBonus: 1,
+    stabilityBonus: 0,
+    meleeDamageBonus: '+0/+0/+0',
+    rangedDamageBonus: '+0/+0/+0',
+    magicDamageBonus: '+0/+0/+0',
+  },
   characteristics: { might: 0, agility: 0, reason: 2, intuition: 0, presence: 0 },
   stamina: { current: 18, max: 18, winded: 9 },
   recoveries: { current: 8, max: 8, value: 6 },
@@ -57,10 +98,19 @@ const createTestHero = (overrides: Partial<SummonerHeroV2> = {}): SummonerHeroV2
   fixturePortrait: null,
   inactiveMinions: [],
   activeChampion: null,
-  championState: { isActive: false, usedActionThisEncounter: false },
-  outOfCombatState: { minions: [], lastUpdated: 0 },
+  championState: {
+    canSummon: true,
+    summonedThisEncounter: false,
+    championActionUsed: false,
+    requiresVictoryToResummon: false,
+  },
+  outOfCombatState: {
+    activeMinions: [],
+    usedAbilities: {},
+    shouldDismissOnCombatStart: true,
+  },
   ...overrides,
-});
+} as SummonerHeroV2);
 
 describe('Storage Functions', () => {
   beforeEach(() => {
